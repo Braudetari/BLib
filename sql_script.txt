@@ -1,0 +1,9 @@
+CREATE SCHEMA prototypedb;
+CREATE TABLE 'prototypedb'.'subscriber' (
+	`subscriber_id` INT NOT NULL,
+	`subscriber_name` VARCHAR(45) NULL,
+	`detailed_subscription_history` INT NOT NULL,
+	`subscriber_phone_number` VARCHAR(45) NULL,
+	`subscriber_email` VARCHAR(45) NULL,
+	PRIMARY KEY (`subscriber_id`, `detailed_subscription_history`));
+INSERT INTO subscriber(subscriber_id,subscriber_name,detailed_subscription_history,subscriber_phone_number,subscriber_email) VALUES (111111111,"Leo RealPerson",0,"050-55555555","leo@yesmail.net"),(222222222,"Ilya the Engineer",1,"054-phonenumber","ilya@braude.probably"),(333333333,"God Himself",2,"+97250234567","god@damnit.com");

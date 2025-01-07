@@ -3,10 +3,11 @@
 // license found at www.lloseng.com 
 package client;
 import java.io.*;
+import java.net.InetAddress;
 import java.util.List;
 
 import client.*;
-import common.ChatIF;
+import common.Message;
 import common.Subscriber;
 
 
@@ -60,20 +61,26 @@ public class ClientController implements ChatIF
   //Instance methods ************************************************
   
   public List<Subscriber> requestSubscribersFromServer(){
-	  accept("subscribers");
+	  Message message = new Message("subscribers", client.getSessionId(), null);
+	  accept(message);
 	  return client.getSubscriberList();
   }
   public Subscriber requestSubscriberFromServer(String id){
-	  accept("getsubscriber "+id);
+	  Message message = new Message("getsubscriber", client.getSessionId(), id);
+	  accept(message);
+	  //CHANGE
+	  //Try-Catch if accept fails
 	  return client.getSubscriber();
   }
   /**
    * This method waits for input from the console.  Once it is 
    * received, it sends it to the client's message handler.
    */
-  public void accept(String str) 
+   public void accept(Message msg) 
   {
-	  client.handleMessageFromClientUI(str);
+	  Message message = new Message(msg);
+	  message.setSessionId(client.getSessionId());
+	  client.handleMessageFromClientUI(message);
   }
   
   /**
@@ -91,5 +98,14 @@ public class ClientController implements ChatIF
 	  ChatClient.ConnectionStatus status = client.status;
 	  return status;
   }
+  
+  public boolean connect() {
+		  Message msg = client.getConnectMessage();
+		  if(msg == null)
+			  return false;
+		  accept(msg);
+		  return true;
+  }
+  
 }
 //End of ConsoleChat class

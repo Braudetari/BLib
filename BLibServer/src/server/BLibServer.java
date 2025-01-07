@@ -11,6 +11,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 import java.util.Vector;
 
 import common.Message;
@@ -72,6 +73,15 @@ public class BLibServer extends AbstractServer
 	  return false;
   }
   
+  private ConnectionToClientInfo getClientInList(ConnectionToClient client) {
+	  for(ConnectionToClientInfo clientInfo : clientConnections) {
+		  if(clientInfo.getClient().equals(client)) {
+			  return clientInfo;
+		  }
+	  }
+	  return null;
+  }
+  
   private void handleClientConnection(ConnectionToClient client, String clientName) {
 	  boolean clientExists = false;
 	  int clientIndex = -1;
@@ -91,6 +101,10 @@ public class BLibServer extends AbstractServer
 			  clientConnections.get(clientIndex).setStatus(ClientConnectionStatus.Connected);
 		  }
 	  }
+  }
+  
+  private String generateSessionId() {
+	  return UUID.randomUUID().toString();
   }
   
   private void handleClientDisconnection(ConnectionToClientInfo clientInfo) {
@@ -121,7 +135,8 @@ public class BLibServer extends AbstractServer
   
   public void handleMessageToClient(Object msg, ConnectionToClient client) {
 	  try {
-		  client.sendToClient(msg);
+		  Message message = (Message)msg;
+		  client.sendToClient(Message.encrypt(message));
 	  }
 	  catch(Exception e) {
 		  e.printStackTrace();
@@ -138,42 +153,58 @@ public class BLibServer extends AbstractServer
   public void handleMessageFromClient  (Object msg, ConnectionToClient client)
   {
 	 System.out.println("Message received: " + msg + " from " + client);
-	 String[] inputs = msg.toString().split(" ");
-	 if(inputs == null)
-		 return;
-	 switch(inputs[0]) {
-	 	case "connect":
-	 		 String clientName = inputs[1];
-			 handleClientConnection(client, Message.decryptFromBase64(clientName));
-			 handleMessageToClient("msg connected to server", client);
-	 		break;
-	 	
-	 	case "subscribers":
-	 		List<Subscriber> subscriberList = dbConnection.getAllSubscribers();
-	 		String reply = Subscriber.subscriberListToString(subscriberList);
-	 		handleMessageToClient("subscribers " + Message.encryptToBase64(reply), client);
-	 		break;
-	 		
-	 	case "updatesubscriber":
-	 		//Update subscriber in DB sent from client in string form
-	 		Subscriber subscriber = Subscriber.subscriberFromString(Message.decryptFromBase64(inputs[1]));
-	 		dbConnection.updateSubscriber(subscriber.getSubscriberId(), subscriber.getSubscriberEmail(), subscriber.getSubscriberPhoneNumber());
-	 		handleMessageToClient("updated subscriber.", client);
-	 	break;
-	 	case "getsubscriber":
-	 		String reply1 = dbConnection.getSubscriberById(Message.decryptFromBase64(inputs[1])).toString();
-	 		handleMessageToClient("getsubscriber " + Message.encryptToBase64(reply1), client);
-	 		
-	 	default:
-	 		return;
+	 ConnectionToClientInfo clientInfo = getClientInList(client);
+	 String clientSessionId = null;
+	 if(clientInfo != null)
+		 clientSessionId = clientInfo.getSessionId();
+	 try {
+		 Message message = Message.decrypt((Message)msg, clientSessionId);
+		 if(message == null)
+			 return;
+		 Message reply;
+		 Subscriber subscriber;
+		 String str;
+		 switch(message.getRequest()) {
+		 	case "connect":
+				 handleClientConnection(client, message.getMessage());
+				 clientInfo = getClientInList(client);
+				 String sessionId = clientInfo.getSessionId();
+				 if(sessionId == null) {
+					 clientInfo.setSessionId(generateSessionId());
+				 }
+				 reply = new Message("connected", null, clientInfo.getSessionId());
+				 handleMessageToClient(reply, client);
+		 		break;
+		 	
+		 	case "subscribers":
+		 		List<Subscriber> subscriberList = dbConnection.getAllSubscribers();
+		 		reply = new Message("subscribers", clientInfo.getSessionId(),Subscriber.subscriberListToString(subscriberList));
+		 		handleMessageToClient(reply, client);
+		 		break;
+		 		
+		 	case "updatesubscriber":
+		 		//Update subscriber in DB sent from client in string form
+		 		subscriber = Subscriber.subscriberFromString(message.getMessage());
+		 		dbConnection.updateSubscriber(subscriber.getSubscriberId(), subscriber.getSubscriberEmail(), subscriber.getSubscriberPhoneNumber());
+		 		reply = new Message("msg",clientInfo.getSessionId(),"updated subscriber");
+		 		handleMessageToClient(reply, client);
+		 	break;
+		 	case "getsubscriber":
+		 		str = dbConnection.getSubscriberById(message.getMessage()).toString();
+		 		reply = new Message("getsubscriber", clientInfo.getSessionId(), str);
+		 		handleMessageToClient(reply, client);
+		 		
+		 	default:
+		 		return;
+		 }
+		 if(!isClientInList(client)) {
+			 reply = new Message("requestConnect", null, null);
+			 handleMessageToClient(reply, client);
+		 }
 	 }
-	 if(!isClientInList(client)) {
-		 handleMessageToClient("requestConnect", client);
+	 catch(Exception e) {
+		 e.printStackTrace();
 	 }
-	 //Echo behaviour
-//	 else {
-//		 handleMessageToClient("echo: " + msg, client);
-//	 }
   }
    
   /**

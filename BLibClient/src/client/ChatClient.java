@@ -6,7 +6,6 @@ package client;
 
 import ocsf.client.*;
 import client.*;
-import common.ChatIF;
 import common.Message;
 import common.Subscriber;
 
@@ -39,6 +38,7 @@ public class ChatClient extends AbstractClient
   public static enum ConnectionStatus{Disconnected, Connected}; 
   private List<Subscriber> subscriberList;
   private Subscriber subscriber;
+  private String sessionId;
   
   //Constructors ****************************************************
   
@@ -83,30 +83,48 @@ public class ChatClient extends AbstractClient
   public void handleMessageFromServer(Object msg) 
   {
 	  System.out.println("--> " + msg);
-	  String[] inputs = msg.toString().split(" ");
-	  
-	  if(inputs[0] != null) {
-		  switch(inputs[0]) {
-		  	case "subscribers":
-		  			subscriberList = Subscriber.subscriberListFromString(Message.decryptFromBase64(inputs[1]));
-		  		break;
-		  	case "getsubscriber":
-		  		subscriber=Subscriber.subscriberFromString(Message.decryptFromBase64(inputs[1]));
-		  		break;
-		  	case "requestConnect":
-					try {
-						sendToServer("connect " + Message.encryptToBase64(InetAddress.getLocalHost().getHostName()));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-		  		break;
-		  	default:
-		  		break;
+	  try {
+		  Message message = Message.decrypt((Message)msg, this.sessionId);
+		  if(message != null) {
+			  switch(message.getRequest()) {
+			  	case "subscribers":
+			  			subscriberList = Subscriber.subscriberListFromString(message.getMessage());
+			  		break;
+			  	case "getsubscriber":
+			  		subscriber=Subscriber.subscriberFromString(message.getMessage());
+			  		break;
+			  	case "requestConnect":
+						try {
+							handleMessageFromClientUI(getConnectMessage());
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+			  		break;
+			  	case "connected":
+			  			this.sessionId = message.getMessage();
+			  	default:
+			  		break;
+			  }
 		  }
-			  
+		  awaitResponse = false;
 	  }
-	  
-	  awaitResponse = false;
+	  catch(Exception e) {
+		  e.printStackTrace();
+		  System.err.println("Could not cast msg as Message object");
+	  }
+  }
+  
+  Message getConnectMessage() {
+	  try {
+		  String hostname = InetAddress.getLocalHost().getHostName();
+		  Message message = new Message("connect", getSessionId(), hostname);
+		  return message;
+	  }
+	  catch (Exception e){
+		  e.printStackTrace();
+		  System.err.println("Could not get client hostname");
+		  return null;
+	  }
   }
 
   /**
@@ -115,13 +133,14 @@ public class ChatClient extends AbstractClient
    * @param message The message from the UI.    
    */
   
-  public void handleMessageFromClientUI(String message)  
+  public void handleMessageFromClientUI(Message message)  
   {
     try
     {
     	openConnection();//in order to send more than one message
        	awaitResponse = true;
-    	sendToServer(message);
+       	//Encrypt message and send to server
+       	sendToServer(Message.encrypt(message));
 		// wait for response
 		while (awaitResponse) {
 			try {
@@ -140,6 +159,14 @@ public class ChatClient extends AbstractClient
     }
   }
 
+  //Client-package private access for SessionId
+  String getSessionId() {
+	  return this.sessionId;
+  }
+  
+  void setSessionId(String sessionId) {
+	  this.sessionId = sessionId;
+  }
   
   /**
    * This method terminates the client.

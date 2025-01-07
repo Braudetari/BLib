@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.net.InetAddress;
 
 import client.ChatClient;
+import client.ChatIF;
 import client.ClientController;
 import client.ClientUI;
-import common.ChatIF;
 import common.Message;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -83,7 +83,9 @@ public  class ConnectionFrameController   {
 			ClientUI.chat = new ClientController(getServerIP(), getport());
 			System.out.println();
 			//send connect request with client name
-			ClientUI.chat.accept("connect " + Message.encryptToBase64(InetAddress.getLocalHost().getHostName()));
+			//CHANGE
+			//Do something with the boolean from connect()
+			 ClientUI.chat.connect();
 			 if(ClientUI.chat.getConnectionStatus().toString() == "Connected") { //Connection Success
 					((Stage)((Node)event.getSource()).getScene().getWindow()).close(); //close ConnectionFrame
 					SubscriberManagerFrameController subscriberManagerFrame = new SubscriberManagerFrameController();

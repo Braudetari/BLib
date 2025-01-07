@@ -61,7 +61,7 @@ public class SubscriberInfoFrameController {
 		Subscriber editedSubscriber = new Subscriber(importedSubscriber);
 		editedSubscriber.setSubscriberEmail(txtEmail.getText());
 		editedSubscriber.setSubscriberPhoneNumber(txtPhone.getText());
-		ClientUI.chat.accept("updatesubscriber " + Message.encryptToBase64(editedSubscriber.toString()));
+		ClientUI.chat.accept(new Message("updatesubscriber",null,editedSubscriber.toString()));
 		getCloseButton(event); //close post update
 	}
 	

@@ -7,6 +7,7 @@ public class ConnectionToClientInfo {
 	private ConnectionToClient client;
 	private final String clientIp;
 	private final String clientName;
+	private String sessionId;
 	private ClientConnectionStatus clientStatus;
 	
 	public static enum ClientConnectionStatus{Disconnected, Connected};
@@ -48,6 +49,14 @@ public class ConnectionToClientInfo {
 	
 	public void setClient(ConnectionToClient client) {
 		this.client = client;
+	}
+	
+	public String getSessionId() {
+		return this.sessionId;
+	}
+	
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
 	}
 	
 	public String toString() {

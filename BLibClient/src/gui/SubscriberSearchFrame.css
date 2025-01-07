@@ -1,0 +1,25 @@
+/* SubscriberSearchFrame.css */
+.root {
+    -fx-background-color: lightgray;
+}
+
+Label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333;
+}
+
+TextField {
+    -fx-font-size: 12px;
+    -fx-pref-width: 300px;
+}
+
+Button {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-background-color: #0078d7;
+    -fx-background-radius: 5;
+}
+
+Button:hover {
+    -fx-background-color: #005a9e;
+}

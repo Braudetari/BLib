@@ -7,8 +7,10 @@ import java.net.InetAddress;
 import java.util.List;
 
 import client.*;
+import common.Client;
 import common.Message;
 import common.Subscriber;
+import common.loginInfo;
 
 
 /**
@@ -72,6 +74,18 @@ public class ClientController implements ChatIF
 	  //Try-Catch if accept fails
 	  return client.getSubscriber();
   }
+  public Client requestClientFromServer(loginInfo info) {
+	    Message message = new Message("login", null, info.toString());
+	    try {
+	        accept(message);
+	    } catch (Exception e) {
+	        // Handle the exception, for example, by logging or rethrowing it
+	        System.err.println("Error while sending the message to the server: " + e.getMessage());
+	        e.printStackTrace(); // Optional: To debug the stack trace
+	        return null; // Return null or handle the error appropriately
+	    }
+	    return client.getClient();
+	}
   /**
    * This method waits for input from the console.  Once it is 
    * received, it sends it to the client's message handler.

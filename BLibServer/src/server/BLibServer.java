@@ -14,8 +14,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.Vector;
 
+import com.mysql.cj.xdevapi.Client;
+
 import common.Message;
 import common.Subscriber;
+import common.loginInfo;
 import ocsf.server.*;
 import server.ConnectionToClientInfo.ClientConnectionStatus;
 
@@ -163,6 +166,7 @@ public class BLibServer extends AbstractServer
 			 return;
 		 Message reply;
 		 Subscriber subscriber;
+		 common.Client client1;
 		 String str;
 		 switch(message.getRequest()) {
 		 	case "connect":
@@ -189,6 +193,25 @@ public class BLibServer extends AbstractServer
 		 		reply = new Message("msg",clientInfo.getSessionId(),"updated subscriber");
 		 		handleMessageToClient(reply, client);
 		 	break;
+		 	case "login":
+		 		String userName=loginInfo.fromString(message.getMessage()).getName();
+		 		String password=loginInfo.fromString(message.getMessage()).getPassword();
+
+		 		client1 =dbConnection.HandleClientLogin(userName, password);
+
+		 		if (client1 != null) {
+		 		    // Create a reply message with the client information
+		 		    reply = new Message("login", null, client1.toString());
+		 		    handleMessageToClient(reply, client);
+		 		} else {
+		 		    // Handle the null case, e.g., send an error message to the client
+		 		    System.err.println("Error: Login failed, client1 is null.");
+		 		    reply = new Message("login", null, null);
+		 		    handleMessageToClient(reply, client);
+		 		}
+
+		 	break;
+		 	
 		 	case "getsubscriber":
 		 		str = dbConnection.getSubscriberById(message.getMessage()).toString();
 		 		reply = new Message("getsubscriber", clientInfo.getSessionId(), str);

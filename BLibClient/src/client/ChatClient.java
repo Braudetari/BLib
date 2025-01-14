@@ -6,6 +6,7 @@ package client;
 
 import ocsf.client.*;
 import client.*;
+import common.Client;
 import common.Message;
 import common.Subscriber;
 
@@ -39,6 +40,7 @@ public class ChatClient extends AbstractClient
   private List<Subscriber> subscriberList;
   private Subscriber subscriber;
   private String sessionId;
+  private Client client1;
   
   //Constructors ****************************************************
   
@@ -73,6 +75,12 @@ public class ChatClient extends AbstractClient
 	  }
 	  return (subscriber);
   }
+  public Client getClient(){
+	  if(client1 == null) {
+		  return null;
+	  }
+	  return (client1);
+  }
   //Instance methods ************************************************
    
   /**
@@ -93,6 +101,13 @@ public class ChatClient extends AbstractClient
 			  	case "getsubscriber":
 			  		subscriber=Subscriber.subscriberFromString(message.getMessage());
 			  		break;
+			  	case "login":
+			  	    if (message.getMessage() == null) {
+			  	        client1 = null; // Set client1 to null if the message is null
+			  	    } else {
+			  	        client1 = Client.fromString(message.getMessage()); // Process the message if not null
+			  	    }
+			  	    break;
 			  	case "requestConnect":
 						try {
 							handleMessageFromClientUI(getConnectMessage());

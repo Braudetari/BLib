@@ -88,8 +88,8 @@ public  class ConnectionFrameController   {
 			 ClientUI.chat.connect();
 			 if(ClientUI.chat.getConnectionStatus().toString() == "Connected") { //Connection Success
 					((Stage)((Node)event.getSource()).getScene().getWindow()).close(); //close ConnectionFrame
-					SubscriberManagerFrameController subscriberManagerFrame = new SubscriberManagerFrameController();
-					subscriberManagerFrame.start(new Stage());
+					loginFrameController loginFrameController1 = new loginFrameController();
+					loginFrameController1.start(new Stage());
 			 }
 			 else { //Connection Failed
 				 //Open Notice with error

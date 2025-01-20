@@ -2,5 +2,6 @@
 .vs/
 
 # Ignore bin directories in specific projects
-PrototypeClient/bin/
-PrototypeServer/bin/
+BLibClient/bin/
+BLibServer/bin/
+OCSF/bin/

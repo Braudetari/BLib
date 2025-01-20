@@ -1,13 +1,13 @@
-Tasks to do: Prototype
+Tasks to do: BLib
 
-PrototypeClient:
-- Implement Connect after 'ConnectionFrame'
-	+ Basic Buttons: Connect, NoticeFrame if Error
-- Implement SubscriberManager
-	+ Basic Buttons: Show, Close
-	+ Show All Subscribers: Name, ID
-	+ Open SubscriberInfo Screen
-- Implement SubscriberInfo:
-	+ Basic Buttons: Update, Close
-	+ Show Subscriber Info
-	+ Update Subscriber Info
+BLibServer:
+	- DetailedHistory
+	- DetailedHistoryController
+	- SubscriberController
+		• SendSMSReminder
+		• SendEmailReminder
+	- BookController
+	- LendController 
+	- ReportController
+	
+BLibClient:

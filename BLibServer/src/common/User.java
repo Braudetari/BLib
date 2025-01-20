@@ -1,6 +1,7 @@
 package common;
 
 public class User {
+	private int id;
 	private String username = null;
 	private String password = null;
 	private UserType type = null;
@@ -29,12 +30,19 @@ public class User {
 		password=null;
 		type = UserType.GUEST;
 	}
-	public User(String username, String password, UserType type) {
+	public User(int id, String username, String password, UserType type) {
+		this.id = id;
 		this.username = username;
 		this.password = password;
 		this.type = type;
 	}
-	
+	public User(User user) {
+		this.id = user.id;
+		this.password = user.password;
+		this.type = user.type;
+		this.username = user.username;
+	}
+
 	////////	SETTER/GETTER	////////
 	public String getUsername() {
 		return this.username;
@@ -57,4 +65,10 @@ public class User {
 		this.type = type;
 	}
 	
+	public int getId() {
+		return this.id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 }

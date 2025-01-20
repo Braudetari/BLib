@@ -187,7 +187,7 @@ public class BLibServer extends AbstractServer
 		 	case "updatesubscriber":
 		 		//Update subscriber in DB sent from client in string form
 		 		subscriber = Subscriber.subscriberFromString(message.getMessage());
-		 		SubscriberController.updateSubscriber(dbConnection.getConnection(), subscriber.getSubscriberId(), subscriber.getSubscriberEmail(), subscriber.getSubscriberPhoneNumber());
+		 		SubscriberController.updateSubscriberInfo(dbConnection.getConnection(), subscriber.getSubscriberId(), subscriber.getSubscriberEmail(), subscriber.getSubscriberPhoneNumber());
 		 		reply = new Message("msg",clientInfo.getSessionId(),"updated subscriber");
 		 		handleMessageToClient(reply, client);
 		 	break;
@@ -202,7 +202,7 @@ public class BLibServer extends AbstractServer
 		 			str = message.getMessage();
 		 			User user = null;
 		 			if(str.equals("guest")) { //user logged in as guest
-		 				user = new User(null, null, User.UserType.GUEST);
+		 				user = new User(0, null, null, User.UserType.GUEST);
 		 			}
 		 			else { //User isn't logging in as guest
 			 			String[] loginInfo = str.split(" ");

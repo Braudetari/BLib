@@ -25,11 +25,12 @@ public class UserController {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
+            	int id = rs.getInt("user_id");
                 String password = rs.getString("password");
                 User.UserType type = User.UserType.fromInt(rs.getInt("user_type"));
                 
                 // Return User object
-                return new User(username, password, type);
+                return new User(id, username, password, type);
             }
         } catch (SQLException ex) {
             System.out.println("SQLException: " + ex.getMessage());

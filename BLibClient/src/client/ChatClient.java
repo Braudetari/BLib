@@ -8,6 +8,7 @@ import ocsf.client.*;
 import client.*;
 import common.Message;
 import common.Subscriber;
+import gui.NoticeFrameController;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -102,6 +103,12 @@ public class ChatClient extends AbstractClient
 			  		break;
 			  	case "connected":
 			  			this.sessionId = message.getMessage();
+			  			break;
+			  	//Display error as Notice
+			  	case "error":
+			  			NoticeFrameController frame = new NoticeFrameController();
+			  			frame.start(message.getMessage());
+			  			break;
 			  	default:
 			  		break;
 			  }

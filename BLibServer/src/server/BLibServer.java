@@ -3,6 +3,7 @@
 // license found at www.lloseng.com 
 package server;
 
+import controller.*;
 import java.io.*;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.Vector;
 
 import common.Message;
 import common.Subscriber;
+import common.User;
 import ocsf.server.*;
 import server.ConnectionToClientInfo.ClientConnectionStatus;
 
@@ -82,7 +84,7 @@ public class BLibServer extends AbstractServer
 	  return null;
   }
   
-  private void handleClientConnection(ConnectionToClient client, String clientName) {
+  private void handleClientConnection(ConnectionToClient client, String clientName, User clientUser) {
 	  boolean clientExists = false;
 	  int clientIndex = -1;
 	  for(int i=0; i<clientConnections.size() && clientExists == false; i++) {
@@ -93,7 +95,7 @@ public class BLibServer extends AbstractServer
 		  }
 	  }
 	  if(!clientExists) {
-		  clientConnections.add(new ConnectionToClientInfo(client, clientName));
+		  clientConnections.add(new ConnectionToClientInfo(client, clientName, clientUser));
 	  }
 	  else {
 		  if(clientIndex >= 0) {
@@ -166,7 +168,7 @@ public class BLibServer extends AbstractServer
 		 String str;
 		 switch(message.getRequest()) {
 		 	case "connect":
-				 handleClientConnection(client, message.getMessage());
+				 handleClientConnection(client, message.getMessage(), null);
 				 clientInfo = getClientInList(client);
 				 String sessionId = clientInfo.getSessionId();
 				 if(sessionId == null) {
@@ -177,7 +179,7 @@ public class BLibServer extends AbstractServer
 		 		break;
 		 	
 		 	case "subscribers":
-		 		List<Subscriber> subscriberList = dbConnection.getAllSubscribers();
+		 		List<Subscriber> subscriberList = SubscriberController.getAllSubscribers(dbConnection.getConnection());
 		 		reply = new Message("subscribers", clientInfo.getSessionId(),Subscriber.subscriberListToString(subscriberList));
 		 		handleMessageToClient(reply, client);
 		 		break;
@@ -185,14 +187,41 @@ public class BLibServer extends AbstractServer
 		 	case "updatesubscriber":
 		 		//Update subscriber in DB sent from client in string form
 		 		subscriber = Subscriber.subscriberFromString(message.getMessage());
-		 		dbConnection.updateSubscriber(subscriber.getSubscriberId(), subscriber.getSubscriberEmail(), subscriber.getSubscriberPhoneNumber());
+		 		SubscriberController.updateSubscriber(dbConnection.getConnection(), subscriber.getSubscriberId(), subscriber.getSubscriberEmail(), subscriber.getSubscriberPhoneNumber());
 		 		reply = new Message("msg",clientInfo.getSessionId(),"updated subscriber");
 		 		handleMessageToClient(reply, client);
 		 	break;
 		 	case "getsubscriber":
-		 		str = dbConnection.getSubscriberById(message.getMessage()).toString();
+		 		str = SubscriberController.getSubscriberById(dbConnection.getConnection(), message.getMessage()).toString();
 		 		reply = new Message("getsubscriber", clientInfo.getSessionId(), str);
 		 		handleMessageToClient(reply, client);
+		 		break;
+		 		
+		 	//Handle client login request, e.g. request:"login", msg:"username password"
+		 	case "login":
+		 			str = message.getMessage();
+		 			User user = null;
+		 			if(str.equals("guest")) { //user logged in as guest
+		 				user = new User(null, null, User.UserType.GUEST);
+		 			}
+		 			else { //User isn't logging in as guest
+			 			String[] loginInfo = str.split(" ");
+			 			String username = loginInfo[0];
+			 			String password = loginInfo[1];
+			 			//try to find user in database
+			 			user = UserController.getUserByUsername(dbConnection.getConnection(), username);
+			 			Message replyLoginFail = new Message("error", clientInfo.getSessionId(), "Incorrect username or password");
+			 			if(user == null) {  //username doesnt exist
+			 				handleMessageToClient(replyLoginFail, client);
+			 				break;
+			 			}
+			 			if(!password.equals(user.getPassword())) { //incorrect password
+			 				handleMessageToClient(replyLoginFail, client);
+			 				break;
+			 			}
+		 			}
+		 			clientInfo.setUser(user);
+		 		break;
 		 		
 		 	default:
 		 		return;

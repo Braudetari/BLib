@@ -1,6 +1,6 @@
 package server;
-import java.net.InetAddress;
-import java.util.ArrayList;
+
+import common.User;
 import ocsf.server.ConnectionToClient;
 
 public class ConnectionToClientInfo {
@@ -8,14 +8,16 @@ public class ConnectionToClientInfo {
 	private final String clientIp;
 	private final String clientName;
 	private String sessionId;
+	private User clientUser;
 	private ClientConnectionStatus clientStatus;
 	
 	public static enum ClientConnectionStatus{Disconnected, Connected};
 	
-	ConnectionToClientInfo(ConnectionToClient client, String clientName){
+	ConnectionToClientInfo(ConnectionToClient client, String clientName, User clientUser){
 		this.client = client;
 		this.clientName = clientName;
 		clientIp = client.getInetAddress().getHostAddress();
+		this.clientUser = clientUser;
 		clientStatus = ClientConnectionStatus.Connected;
 	}
 	
@@ -49,6 +51,14 @@ public class ConnectionToClientInfo {
 	
 	public void setClient(ConnectionToClient client) {
 		this.client = client;
+	}
+	
+	public void setUser(User user) {
+		this.clientUser = user;
+	}
+	
+	public User getUser() {
+		return this.clientUser;
 	}
 	
 	public String getSessionId() {

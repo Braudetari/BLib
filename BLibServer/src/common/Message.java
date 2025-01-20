@@ -1,8 +1,17 @@
 package common;
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
+import javax.crypto.KeyGenerator;
+import javax.crypto.spec.SecretKeySpec;
 /** 
 * Handles messages and data between client and server <p>
 * Encrypts and decrypts messages with Base64 <p>
@@ -60,16 +69,6 @@ public class Message implements Serializable{
 			this.msg = msg;
 		}
 	
-	private static String encryptToBase64(String msg){
-		Base64.Encoder encoder = Base64.getEncoder();
-		return new String(encoder.encode(msg.getBytes()));
-	}
-	
-	private static String decryptFromBase64(String msg) {
-		Base64.Decoder decoder = Base64.getDecoder();
-		return new String(decoder.decode(msg));
-	}
-	
 	public String toString() {
 		return new String(this.request + " " + this.sessionId + " " + this.msg); 
 	}
@@ -77,7 +76,26 @@ public class Message implements Serializable{
 	public static Message encrypt(Message message) {
 		if(message.encrypted)
 			return message;
-		//Implement encryption based on this.sessionId;
+//		try{
+//			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+//			MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
+//			byte[] keyBytes = sha256.digest(message.getSessionId().getBytes(StandardCharsets.UTF_8));
+//			SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "AES");
+//			cipher.init(Cipher.ENCRYPT_MODE, keySpec);
+//			ByteArrayOutputStream bs = new ByteArrayOutputStream();
+//			CipherOutputStream cos = new CipherOutputStream(bs, cipher);
+//			byte[] messageBytes = message.toString().getBytes(StandardCharsets.UTF_8);
+//			cos.write(messageBytes);
+//			cos.close();
+//			Message encryptedMsg = new Message(null, null, messageBytes.toString());
+//			encryptedMsg.encrypted = true;
+//			return encryptedMsg;
+//		}
+//		catch(Exception e) {
+//			e.printStackTrace();
+//			System.err.println("Could not encrypt message");
+//			return message;
+//		}
 		return message;
 	}
 	

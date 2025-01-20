@@ -37,4 +37,28 @@ public class UserController {
 
         return null; // Return null if no subscriber is found
     }
+	
+	//INSERT given user into database
+	public static boolean createUsername(Connection connection, User user) {
+        
+        if (connection == null) {
+            System.out.println("Failed to connect to the database.");
+            return false;
+        }
+
+        try {
+            String query = "INSERT INTO user (username, password, user_type) VALUES(?,?,?)";
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, user.getUsername()); // Use setString for a String parameter
+            pstmt.setString(2, user.getPassword());
+            pstmt.setString(3, user.getType().toString());
+            int success = pstmt.executeUpdate();
+
+            return (success>0) ? true : false;
+        } catch (SQLException ex) {
+            System.out.println("SQLException: " + ex.getMessage());
+            return false;
+        }
+    }	
+
 }

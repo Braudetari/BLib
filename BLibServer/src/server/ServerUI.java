@@ -11,10 +11,10 @@ import server.BLibServer;
 
 public class ServerUI extends Application {
 	final public static int DEFAULT_PORT = 5555;
-	final public static String DEFAULT_DB_IP = "localhost";
-	final public static String DEFAULT_DB_SCHEME = "prototypedb";
-	final public static String DEFAULT_DB_USER = "root";
-	final public static String DEFAULT_DB_PASS = "Aa123456";
+	final public static String DEFAULT_DB_IP = null;
+	final public static String DEFAULT_DB_SCHEME = null;
+	final public static String DEFAULT_DB_USER = null;
+	final public static String DEFAULT_DB_PASS = null;
 	public static String DB_IP = DEFAULT_DB_IP;
 	public static String DB_SCHEME = DEFAULT_DB_SCHEME;
 	public static String DB_USER = DEFAULT_DB_USER;
@@ -32,7 +32,7 @@ public class ServerUI extends Application {
 			System.out.println("DB arguments accepted.");
 		}
 		catch(Exception e) {
-			System.out.println("DB arguments failed. using default");
+			System.out.println("DB arguments incomplete/failed. using default (local db)");
 			DB_IP = DEFAULT_DB_IP;
 			DB_SCHEME = DEFAULT_DB_SCHEME;
 			DB_USER = DEFAULT_DB_USER;
@@ -63,9 +63,10 @@ public class ServerUI extends Application {
 	    	
 	        server = new BLibServer(port);
 	        try {
-		        server.dbConnection = DatabaseConnection.getInstance(DB_IP, DB_SCHEME, DB_USER, DB_PASS);
-		        
-		        
+	        	if(DB_IP != null)
+	        		BLibServer.dbConnection = DatabaseConnection.getInstance(DB_IP, DB_SCHEME, DB_USER, DB_PASS);
+	        	else
+	        		BLibServer.dbConnection = DatabaseConnection.getInstance();
 	        }
 	        catch(Exception e) {
 	        	System.out.println("ERROR - could not connect to DB");

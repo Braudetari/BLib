@@ -12,7 +12,33 @@ import common.Subscriber;
 public class DatabaseConnection {
     private static DatabaseConnection instance; // Singleton instance
     private Connection connection; // Single database connection
-
+    
+    /**
+     * Connect to Database locally
+     * @throws SQLException
+     */
+    private DatabaseConnection() throws SQLException{
+    	try {
+            Class.forName("org.sqlite.JDBC").newInstance();
+            System.out.println("Driver definition succeeded.");
+        } catch (Exception ex) {
+            System.out.println("Driver definition failed: " + ex.getMessage());
+            throw new SQLException("Failed to load driver.");
+        }
+    	String dbPath = "database.db";
+        connection = DriverManager.getConnection(
+            "jdbc:sqlite:"+dbPath);
+        System.out.println("Local SQL connection succeeded.");
+    }
+    
+    /**
+     * Connect to Database using TCP/IP with Scheme/User info
+     * @param DBIp
+     * @param DBScheme
+     * @param DBUser
+     * @param DBPass
+     * @throws SQLException
+     */
     private DatabaseConnection(String DBIp, String DBScheme, String DBUser, String DBPass) throws SQLException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
@@ -32,6 +58,16 @@ public class DatabaseConnection {
             synchronized (DatabaseConnection.class) {
                 if (instance == null) {
                     instance = new DatabaseConnection(DBIp, DBScheme, DBUser, DBPass);
+                }
+            }
+        }
+        return instance;
+    }
+    public static DatabaseConnection getInstance() throws SQLException {
+        if (instance == null) {
+            synchronized (DatabaseConnection.class) {
+                if (instance == null) {
+                    instance = new DatabaseConnection();
                 }
             }
         }
@@ -63,4 +99,5 @@ public class DatabaseConnection {
             return null;
         }
     }
+
 }

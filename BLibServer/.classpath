@@ -9,5 +9,6 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JavaFX"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-8.0.13.jar"/>
+	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.48.0.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

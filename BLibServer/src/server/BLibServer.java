@@ -6,6 +6,7 @@ package server;
 import controller.*;
 import java.io.*;
 import java.sql.Connection;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Dictionary;
@@ -165,6 +166,7 @@ public class BLibServer extends AbstractServer
 		 Message reply;
 		 Subscriber subscriber;
 		 String str;
+	 	 int subscriberId;
 		 switch(message.getRequest()) {
 		 	case "connect":
 				 handleClientConnection(client, message.getMessage(), null);
@@ -191,7 +193,6 @@ public class BLibServer extends AbstractServer
 		 		handleMessageToClient(reply, client);
 		 	break;
 		 	case "getsubscriber":
-		 		int subscriberId;
 		 		try {
 			 		subscriberId = Integer.parseInt(message.getMessage());
 		 		}
@@ -266,7 +267,52 @@ public class BLibServer extends AbstractServer
 	 				handleMessageToClient(reply, client);
 	 			}
 		 		break;
-		 		
+		 	case "borrowbook": //expected to get message of "bookSerial/Id;subscriberId;dateFrom;dateTo;id/serial"
+		 			User clientUser = clientInfo.getUser();
+		 			if(clientUser == null) {
+		 				reply = new Message("error", clientInfo.getSessionId(), "You are not logged in.");
+		 				handleMessageToClient(reply, client);
+		 				break;
+		 			}
+		 			else if(!clientUser.getType().equals(User.UserType.LIBRARIAN)) {
+		 				reply = new Message("error", clientInfo.getSessionId(), "Can't borrow book, not a Librarian.");
+		 				handleMessageToClient(reply, client);
+		 				break;
+		 			}
+		 			else {
+		 				str = message.getMessage();
+		 				try {
+			 				String[] split = str.split(";");
+			 				int bookOrSerialId = Integer.parseInt(split[0]);
+			 				subscriberId = Integer.parseInt(split[1]); 
+			 				LocalDate dateFrom = DateUtil.DateFromString(split[2]);
+			 				LocalDate dateTo = DateUtil.DateFromString(split[3]);
+			 				String borrowType = split[4];
+			 				int result = 0;
+			 				if(borrowType.equals("serial")) {
+			 					result = LendController.LendBookSerialId(dbConnection.getConnection(), subscriberId, dateFrom, dateTo, bookOrSerialId);
+			 				}
+			 				else if(borrowType.equals("id")) {
+			 					result = LendController.LendBookId(dbConnection.getConnection(), subscriberId, dateFrom, dateTo, bookOrSerialId);
+			 				}
+			 				else {
+			 					throw new Exception("Not a valid borrow type");
+			 				}
+			 				if(result<=0) {
+			 					reply = new Message("error", clientInfo.getSessionId(), "Could not borrow book, it might be taken");
+			 					handleMessageToClient(reply, client);
+			 					break;
+			 				}
+			 				reply = new Message("msg", clientInfo.getSessionId(), "Book " + bookOrSerialId + " Lent to Subscriber " + subscriberId + " successfully.");
+			 				handleMessageToClient(reply, client);
+			 				break;
+		 				}
+		 				catch(Exception e) {
+		 					reply = new Message("error", clientInfo.getSessionId(), "Could not borrow book, expected \"bookSerialId;subscriberId;dateFrom;dateTo\"");
+		 					handleMessageToClient(reply, client);
+		 					break;
+		 				}
+		 			}
 		 	default:
 		 		return;
 		 }

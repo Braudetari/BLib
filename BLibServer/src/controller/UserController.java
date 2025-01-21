@@ -27,7 +27,7 @@ public class UserController {
             if (rs.next()) {
             	int id = rs.getInt("user_id");
                 String password = rs.getString("password");
-                User.UserType type = User.UserType.fromInt(rs.getInt("user_type"));
+                User.UserType type = User.UserType.fromString(rs.getString("user_type"));
                 
                 // Return User object
                 return new User(id, username, password, type);

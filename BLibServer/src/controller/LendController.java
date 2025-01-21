@@ -68,6 +68,35 @@ public class LendController {
 	}
 	
 	/**
+	 * Returns whether a certain book serial is already lent by this subscriber
+	 * @param connection
+	 * @param subscriberId
+	 * @param bookSerialId
+	 * @return -1=error, 0=false, 1=true
+	 */
+	public static int IsBookLentBySubscriber(Connection connection, int subscriberId, int bookSerialId) {
+		if(connection == null) {
+			System.err.println("Could not connect to Database");
+			return -1;
+		}
+				
+		try {
+			PreparedStatement pstmt = connection.prepareStatement("SELECT book_id FROM book b WHERE b.book_serial_id = ? AND b.book_id IN (SELECT bb.book_id FROM borrowed_book bb WHERE bb.subscriber_id = ?)");
+			pstmt.setInt(1, bookSerialId);
+			pstmt.setInt(2, subscriberId);
+			ResultSet rs = pstmt.executeQuery();
+			if(rs.next()) {
+				return 1;
+			}
+			return 0;
+		}
+		catch(Exception e) {
+			System.err.println("Could not check if Book Lent by Subscriber.");
+			return -1;
+		}
+	}
+	
+	/**
 	 * Lend book to subscriber using bookSerialId from Date to Date
 	 * Lends the first book received from Search Query
 	 * @param connection
@@ -81,6 +110,12 @@ public class LendController {
 		if(connection == null) {
 			System.err.println("Could not connect to Database");
 			return -1;
+		}	
+		
+		//Check if book is already lent
+		int lent = IsBookLentBySubscriber(connection, subscriberId, book_serial_id);
+		if(lent>0) {
+			return 0;
 		}
 		
 		try {
@@ -123,6 +158,15 @@ public class LendController {
 			return -1;
 		}
 		
+		//Check if book is already lent
+		Book book = BookController.GetBookById(connection, book_id);
+		if(book != null) {
+			int lent = IsBookLentBySubscriber(connection, subscriberId, book.getSerial_id());
+			if(lent>0) {
+				return 0;
+			}
+		}
+		
 		try {
 			int available = BookController.CheckBookAvailability(connection, book_id);
 			if(available == 0) {
@@ -132,7 +176,7 @@ public class LendController {
 			int dateToId = DateController.GetOrCreateDateIdByDate(connection, to);
 			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO borrowed_book(book_id, subscriber_id, borrowed_date_id, return_date_id) VALUES (?,?,?,?)");
 			pstmt.setInt(1, book_id);
-			pstmt.setInt(1, subscriberId);
+			pstmt.setInt(2, subscriberId);
 			pstmt.setInt(3, dateFromId);
 			pstmt.setInt(4, dateToId);
 			int success = pstmt.executeUpdate();

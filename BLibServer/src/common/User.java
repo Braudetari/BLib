@@ -21,6 +21,14 @@ public class User {
 			}
 			return null;
 		}
+		public static UserType fromString(String value) {
+			for(UserType type : UserType.values()) {
+				if(type.toString().equals(value.toUpperCase())) {
+					return type;
+				}
+			}
+			return null;
+		}
 		public int getValue() {
 			return value;
 		}

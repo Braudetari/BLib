@@ -12,6 +12,7 @@ import gui.NoticeFrameController;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -93,6 +94,9 @@ public class ChatClient extends AbstractClient
 		  if(message != null) {
 			  lastResponse = message.getRequest();
 			  switch(message.getRequest()) {
+			   case "msg":
+				   System.out.println(message.getMessage());
+				  break;
 			  	case "subscribers":
 			  			subscriberList = Subscriber.subscriberListFromString(message.getMessage());
 			  		break;
@@ -237,13 +241,16 @@ public class ChatClient extends AbstractClient
 		}
 		 
 		 try {
-			 Message msg = new Message("getbook", chat.client.getSessionId(), "1");
+			 Message msg;
+			 msg = new Message("login", chat.client.getSessionId(), "wow sauce");
+			 chat.client.handleMessageFromClientUI(msg);
+			 LocalDate from = LocalDate.of(2025, 1, 27);
+			 LocalDate to = LocalDate.of(2025, 1, 28);
+			 msg = new Message("borrowbook", chat.client.getSessionId(), "11;4;"+DateUtil.DateToString(from)+";"+DateUtil.DateToString(to)+";"+"id");
 			 chat.client.handleMessageFromClientUI(msg);
 			 String lr = chat.client.lastResponse;
 			 String lre = chat.client.lastResponseError;
 			 System.out.println(lr +" "+ lre);
-			 System.out.println(chat.client.book);
-			 System.out.println(chat.client.books);
 		 }
 		 catch(Exception e) {
 			 e.printStackTrace();

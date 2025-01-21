@@ -235,6 +235,8 @@ public class BLibServer extends AbstractServer
 			 			}
 		 			}
 		 			clientInfo.setUser(user);
+		 			reply = new Message("login",clientInfo.getSessionId(), user.toString());
+		 			client.sendToClient(reply);
 		 		break;
 		 		
 		 	default:

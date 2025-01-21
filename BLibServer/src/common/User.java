@@ -1,5 +1,8 @@
 package common;
 
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
+
 public class User {
 	private int id;
 	private String username = null;
@@ -70,5 +73,43 @@ public class User {
 	}
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	/////////	FUNCTIONS	////////
+	public String toString() {
+		int id = this.id;
+		String username = this.username;
+		String password = this.password;
+		int type = this.type.value;
+		if(this.username == null)
+			username = " ";
+		if(this.password == null)
+			password = " ";
+		if(this.type == null)
+			type = -1;
+		return new String("[" + 
+					id+","+username+","+password+","+type
+					+"]"
+				);
+	}
+	
+	public static User fromString(String str) {
+		str = str.substring(1, str.length()-1); //remove toString []
+    	StringTokenizer tokenizer = new StringTokenizer(str, ",");
+    	int id;
+    	String username;
+    	String password;
+    	int type;
+    	try{
+    		id = Integer.parseInt(tokenizer.nextToken().trim());
+    		username = tokenizer.nextToken().trim();
+    		password = tokenizer.nextToken().trim();
+            type = Integer.parseInt(tokenizer.nextToken().trim());
+    	}
+        catch(NoSuchElementException e) {
+        	   return null;
+        }
+        User user = new User(id, username, password, UserType.fromInt(type));
+        return user;
 	}
 }

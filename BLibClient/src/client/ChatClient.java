@@ -6,8 +6,7 @@ package client;
 
 import ocsf.client.*;
 import client.*;
-import common.Message;
-import common.Subscriber;
+import common.*;
 import gui.NoticeFrameController;
 
 import java.io.*;
@@ -36,8 +35,10 @@ public class ChatClient extends AbstractClient
   ChatIF clientUI; 
   public static boolean awaitResponse = false;
   public static String lastResponse = null;
+  public static String lastResponseError = null;
   public ConnectionStatus status;
-  public static enum ConnectionStatus{Disconnected, Connected}; 
+  public static enum ConnectionStatus{Disconnected, Connected};
+  private User user;
   private List<Subscriber> subscriberList;
   private Subscriber subscriber;
   private String sessionId;
@@ -106,10 +107,18 @@ public class ChatClient extends AbstractClient
 			  	case "connected":
 			  			this.sessionId = message.getMessage();
 			  			break;
+			  			
+			  	case "login":
+			  		try{
+			  			this.user = User.fromString(message.getMessage());
+			  		}
+			  		catch(Exception e) {
+			  			System.err.println("Could not receive user from server.");
+			  		}
+			  		break;
 			  	//Display error as Notice
 			  	case "error":
-			  			NoticeFrameController frame = new NoticeFrameController();
-			  			frame.start(message.getMessage());
+			  			lastResponseError = message.getMessage();
 			  			break;
 			  	default:
 			  		break;
@@ -191,6 +200,30 @@ public class ChatClient extends AbstractClient
     }
     catch(IOException e) {}
     //System.exit(0);
+  }
+  
+  //DEBUG MAIN
+  public static void main(String args[]) {
+		ClientController chat = new ClientController("localhost",5555);
+		 try {
+			chat.connect();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.err.println("Could not connect to server");
+			return;
+		}
+		 
+		 try {
+			 Message msg = new Message("login", chat.client.getSessionId(), "leo passwuwrd");
+			 chat.client.handleMessageFromClientUI(msg);
+			 String lr = chat.client.lastResponse;
+			 String lre = chat.client.lastResponseError;
+			 System.out.println(lr +" "+ lre);
+		 }
+		 catch(Exception e) {
+			 e.printStackTrace();
+		 }
   }
 }
 //End of ChatClient class

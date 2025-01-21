@@ -5,6 +5,7 @@ import javafx.stage.Stage;
 import java.util.Vector;
 import gui.ConnectionFrameController;
 import client.ClientController;
+import common.Message;
 
 public class ClientUI extends Application {
 	public static ClientController chat; //only one instance
@@ -35,9 +36,7 @@ public class ClientUI extends Application {
 		// TODO Auto-generated method stub
 						  		
 		 ConnectionFrameController connectionFrameController = new ConnectionFrameController(); // create StudentFrame
-		 
 		connectionFrameController.start(primaryStage, ConnectionIP, port);
 	}
-	
 	
 }

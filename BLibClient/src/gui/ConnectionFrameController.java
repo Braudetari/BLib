@@ -97,7 +97,6 @@ public  class ConnectionFrameController   {
 				 NoticeFrameController noticeFrameController = new NoticeFrameController();
 				 noticeFrameController.start(noticeMessage);
 			 }
-
 		}
 		
 		

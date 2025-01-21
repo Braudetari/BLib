@@ -52,7 +52,7 @@ public class UserController {
             PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setString(1, user.getUsername()); // Use setString for a String parameter
             pstmt.setString(2, user.getPassword());
-            pstmt.setString(3, user.getType().toString());
+            pstmt.setString(3, user.getType().toString().toLowerCase());
             int success = pstmt.executeUpdate();
 
             return (success>0) ? true : false;

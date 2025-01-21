@@ -1,14 +1,16 @@
 package controller;
 
 import java.sql.Connection;
-import java.sql.Date;
+import java.util.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import common.*;
+import server.DatabaseConnection;
 
 public class LendController {
 	public static List<BorrowedBook> GetAllBorrowedBooks(Connection connection) {
@@ -28,8 +30,8 @@ public class LendController {
 				int borrowed_date_id = rs.getInt("borrowed_date_id");
 				Book book = BookController.GetBookById(connection, book_id); 
 				Subscriber subscriber = SubscriberController.getSubscriberById(connection, subscriber_id);
-				Date borrowed_date = DateController.GetDateById(connection, borrowed_date_id);
-				Date return_date = DateController.GetDateById(connection, return_date_id);
+				LocalDate borrowed_date = DateController.GetDateById(connection, borrowed_date_id);
+				LocalDate return_date = DateController.GetDateById(connection, return_date_id);
 				borrowedBooks.add(new BorrowedBook(book, subscriber, borrowed_date, return_date));
 			}
 			return borrowedBooks;
@@ -39,5 +41,128 @@ public class LendController {
 			System.err.println("Could not get all borrowed books");
 			return null;
 		}
+	}
+
+	public static List<Integer> GetAllNonBorrowedBookIdsBySerial(Connection connection, int bookSerialId){
+		if(connection == null) {
+			System.err.println("Could not connect to Database");
+			return null;
+		}
+		
+		try {
+			PreparedStatement pstmt = connection.prepareStatement("SELECT b.book_id FROM book b WHERE b.book_serial_id = ? AND b.book_id NOT IN (SELECT bb.book_id FROM borrowed_book bb)");
+			pstmt.setInt(1, bookSerialId);
+			ResultSet rs = pstmt.executeQuery();
+			List<Integer> bookIds = new ArrayList<Integer>();
+			while(rs.next()) {
+				int book_id = rs.getInt("book_id");
+				bookIds.add(book_id);
+			}
+			return bookIds;
+		}
+		catch(SQLException ex) {
+			ex.printStackTrace();
+			System.err.println("Could not get all non borrowed books with serial id " +bookSerialId);
+			return null;
+		}
+	}
+	
+	/**
+	 * Lend book to subscriber using bookSerialId from Date to Date
+	 * Lends the first book received from Search Query
+	 * @param connection
+	 * @param subscriberId
+	 * @param Date from when
+	 * @param Date to when
+	 * @param book serial id
+	 * @return boolean -1=error, 0=fail, 1=success
+	 */
+	public static int LendBookSerialId(Connection connection, int subscriberId, LocalDate from, LocalDate to, int book_serial_id) {
+		if(connection == null) {
+			System.err.println("Could not connect to Database");
+			return -1;
+		}
+		
+		try {
+			int available = BookController.CheckBookSerialAvailability(connection, book_serial_id);
+			if(available == 0) {
+				return 0;
+			}
+			int dateFromId = DateController.GetOrCreateDateIdByDate(connection, from);
+			int dateToId = DateController.GetOrCreateDateIdByDate(connection, to);
+			List<Integer> booksNotBorrowed = GetAllNonBorrowedBookIdsBySerial(connection, book_serial_id);
+			int firstBookId = booksNotBorrowed.get(0);
+			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO borrowed_book(book_id, subscriber_id, borrowed_date_id, return_date_id) VALUES (?,?,?,?)");
+			pstmt.setInt(1, firstBookId);
+			pstmt.setInt(2, subscriberId);
+			pstmt.setInt(3, dateFromId);
+			pstmt.setInt(4, dateToId);
+			int success = pstmt.executeUpdate();
+			if(success<=0) {
+				return 0;
+			}
+			return 1;
+		}
+		catch(Exception e) {
+			System.err.println("Could not LendBook using bookId");
+			return -1;
+		}
+	}
+
+	/**
+	 * Lend book to subscriber using bookId from Date to Date
+	 * @param connection
+	 * @param subscriberId
+	 * @param Date from when
+	 * @param book id
+	 * @return boolean -1=error, 0=fail, 1=success
+	 */
+	public static int LendBookId(Connection connection, int subscriberId, LocalDate from, LocalDate to, int book_id) {
+		if(connection == null) {
+			System.err.println("Could not connect to Database");
+			return -1;
+		}
+		
+		try {
+			int available = BookController.CheckBookAvailability(connection, book_id);
+			if(available == 0) {
+				return 0;
+			}
+			int dateFromId = DateController.GetOrCreateDateIdByDate(connection, from);
+			int dateToId = DateController.GetOrCreateDateIdByDate(connection, to);
+			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO borrowed_book(book_id, subscriber_id, borrowed_date_id, return_date_id) VALUES (?,?,?,?)");
+			pstmt.setInt(1, book_id);
+			pstmt.setInt(1, subscriberId);
+			pstmt.setInt(3, dateFromId);
+			pstmt.setInt(4, dateToId);
+			int success = pstmt.executeUpdate();
+			if(success<=0) {
+				return 0;
+			}
+			return 1;
+		}
+		catch(Exception e) {
+			System.err.println("Could not LendBook using bookId");
+			return -1;
+		}
+	}
+	
+	//DEBUG main
+	public static void main(String args[]) {
+		DatabaseConnection dbc;
+		try {
+			dbc = DatabaseConnection.getInstance();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return;
+		}
+		int subscriber_id = 1;
+		LocalDate from = LocalDate.of(2025,1,24);
+		LocalDate to = LocalDate.of(2025,1,30);
+		
+		int book_serial_id = 101;
+		int success = LendBookSerialId(dbc.getConnection(), subscriber_id, from, to, book_serial_id);
+		System.out.println(success);
 	}
 }

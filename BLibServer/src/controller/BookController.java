@@ -158,7 +158,7 @@ public class BookController {
 	 * @param bookSerialId
 	 * @return number of available books
 	 */
-	public static int CheckBookAvailability(Connection connection, int bookSerialId) {
+	public static int CheckBookSerialAvailability(Connection connection, int bookSerialId) {
 		if(connection == null) {
 			System.err.println("Could not connect to Database");
 			return -1;
@@ -182,12 +182,41 @@ public class BookController {
 	}
 
 	/**
+	 * Checks if a specific bookId is available
+	 * @param connection
+	 * @param bookId
+	 * @return number of available books
+	 */
+	public static int CheckBookAvailability(Connection connection, int bookId) {
+		if(connection == null) {
+			System.err.println("Could not connect to Database");
+			return -1;
+		}
+		
+		try {
+			String query = "SELECT book_id FROM book b WHERE b.book_id = ? AND b.book_id NOT IN (SELECT bb.book_id FROM borrowed_book bb)";
+			PreparedStatement pstmt = connection.prepareStatement(query);
+			pstmt.setInt(1, bookId);
+			ResultSet rs = pstmt.executeQuery();
+			int book_id = 0;
+			if(rs.next()) {
+				book_id = rs.getInt("book_id");
+			}
+			return (book_id>0) ? 1:0;
+		}
+		catch(SQLException ex) {
+			ex.printStackTrace();
+			System.err.println("Could not check how many books are available");
+			return -1;
+		}
+	}
+	/**
 	 * Get Closest Return Date for a book serial Id
 	 * @param connection
 	 * @param bookSerialId
 	 * @return Date of Closest Return, null if not fail or not relevant
 	 */
-	public static Date ClosestReturnDate(Connection connection, int bookSerialId) {
+	public static LocalDate ClosestReturnDate(Connection connection, int bookSerialId) {
 		if(connection == null) {
 			System.err.println("Could not connect to Database");
 			return null;
@@ -198,11 +227,11 @@ public class BookController {
 			PreparedStatement pstmt = connection.prepareStatement(query);
 			pstmt.setInt(1, bookSerialId);
 			ResultSet rs = pstmt.executeQuery();
-			Date closestDate = null;
+			LocalDate closestDate = null;
 			while(rs.next()) {
 				int return_date_id = rs.getInt("return_date_id");
-				Date returnDate = DateController.GetDateById(connection, return_date_id);
-				if(closestDate == null || returnDate.before(closestDate)) {
+				LocalDate returnDate = DateController.GetDateById(connection, return_date_id);
+				if(closestDate == null || returnDate.isBefore(closestDate)) {
 					closestDate = returnDate;
 				}
 			}
@@ -232,16 +261,15 @@ public class BookController {
 			//Check/Get Current Date
 			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO order(book_id, subscriber_id, order_date_id) VALUES(?,?,?)");
 			LocalDate currentLocalDate = LocalDate.now();
-			Date currentDate = new Date(currentLocalDate.getYear(), currentLocalDate.getMonthValue(), currentLocalDate.getDayOfMonth());
 			//Get Date_id from current date
-			int dateId = DateController.GetDateIdByDate(connection, currentDate);
+			int dateId = DateController.GetDateIdByDate(connection, currentLocalDate);
 			if(dateId <= 0) {
 				int dateSuccess;
 				//Create date id from current date
-				dateSuccess = DateController.CreateDateIdByDate(connection, currentDate);
+				dateSuccess = DateController.CreateDateIdByDate(connection, currentLocalDate);
 				if(dateSuccess <= 0)
 					return -1; //failed to create
-				dateId = DateController.GetDateIdByDate(connection, currentDate);
+				dateId = DateController.GetDateIdByDate(connection, currentLocalDate);
 				if(dateId <= 0)
 					return -1; //failed to reaquire post creation
 			}

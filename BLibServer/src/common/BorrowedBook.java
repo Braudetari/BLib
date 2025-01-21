@@ -1,6 +1,7 @@
 package common;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 /**
  * Represents a borrowed book record, including borrowed and return dates
@@ -9,8 +10,8 @@ import java.sql.Date;
 public class BorrowedBook {
     private Book borrowedBook;
     private Subscriber borrowingSubscriber;
-    private Date borrowed_date;
-    private Date return_date;
+    private LocalDate borrowed_date;
+    private LocalDate return_date;
 
     
     /////////	CONSTRUCTORS	/////////
@@ -30,7 +31,7 @@ public class BorrowedBook {
      * @param borrowedDate the date the book was borrowed
      * @param returnDate   the date the book was returned or is due
      */
-    public BorrowedBook(Book borrowedBook, Subscriber borrowingSubscriber, Date borrowedDate, Date returnDate) {
+    public BorrowedBook(Book borrowedBook, Subscriber borrowingSubscriber, LocalDate borrowedDate, LocalDate returnDate) {
         this.borrowedBook = borrowedBook;
         this.borrowingSubscriber = borrowingSubscriber;
         this.borrowed_date = borrowedDate;
@@ -91,7 +92,7 @@ public class BorrowedBook {
      *
      * @return the borrowed date
      */
-    public Date getBorrowedDate() {
+    public LocalDate getBorrowedDate() {
         return borrowed_date;
     }
 
@@ -100,7 +101,7 @@ public class BorrowedBook {
      *
      * @param borrowedDate the borrowed date to set
      */
-    public void setBorrowedDate(Date borrowedDate) {
+    public void setBorrowedDate(LocalDate borrowedDate) {
         this.borrowed_date = borrowedDate;
     }
 
@@ -109,7 +110,7 @@ public class BorrowedBook {
      *
      * @return the return date
      */
-    public Date getReturnDate() {
+    public LocalDate getReturnDate() {
         return return_date;
     }
 
@@ -118,7 +119,7 @@ public class BorrowedBook {
      *
      * @param returnDate the return date to set
      */
-    public void setReturnDate(Date returnDate) {
+    public void setReturnDate(LocalDate returnDate) {
         this.return_date = returnDate;
     }
 }

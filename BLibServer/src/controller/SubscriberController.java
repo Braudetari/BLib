@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import common.Subscriber;
 import common.User;
 import common.User.UserType;
+import server.DatabaseConnection;
 
 public class SubscriberController {
 	   public static ArrayList<Subscriber> getAllSubscribers(Connection connection) {
@@ -225,5 +226,17 @@ public class SubscriberController {
 	        }
 	    }
 
-	    
+	    //DEBUG main
+	    public static void main(String args[]) {
+	    	DatabaseConnection dbc; 
+	    	try {
+	    		dbc = DatabaseConnection.getInstance();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return;
+			}
+	    	boolean success = RegisterSubscriber(dbc.getConnection(), "userman", "passwordman", "Leo Userperson", "email@email.net", "054-Man");
+	    	System.out.println(success);
+	    }
 }

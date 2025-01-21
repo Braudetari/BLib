@@ -13,6 +13,10 @@ public class Subscriber {
     private String subscriberPhoneNumber;
     private String subscriberEmail;
 
+    public Subscriber() {
+    	this.subscriberId = -1;
+    }
+    
     public Subscriber(Subscriber subscriber) {
     	this.subscriberId = subscriber.subscriberId;
     	this.subscriberName = subscriber.subscriberName;
@@ -77,6 +81,9 @@ public class Subscriber {
 
     @Override
     public String toString() {
+    	if(this.subscriberId == -1)
+    		return new String("[]");
+    	
         return new String("["+subscriberId+","
         					+subscriberName+","
         					+detailedSubscriptionHistory+","
@@ -132,6 +139,8 @@ public class Subscriber {
 		Subscriber subscriber;
     	List<Subscriber> subscriberList = new ArrayList<Subscriber>();
     	str = str.substring(1, str.length()-1); //remove {}
+    	if(str.equals(""))
+    		return null;
     	StringTokenizer tokenizer = new StringTokenizer(str, ";");
     	if(!tokenizer.hasMoreTokens()) {
     		subscriber = subscriberFromString(str);

@@ -35,6 +35,7 @@ public class ChatClient extends AbstractClient
    */
   ChatIF clientUI; 
   public static boolean awaitResponse = false;
+  public static String lastResponse = null;
   public ConnectionStatus status;
   public static enum ConnectionStatus{Disconnected, Connected}; 
   private List<Subscriber> subscriberList;
@@ -87,6 +88,7 @@ public class ChatClient extends AbstractClient
 	  try {
 		  Message message = Message.decrypt((Message)msg, this.sessionId);
 		  if(message != null) {
+			  lastResponse = message.getRequest();
 			  switch(message.getRequest()) {
 			  	case "subscribers":
 			  			subscriberList = Subscriber.subscriberListFromString(message.getMessage());
@@ -113,6 +115,7 @@ public class ChatClient extends AbstractClient
 			  		break;
 			  }
 		  }
+		  
 		  awaitResponse = false;
 	  }
 	  catch(Exception e) {
@@ -147,6 +150,8 @@ public class ChatClient extends AbstractClient
     	openConnection();//in order to send more than one message
        	awaitResponse = true;
        	//Encrypt message and send to server
+       	if(message.getMessage() == null)
+       		message.setMessage("");
        	sendToServer(Message.encrypt(message));
 		// wait for response
 		while (awaitResponse) {

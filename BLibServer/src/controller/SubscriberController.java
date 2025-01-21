@@ -62,7 +62,7 @@ public class SubscriberController {
 	            return false;
 	        }
 	    }
-	    public static Subscriber getSubscriberById(Connection connection, String subscriberId) {     
+	    public static Subscriber getSubscriberById(Connection connection, int subscriberId) {     
 	        if (connection == null) {
 	            System.out.println("Failed to connect to the database.");
 	            return null;
@@ -71,18 +71,24 @@ public class SubscriberController {
 	        try {
 	            String query = "SELECT * FROM subscriber WHERE subscriber_id = ?";
 	            PreparedStatement pstmt = connection.prepareStatement(query);
-	            pstmt.setString(1, subscriberId); // Use setString for a String parameter
+	            pstmt.setInt(1, subscriberId); // Use setString for a String parameter
 
 	            ResultSet rs = pstmt.executeQuery();
 
 	            if (rs.next()) {
 	                String subscriberName = rs.getString("subscriber_name");
-	                int detailedSubscriptionHistory = rs.getInt("detailed_subscription_history");
+	                int detailedSubscriptionHistory;
+	                try {
+		                detailedSubscriptionHistory = rs.getInt("detailed_subscription_history");	
+	                }
+	                catch(Exception e) {
+	                	detailedSubscriptionHistory = 0;
+	                }
 	                String subscriberPhoneNumber = rs.getString("subscriber_phone_number");
 	                String subscriberEmail = rs.getString("subscriber_email");
 
 	                // Return the relevant Subscriber object
-	                return new Subscriber(Integer.parseInt(subscriberId), subscriberName, detailedSubscriptionHistory, subscriberPhoneNumber, subscriberEmail);
+	                return new Subscriber(subscriberId, subscriberName, detailedSubscriptionHistory, subscriberPhoneNumber, subscriberEmail);
 	            }
 	        } catch (SQLException ex) {
 	            System.out.println("SQLException: " + ex.getMessage());

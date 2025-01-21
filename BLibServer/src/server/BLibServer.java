@@ -161,6 +161,7 @@ public class BLibServer extends AbstractServer
 		 clientSessionId = clientInfo.getSessionId();
 	 try {
 		 Message message = Message.decrypt((Message)msg, clientSessionId);
+		 System.out.println("Decrypted message: " + message + " from " + client);
 		 if(message == null)
 			 return;
 		 Message reply;
@@ -192,8 +193,21 @@ public class BLibServer extends AbstractServer
 		 		handleMessageToClient(reply, client);
 		 	break;
 		 	case "getsubscriber":
-		 		str = SubscriberController.getSubscriberById(dbConnection.getConnection(), message.getMessage()).toString();
-		 		reply = new Message("getsubscriber", clientInfo.getSessionId(), str);
+		 		int subscriberId;
+		 		try {
+			 		subscriberId = Integer.parseInt(message.getMessage());
+		 		}
+		 		catch(Exception e) {
+		 			e.printStackTrace();
+		 			System.err.println("Could not parse Integer of SubscriberId");
+		 			reply = new Message("error", clientInfo.getSessionId(), "SubscriberId is not an integer.");
+		 			handleMessageToClient(reply, client);
+		 			break;
+		 		}
+		 		subscriber = SubscriberController.getSubscriberById(dbConnection.getConnection(), subscriberId);
+		 		if(subscriber == null)
+		 			subscriber = new Subscriber();
+		 		reply = new Message("getsubscriber", clientInfo.getSessionId(), subscriber.toString());
 		 		handleMessageToClient(reply, client);
 		 		break;
 		 		
@@ -261,6 +275,7 @@ public class BLibServer extends AbstractServer
     System.out.println ("Server has stopped listening for connections.");
     
     flagKillPingThread = true;
-  }  
+  }
+  
 }
 //End of EchoServer class

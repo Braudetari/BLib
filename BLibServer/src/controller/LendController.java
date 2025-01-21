@@ -27,7 +27,7 @@ public class LendController {
 				int return_date_id = rs.getInt("return_date_id");
 				int borrowed_date_id = rs.getInt("borrowed_date_id");
 				Book book = BookController.GetBookById(connection, book_id); 
-				Subscriber subscriber = SubscriberController.getSubscriberById(connection, new String("" + subscriber_id));
+				Subscriber subscriber = SubscriberController.getSubscriberById(connection, subscriber_id);
 				Date borrowed_date = DateController.GetDateById(connection, borrowed_date_id);
 				Date return_date = DateController.GetDateById(connection, return_date_id);
 				borrowedBooks.add(new BorrowedBook(book, subscriber, borrowed_date, return_date));

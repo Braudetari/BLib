@@ -216,7 +216,7 @@ public class BLibServer extends AbstractServer
 		 			str = message.getMessage();
 		 			User user = null;
 		 			if(str.equals("guest")) { //user logged in as guest
-		 				user = new User(0, null, null, User.UserType.GUEST);
+		 				user = new User(0, "GUEST", null, User.UserType.GUEST);
 		 			}
 		 			else { //User isn't logging in as guest
 			 			String[] loginInfo = str.split(" ");

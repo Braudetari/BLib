@@ -215,7 +215,7 @@ public class ChatClient extends AbstractClient
 		}
 		 
 		 try {
-			 Message msg = new Message("login", chat.client.getSessionId(), "leo passwuwrd");
+			 Message msg = new Message("login", chat.client.getSessionId(), "guest");
 			 chat.client.handleMessageFromClientUI(msg);
 			 String lr = chat.client.lastResponse;
 			 String lre = chat.client.lastResponseError;

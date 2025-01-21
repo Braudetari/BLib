@@ -8,6 +8,8 @@ public class Book {
     private String name;
     private String author;
     private String description;
+    private String location;
+    private String genre;
 
     ////////	CONSTRUCTORS	////////
     
@@ -24,10 +26,12 @@ public class Book {
      * @param author
      * @param description
      */
-    public Book(int serial_id, String name, String author, String description) {
+    public Book(int serial_id, String name, String author, String description, String genre, String location) {
         this.name = name;
         this.author = author;
         this.description = description;
+        this.genre = genre;
+        this.location = location;
     }
 
     /**
@@ -40,6 +44,8 @@ public class Book {
         this.name = book.name;
         this.author = book.author;
         this.description = book.description;
+        this.genre = book.genre;
+        this.location = book.location;
     }
 
     ////////	GETTERS AND SETTERS	/////////
@@ -123,4 +129,37 @@ public class Book {
     public void setDescription(String description) {
         this.description = description;
     }
+    
+    /**
+     * Get Book Genre
+     * @return genre
+     */
+    public String getGenre() {
+        return genre;
+    }
+
+    /**
+     * Set Book Genre
+     * @param genre
+     */
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+    
+    /**
+     * Get Book Location
+     * @return Location
+     */
+    public String getLocation() {
+        return location;
+    }
+
+    /**
+     * Set Book Location
+     * @param Location
+     */
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
 }

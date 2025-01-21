@@ -1,5 +1,9 @@
 Tasks to do: BLib
 
+Database:
+	- Populate database
+	- use java code to quickly populate detailedhistory after implementation
+
 BLibServer:
 	- DetailedHistory
 	- DetailedHistoryController

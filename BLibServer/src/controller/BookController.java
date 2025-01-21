@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import common.Book;
 import common.Subscriber;
@@ -34,7 +36,9 @@ public class BookController {
 				String book_name = rs.getString("book_name");
 				String book_author = rs.getString("book_author");
 				String book_description = rs.getString("book_description");
-				book = new Book(book_serial_id, book_name, book_author, book_description);
+				String book_genre = rs.getString("book_genre");
+				String book_location = rs.getString("book_location");
+				book = new Book(book_serial_id, book_name, book_author, book_description, book_genre, book_location);
 				book.setId(book_id);
 			}
 			return book;
@@ -46,6 +50,108 @@ public class BookController {
 		}
 	}
 
+	/**
+	 * Private Generic get books by a certain element.
+	 * @param connection
+	 * @param element
+	 * @param value
+	 * @return List of Books
+	 */
+	public static List<Book> GetBooksByElement(Connection connection, String element, String value){
+		if(connection == null) {
+			System.err.println("Could not connect to Database");
+			return null;
+		}
+		int integerValue;
+		boolean valueIsInteger = false;
+		PreparedStatement pstmt = null;
+		try {
+			integerValue = Integer.parseInt(value);
+			valueIsInteger = true;
+		}
+		catch(Exception e) {
+			valueIsInteger = false;
+		}
+		try {
+			//Incase value is of type Int
+			if(valueIsInteger) {
+				pstmt = connection.prepareStatement("SELECT * FROM book WHERE " + element + " = ?");
+				pstmt.setInt(1, Integer.parseInt(value));
+			}
+			else {
+				pstmt = connection.prepareStatement("SELECT * FROM book WHERE " + element + " LIKE ?");
+				pstmt.setString(1, "%" + value + "%");
+			}
+			ResultSet rs = pstmt.executeQuery();
+			List<Book> books = new ArrayList<Book>();
+			while(rs.next()) {
+				try {
+					Book book = null;
+					int book_id = rs.getInt("book_id");
+					int book_serial_id = rs.getInt("book_serial_id");
+					String book_name = rs.getString("book_name");
+					String book_author = rs.getString("book_author");
+					String book_description = rs.getString("book_description");
+					String book_genre = rs.getString("book_genre");
+					String book_location = rs.getString("book_location");
+					book = new Book(book_serial_id, book_name, book_author, book_description, book_genre, book_location);
+					book.setId(book_id);
+					books.add(book);
+				}
+				catch(Exception e){
+					e.printStackTrace();
+					System.err.println("Could not add a book to list using element "+element+" with value "+value+".");
+				}
+			}
+			return books;
+		}
+		catch(SQLException ex) {
+			ex.printStackTrace();
+			System.err.println("Could not Get Book from Database (ID)");
+			return null;
+		}
+	}
+	
+	/**
+	 * Get Books from Database using Name
+	 * @param connection
+	 * @param bookName
+	 * @return List of Books
+	 */
+	public static List<Book> GetBooksByName(Connection connection, String name) {
+		return GetBooksByElement(connection, "book_name", name);
+	}
+
+	/**
+	 * Get Books from Database using Name
+	 * @param connection
+	 * @param bookDescription
+	 * @return List of Books
+	 */
+	public static List<Book> GetBooksByDescription(Connection connection, String description) {
+		return GetBooksByElement(connection, "book_description", description);
+	}
+	
+	/**
+	 * Get Books from Database using Genre
+	 * @param connection
+	 * @param bookGenre
+	 * @return List of Books
+	 */
+	public static List<Book> GetBooksByGenre(Connection connection, String genre) {
+		return GetBooksByElement(connection, "book_genre", genre);
+	}
+	
+	/**
+	 * Get Books from Database using specific SerialId
+	 * @param connection
+	 * @param bookSerialId
+	 * @return List of Books
+	 */
+	public static List<Book> GetBooksBySerialId(Connection connection, int serialId) {
+		return GetBooksByElement(connection, "book_serial_id", ""+serialId);
+	}
+	
 	/**
 	 * Checks how many copies of a book are available
 	 * @param connection

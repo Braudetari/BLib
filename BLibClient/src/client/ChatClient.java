@@ -41,6 +41,8 @@ public class ChatClient extends AbstractClient
   private User user;
   private List<Subscriber> subscriberList;
   private Subscriber subscriber;
+  private List<Book> books;
+  private Book book;
   private String sessionId;
   
   //Constructors ****************************************************
@@ -115,6 +117,26 @@ public class ChatClient extends AbstractClient
 			  		catch(Exception e) {
 			  			System.err.println("Could not receive user from server.");
 			  		}
+			  		break;
+			  		
+			  	case "book":
+			  			try {
+			  				this.book = Book.fromString(message.getMessage());
+			  			}
+			  			catch(Exception e) {
+			  				e.printStackTrace();
+			  				System.err.println("Could not receive book from server");
+			  			}
+			  		break;
+			  	
+			  	case "books":
+				  		try {
+			  				this.books = Book.bookListFromString(message.getMessage());
+			  			}
+			  			catch(Exception e) {
+			  				e.printStackTrace();
+			  				System.err.println("Could not receive books list from server");
+			  			}
 			  		break;
 			  	//Display error as Notice
 			  	case "error":
@@ -215,11 +237,13 @@ public class ChatClient extends AbstractClient
 		}
 		 
 		 try {
-			 Message msg = new Message("login", chat.client.getSessionId(), "guest");
+			 Message msg = new Message("getbook", chat.client.getSessionId(), "1");
 			 chat.client.handleMessageFromClientUI(msg);
 			 String lr = chat.client.lastResponse;
 			 String lre = chat.client.lastResponseError;
 			 System.out.println(lr +" "+ lre);
+			 System.out.println(chat.client.book);
+			 System.out.println(chat.client.books);
 		 }
 		 catch(Exception e) {
 			 e.printStackTrace();

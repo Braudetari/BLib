@@ -181,6 +181,12 @@ public class BookController {
 		}
 	}
 
+	/**
+	 * Get Closest Return Date for a book serial Id
+	 * @param connection
+	 * @param bookSerialId
+	 * @return Date of Closest Return, null if not fail or not relevant
+	 */
 	public static Date ClosestReturnDate(Connection connection, int bookSerialId) {
 		if(connection == null) {
 			System.err.println("Could not connect to Database");

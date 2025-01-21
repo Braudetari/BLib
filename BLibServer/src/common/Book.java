@@ -1,6 +1,13 @@
 package common;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
+
+import common.User.UserType;
 
 public class Book {
     private int id;
@@ -27,7 +34,8 @@ public class Book {
      * @param description
      */
     public Book(int serial_id, String name, String author, String description, String genre, String location) {
-        this.name = name;
+        this.serial_id = serial_id;
+    	this.name = name;
         this.author = author;
         this.description = description;
         this.genre = genre;
@@ -162,4 +170,95 @@ public class Book {
         this.location = location;
     }
 
+    public String toString() {
+    	Object[] list = {this.serial_id, this.name, this.author, this.description, this.genre, this.location};
+    	for(int i=0;i<list.length;i++) {
+    		if(list[i] == null) { //if its null its probably string
+    			list[i] = " ";
+    		}
+    		else {
+    			if(list[i].getClass().equals(String.class)) {
+    				if(((String)list[i]).isEmpty()) {
+    					list[i] = " ";
+    				}
+    			}
+    		}
+    	};
+    	name = (String)list[1];
+    	author = (String)list[2];
+    	description = (String)list[3];
+    	genre = (String)list[4];
+    	location = (String)list[5];
+    	return new String("[" +
+    			this.id+","+
+    			this.serial_id+","+
+    			this.name+","+
+    			this.author+","+
+    			this.description+","+
+    			this.genre+","+
+    			this.location
+    			+"]");
+    }
+    
+    public static Book fromString(String str) {
+    	str = str.substring(1, str.length()-1); //remove toString []
+    	StringTokenizer tokenizer = new StringTokenizer(str, ",");
+    	int id;
+    	int serial_id;
+    	String name;
+    	String author;
+    	String description;
+    	String genre;
+    	String location;
+    	try{
+    		id = Integer.parseInt(tokenizer.nextToken());
+    		serial_id = Integer.parseInt(tokenizer.nextToken());
+    		name = tokenizer.nextToken();
+    		author = tokenizer.nextToken();
+    		description = tokenizer.nextToken();
+    		genre = tokenizer.nextToken();
+    		location = tokenizer.nextToken();
+    	}
+        catch(NoSuchElementException e) {
+        	   return null;
+        }
+        Book book = new Book(serial_id, name, author, description, genre, location);
+        book.setId(id);
+        return book;
+    }
+
+    public static String bookListToString(List<Book> books) {
+    	String output = "{";
+    	Iterator<Book> iterator = books.iterator();
+    	while(iterator.hasNext()) {
+    		output += iterator.next();
+    		if(iterator.hasNext()) {
+    			output += ";";
+    		}
+    	}
+    	output += "}";
+    	return output;
+    }
+    
+    public static List<Book> bookListFromString(String str){
+    	Book book;
+    	List<Book> books = new ArrayList<Book>();
+    	str = str.substring(1, str.length()-1); //remove {}
+    	if(str.equals(""))
+    		return null;
+    	StringTokenizer tokenizer = new StringTokenizer(str, ";");
+    	if(!tokenizer.hasMoreTokens()) {
+    		book = Book.fromString(str);
+    		if(book == null) {
+    			return null;
+    		}
+    		books.add(book);
+    	}
+    	else {
+        	while(tokenizer.hasMoreTokens()) {
+        		books.add(Book.fromString(tokenizer.nextToken().trim()));
+        	}
+    	}
+    	return books;
+    }
 }

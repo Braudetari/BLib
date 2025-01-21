@@ -15,9 +15,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.Vector;
 
-import common.Message;
-import common.Subscriber;
-import common.User;
+import common.*;
 import ocsf.server.*;
 import server.ConnectionToClientInfo.ClientConnectionStatus;
 
@@ -236,7 +234,37 @@ public class BLibServer extends AbstractServer
 		 			}
 		 			clientInfo.setUser(user);
 		 			reply = new Message("login",clientInfo.getSessionId(), user.toString());
-		 			client.sendToClient(reply);
+		 			handleMessageToClient(reply, client);
+		 		break;
+		 		
+		 	case "getbook": //return specific book_id
+		 			str = message.getMessage();
+		 			try {
+		 				int bookId = Integer.parseInt(str);
+			 			Book book = BookController.GetBookById(dbConnection.getConnection(), bookId);
+			 			reply = new Message("book", clientInfo.getSessionId(), book.toString());
+			 			handleMessageToClient(reply, client);
+		 			}
+		 			catch(Exception e) {
+		 				reply = new Message("error", clientInfo.getSessionId(), str+" is not a bookId integer");
+		 				handleMessageToClient(reply, client);
+		 			}
+		 		break;
+		 		
+		 	case "getbooks": // get books by element and value
+		 		str = message.getMessage();
+	 			try {
+	 				String[] split = str.split(";");
+	 				String element = split[0];
+	 				String value = split[1];
+		 			List<Book> books = BookController.GetBooksByElement(dbConnection.getConnection(), element, value);
+		 			reply = new Message("books", clientInfo.getSessionId(), Book.bookListToString(books));
+		 			handleMessageToClient(reply, client);
+	 			}
+	 			catch(Exception e) {
+	 				reply = new Message("error", clientInfo.getSessionId(), str+" are not correct \"element;value\" for books search");
+	 				handleMessageToClient(reply, client);
+	 			}
 		 		break;
 		 		
 		 	default:

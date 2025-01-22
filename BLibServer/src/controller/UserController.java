@@ -38,6 +38,36 @@ public class UserController {
 
         return null; // Return null if no subscriber is found
     }
+
+	public static User getUserById(Connection connection, int userId) {
+		if (connection == null) {
+            System.out.println("Failed to connect to the database.");
+            return null;
+        }
+
+        try {
+            String query = "SELECT * FROM user WHERE username = ?";
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, userId); // Use setString for a String parameter
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+            	int id = rs.getInt("user_id");
+            	String username = rs.getString("username");
+                String password = rs.getString("password");
+                User.UserType type = User.UserType.fromString(rs.getString("user_type"));
+                
+                // Return User object
+                return new User(id, username, password, type);
+            }
+        } catch (SQLException ex) {
+            System.out.println("SQLException: " + ex.getMessage());
+            System.err.println("Could not get User by ID.");
+        }
+
+        return null; // Return null if no subscriber is found
+	}
 	
 	//INSERT given user into database
 	public static boolean createUsername(Connection connection, User user) {

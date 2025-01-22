@@ -68,6 +68,75 @@ public class LendController {
 	}
 	
 	/**
+	 * If a book is borrowed it will return the borrowed book object
+	 * @param connection
+	 * @param book_id
+	 * @return borrowedbook, null if fail or not borrowed
+	 */
+	public static BorrowedBook GetBorrowedBookByBookId(Connection connection, int book_id) {
+		if(connection == null) {
+			System.err.println("Could not connect to Database");
+			return null;
+		}
+		
+		try {
+			PreparedStatement pstmt = connection.prepareStatement("SELECT * from borrowed_book WHERE book_id = ?");
+			pstmt.setInt(1, book_id);
+			ResultSet rs = pstmt.executeQuery();
+			BorrowedBook borrowedBook = null;
+			if(rs.next()) {
+				Book book = BookController.GetBookById(connection, rs.getInt("book_id"));
+				Subscriber subscriber = SubscriberController.getSubscriberById(connection, rs.getInt("subscriber_id"));
+				LocalDate from = DateController.GetDateById(connection, rs.getInt("borrowed_date_id"));
+				LocalDate to = DateController.GetDateById(connection, rs.getInt("return_date_id"));
+				borrowedBook = new BorrowedBook(book, subscriber, from, to);
+			}
+			return borrowedBook;
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			System.err.println("Could not get a borrowed book by id");
+			return null;
+		}
+	}
+	
+	/**
+	 * If a bookSerialId is borrowed by a subscriberId it will return the borrowed book object
+	 * @param connection
+	 * @param book_serial_id
+	 * @param subscriber_id
+	 * @return borrowedbook, null if fail or not borrowed
+	 */
+	public static BorrowedBook GetBorrowedBookByBookSerialIdAndSubscriberId(Connection connection, int book_serial_id, int subscriber_id) {
+		if(connection == null) {
+			System.err.println("Could not connect to Database");
+			return null;
+		}
+		
+		try {
+			PreparedStatement pstmt = connection.prepareStatement("SELECT * from borrowed_book WHERE subscriber_id = ? AND book_id IN (SELECT book_id FROM book WHERE book_serial_id = ?)");
+			pstmt.setInt(1, subscriber_id);
+			pstmt.setInt(2, book_serial_id);
+			ResultSet rs = pstmt.executeQuery();
+			BorrowedBook borrowedBook = null;
+			if(rs.next()) {
+				Book book = BookController.GetBookById(connection, rs.getInt("book_id"));
+				Subscriber subscriber = SubscriberController.getSubscriberById(connection, rs.getInt("subscriber_id"));
+				LocalDate from = DateController.GetDateById(connection, rs.getInt("borrowed_date_id"));
+				LocalDate to = DateController.GetDateById(connection, rs.getInt("return_date_id"));
+				borrowedBook = new BorrowedBook(book, subscriber, from, to);
+			}
+			return borrowedBook;
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			System.err.println("Could not get a borrowed book by serialid and subscriber");
+			return null;
+		}
+	}
+	
+	
+	/**
 	 * Returns whether a certain book serial is already lent by this subscriber
 	 * @param connection
 	 * @param subscriberId
@@ -187,6 +256,36 @@ public class LendController {
 		}
 		catch(Exception e) {
 			System.err.println("Could not LendBook using bookId");
+			return -1;
+		}
+	}
+	
+	/**
+	 * Return a bookSerialId from a subscriber at certain date
+	 * @param connection
+	 * @param bookSerialId
+	 * @param subscriberId
+	 * @param returnDate
+	 * @return -1=error, 0=fail, 1=success
+	 */
+	public static int ReturnBook(Connection connection, int bookSerialId, int subscriberId, LocalDate returnDate) {
+		if(connection == null) {
+			System.err.println("Could not connect to Database");
+			return -1;
+		}
+		
+		try {
+			BorrowedBook book = GetBorrowedBookByBookSerialIdAndSubscriberId(connection, bookSerialId, subscriberId);
+			PreparedStatement pstmt = connection.prepareStatement("DELETE FROM borrowed_book bb WHERE bb.subscriber_id = ? AND bb.book_id IN (SELECT b.book_id FROM book WHERE b.book_serial_id = ?)");
+			pstmt.setInt(1, subscriberId);
+			pstmt.setInt(2, bookSerialId);
+			int success = pstmt.executeUpdate();
+			//add RecordUpdate
+			
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			System.err.println("Could not return book");
 			return -1;
 		}
 	}

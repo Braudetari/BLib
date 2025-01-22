@@ -20,7 +20,7 @@ public class DetailedHistory implements Serializable {
      * Recorded action type
      */
     public enum ActionType implements Serializable{
-        BORROW(0), RETURN(1), ORDER(2), FREEZE(3), UNFREEZE(4);
+        BORROW(0), RETURN(1), ORDER(2), FREEZE(3), UNFREEZE(4), EXTEND(5);
     	public static ActionType fromInt(int value) {
 			for(ActionType type : ActionType.values()) {
 				if(type.getValue() == value) {
@@ -45,7 +45,8 @@ public class DetailedHistory implements Serializable {
             this.value = value;
         }
     }
-    private String description;
+    private String description; //system note
+    private String note; //librarian note
     private LocalDate date;
     private User user;
     private ActionType action;
@@ -63,11 +64,20 @@ public class DetailedHistory implements Serializable {
      * @param date of action
      * @param user affected/relevant
      */
+    public DetailedHistory(User user, ActionType action, LocalDate date, String description, String note) {
+        this.description = description;
+        this.date = date;
+        this.user = user;
+        this.action = action;
+        this.note = note;
+    }
+    
     public DetailedHistory(User user, ActionType action, LocalDate date, String description) {
         this.description = description;
         this.date = date;
         this.user = user;
         this.action = action;
+        this.note = " ";
     }
     
     /**
@@ -79,6 +89,7 @@ public class DetailedHistory implements Serializable {
     	this.description = history.description;
     	this.date = history.date;
     	this.user = history.user;
+    	this.note = history.note;
     }
     
     ////////	GETTERS AND SETTERS		////////
@@ -145,13 +156,30 @@ public class DetailedHistory implements Serializable {
     public void setAction(ActionType action) {
     	this.action = action;
     }
+    
+    /**
+     * Get Note
+     * @return String
+     */
+    public String getNote() {
+    	return this.note;
+    }
+    
+    /**
+     * Set Note
+     * @param note String
+     */
+    public void setNote(String note) {
+    	this.note = note;
+    }
 
     public String toString() {
     	return new String("["+
     				user+"%"+ 
     				action.toString()+"%"+
     				DateUtil.DateToString(date)+"%"+
-    				description
+    				description+"%"+
+    				note
     			+"]");
     }
     
@@ -162,16 +190,18 @@ public class DetailedHistory implements Serializable {
     	ActionType action;
     	LocalDate date;
     	String description;
+    	String note;
     	try{
     		user = User.fromString(tokenizer.nextToken());
     		action = ActionType.fromString(tokenizer.nextToken());
     		date = DateUtil.DateFromString(tokenizer.nextToken());
             description = tokenizer.nextToken();
+            note = tokenizer.nextToken();
     	}
         catch(NoSuchElementException e) {
         	   return null;
         }
-        DetailedHistory dh = new DetailedHistory(user, action, date, description);
+        DetailedHistory dh = new DetailedHistory(user, action, date, description, note);
         return dh;
 	}
     
@@ -225,7 +255,7 @@ public class DetailedHistory implements Serializable {
     	User user = new User(1, "Leolel", "passwuwrd", User.UserType.LIBRARIAN);
     	LocalDate date = LocalDate.now();
     	ActionType action = ActionType.fromString("BORROW");
-    	DetailedHistory a = new DetailedHistory(user, action, date, "Pretty boring action ngl");
+    	DetailedHistory a = new DetailedHistory(user, action, date, "Pretty boring action ngl", " ");
     	System.out.println(a);
     	DetailedHistory b = DetailedHistory.fromString(a.toString());
     	System.out.println(b);

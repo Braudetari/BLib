@@ -74,7 +74,7 @@ public class SubscriberManagerFrameController {
 		primaryStage.show();
 		
 		SubscriberManagerFrameController controller = loader.getController();
-		//controller.initializeTable();
+		controller.initializeTable();
 	}
 	
 	@FXML
@@ -122,11 +122,7 @@ public class SubscriberManagerFrameController {
 	}
 	@FXML
 	private void showAll(ActionEvent event) throws Exception {
-		refreshSubscriberList();
-		if(subscriberList != null) {
-			observableSubscribers.clear();
-		}
-		initializeTable();
+		Refresh(event);
 	}
 	
 	@FXML

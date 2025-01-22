@@ -6,10 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import common.*;
+import common.DetailedHistory.ActionType;
 import server.DatabaseConnection;
 
 public class LendController {
@@ -205,6 +207,10 @@ public class LendController {
 			if(success<=0) {
 				return 0;
 			}
+			//RecordAction for user
+			User user = UserController.getUserById(connection, subscriberId);
+			DetailedHistory dh = new DetailedHistory(user, ActionType.BORROW, LocalDate.now(), "Subscriber " + subscriberId + " is borrowing bookId: " + firstBookId + " on " + DateUtil.DateToString(LocalDate.now()));
+			DetailedHistoryController.RecordHistory(connection, dh);
 			return 1;
 		}
 		catch(Exception e) {
@@ -252,6 +258,10 @@ public class LendController {
 			if(success<=0) {
 				return 0;
 			}
+			//RecordAction for user
+			User user = UserController.getUserById(connection, subscriberId);
+			DetailedHistory dh = new DetailedHistory(user, ActionType.BORROW, LocalDate.now(), "Subscriber " + subscriberId + " is borrowing bookId: " + book_id + " on " + DateUtil.DateToString(LocalDate.now()));
+			DetailedHistoryController.RecordHistory(connection, dh);
 			return 1;
 		}
 		catch(Exception e) {
@@ -268,20 +278,36 @@ public class LendController {
 	 * @param returnDate
 	 * @return -1=error, 0=fail, 1=success
 	 */
-	public static int ReturnBook(Connection connection, int bookSerialId, int subscriberId, LocalDate returnDate) {
+	public static int ReturnBook(Connection connection, Book book, Subscriber subscriber, LocalDate returnDate) {
 		if(connection == null) {
 			System.err.println("Could not connect to Database");
 			return -1;
 		}
 		
 		try {
-			BorrowedBook book = GetBorrowedBookByBookSerialIdAndSubscriberId(connection, bookSerialId, subscriberId);
-			PreparedStatement pstmt = connection.prepareStatement("DELETE FROM borrowed_book bb WHERE bb.subscriber_id = ? AND bb.book_id IN (SELECT b.book_id FROM book WHERE b.book_serial_id = ?)");
-			pstmt.setInt(1, subscriberId);
-			pstmt.setInt(2, bookSerialId);
+			BorrowedBook borrowedbook = GetBorrowedBookByBookSerialIdAndSubscriberId(connection, book.getSerial_id(), subscriber.getSubscriberId());
+			PreparedStatement pstmt = connection.prepareStatement("DELETE FROM borrowed_book WHERE subscriber_id = ? AND book_id IN (SELECT book_id FROM book WHERE book_serial_id = ?)");
+			pstmt.setInt(1, borrowedbook.getBorrowingSubscriber().getSubscriberId());
+			pstmt.setInt(2, borrowedbook.getBorrowedBook().getSerial_id());
 			int success = pstmt.executeUpdate();
-			//add RecordUpdate
+			if(success<=0) {
+				System.out.println("Could not Return book, could not delete relevant row");
+				return 0;
+			}
+			//Record action
+			User user = UserController.getUserById(connection, subscriber.getSubscriberId());
+			DetailedHistory dh = new DetailedHistory(user,ActionType.RETURN,returnDate,"Returned bookId "+book.getId()+"");
+			int result = DetailedHistoryController.RecordHistory(connection, dh);
 			
+			//Freeze subscriber if returned late
+			if(borrowedbook.getReturnDate().isBefore(returnDate) && result>0) {
+				SubscriberController.SetFreezeSubscriber(connection, subscriber.getSubscriberId(), true);
+				dh = new DetailedHistory(user, ActionType.FREEZE,returnDate,"Subscriber frozen for returning book "+book.getId()+" after return time "+DateUtil.DateToString(borrowedbook.getBorrowedDate()));
+				DetailedHistoryController.RecordHistory(connection, dh);
+				result = 2;
+			}
+			
+			return result;
 		}
 		catch(Exception e) {
 			e.printStackTrace();

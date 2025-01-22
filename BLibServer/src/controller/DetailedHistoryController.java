@@ -7,11 +7,16 @@ import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import common.DetailedHistory;
+import common.DetailedHistory.ActionType;
+import common.Subscriber;
 import common.User;
+import server.DatabaseConnection;
 
 public class DetailedHistoryController {
 	
@@ -40,6 +45,7 @@ public class DetailedHistoryController {
 			blobBytes = bos.toByteArray();
 		}
 		catch(Exception e) {
+			e.printStackTrace();
 			System.err.println("Could not serialize History List.");
 			return -1;
 		}
@@ -67,7 +73,7 @@ public class DetailedHistoryController {
 			//get history_id and return it
 			if(historyId==0) {
 				ResultSet st = pstmt.getGeneratedKeys();
-				return st.getInt("history_id");
+				return st.getInt(1);
 			}
 			return historyId;
 		}
@@ -185,7 +191,7 @@ public class DetailedHistoryController {
 			return null;
 		}
 		try {
-			PreparedStatement pstmt = connection.prepareStatement("SELECT history_id FROM history WHERE history_type LIKE %librarian%");
+			PreparedStatement pstmt = connection.prepareStatement("SELECT history_id FROM history WHERE history_type LIKE '%librarian%'");
 			ResultSet rs = pstmt.executeQuery();
 			if(!rs.next()) {
 				System.out.println("Librarian History List doesnt exist in Database.");
@@ -284,8 +290,9 @@ public class DetailedHistoryController {
 			//DetailedHistory for Librarian now exists.
 			//Get History List for relevant DetailedHistory
 			int userId = dh.getUser().getId();
+			Subscriber subscriber = SubscriberController.getSubscriberById(connection, userId);
 			int result;
-			List<DetailedHistory> subscriberHistory = GetHistoryListFromDatabase(connection, userId);
+			List<DetailedHistory> subscriberHistory = GetHistoryListFromDatabase(connection, subscriber.getDetailedSubscriptionHistory());
 			if(subscriberHistory == null) { //doesnt exist, create one
 				subscriberHistory = new ArrayList<DetailedHistory>();
 				int resultId = CreateHistoryListInDatabase(connection, subscriberHistory, User.UserType.SUBSCRIBER);
@@ -320,5 +327,24 @@ public class DetailedHistoryController {
 			System.err.println("Could not record history.");
 			return -1;
 		}
+	}
+	
+	//DEBUG main
+	public static void main(String args[]) {
+		DatabaseConnection db;
+		try {
+			db = DatabaseConnection.getInstance();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return;
+		}
+		Connection connection = db.getConnection();
+		List<DetailedHistory> list = GetHistoryListFromDatabase(connection, 6);
+		for(DetailedHistory item : list) {
+			System.out.println(item);
+		}
+		
+		
 	}
 }

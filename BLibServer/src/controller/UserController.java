@@ -46,7 +46,7 @@ public class UserController {
         }
 
         try {
-            String query = "SELECT * FROM user WHERE username = ?";
+            String query = "SELECT * FROM user WHERE user_id = ?";
             PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, userId); // Use setString for a String parameter
 

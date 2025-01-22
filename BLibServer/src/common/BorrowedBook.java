@@ -45,7 +45,7 @@ public class BorrowedBook {
      */
     public BorrowedBook(BorrowedBook bb) {
         this.borrowedBook = bb.borrowedBook;
-        this.borrowedBook = bb.borrowedBook;
+        this.borrowingSubscriber = bb.borrowingSubscriber;
         this.borrowed_date = bb.borrowed_date;
         this.return_date = bb.return_date;
     }

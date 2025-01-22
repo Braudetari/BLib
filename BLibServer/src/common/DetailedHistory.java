@@ -13,16 +13,13 @@ import common.User.UserType;
  * DetailedHistory represents the detailed history record for an action.
  */
 public class DetailedHistory implements Serializable {
-    
-    /**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 8018958152928909570L;
 
 	/**
      * Recorded action type
      */
-    public enum ActionType {
+    public enum ActionType implements Serializable{
         BORROW(0), RETURN(1), ORDER(2), FREEZE(3), UNFREEZE(4);
     	public static ActionType fromInt(int value) {
 			for(ActionType type : ActionType.values()) {
@@ -151,16 +148,16 @@ public class DetailedHistory implements Serializable {
 
     public String toString() {
     	return new String("["+
-    				user+" "+ //ALT+255
-    				action.toString()+" "+
-    				DateUtil.DateToString(date)+" "+
+    				user+"%"+ 
+    				action.toString()+"%"+
+    				DateUtil.DateToString(date)+"%"+
     				description
     			+"]");
     }
     
     public static DetailedHistory fromString(String str) {
 		str = str.substring(1, str.length()-1); //remove toString []
-    	StringTokenizer tokenizer = new StringTokenizer(str, " "); //split ALT+255
+    	StringTokenizer tokenizer = new StringTokenizer(str, "%"); 
     	User user;
     	ActionType action;
     	LocalDate date;

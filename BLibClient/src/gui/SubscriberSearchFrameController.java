@@ -55,7 +55,7 @@ public class SubscriberSearchFrameController {
             System.out.println("No subscriber found for ID: " + subscriberId);  // Log the failure
         } else {
             // Handle the case where the subscriber is found
-            System.out.println(subscriber.toString());  // Log the subscriber information
+           // System.out.println(subscriber.toString());  // Log the subscriber information
             
             
         }

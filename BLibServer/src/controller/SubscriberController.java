@@ -31,9 +31,10 @@ public class SubscriberController {
 	                int detailedSubscriptionHistory = rs.getInt("detailed_subscription_history");
 	                String subscriberPhoneNumber = rs.getString("subscriber_phone_number");
 	                String subscriberEmail = rs.getString("subscriber_email");
+	                int subscriberFrozen = rs.getInt("subscriber_frozen");
 
 	                // Create Subscriber object and add to the list
-	                Subscriber subscriber = new Subscriber(subscriberId, subscriberName, detailedSubscriptionHistory, subscriberPhoneNumber, subscriberEmail);
+	                Subscriber subscriber = new Subscriber(subscriberId, subscriberName, detailedSubscriptionHistory, subscriberPhoneNumber, subscriberEmail, subscriberFrozen);
 	                subscribers.add(subscriber);
 	            }
 	        } catch (SQLException ex) {
@@ -87,9 +88,10 @@ public class SubscriberController {
 	                }
 	                String subscriberPhoneNumber = rs.getString("subscriber_phone_number");
 	                String subscriberEmail = rs.getString("subscriber_email");
+	                int subscriberFrozen = rs.getInt("subscriber_frozen");
 
 	                // Return the relevant Subscriber object
-	                return new Subscriber(subscriberId, subscriberName, detailedSubscriptionHistory, subscriberPhoneNumber, subscriberEmail);
+	                return new Subscriber(subscriberId, subscriberName, detailedSubscriptionHistory, subscriberPhoneNumber, subscriberEmail, subscriberFrozen);
 	            }
 	        } catch (SQLException ex) {
 	            System.out.println("SQLException: " + ex.getMessage());
@@ -116,9 +118,10 @@ public class SubscriberController {
 	                int detailedSubscriptionHistory = rs.getInt("detailed_subscription_history");
 	                String subscriberPhoneNumber = rs.getString("subscriber_phone_number");
 	                String subscriberEmail = rs.getString("subscriber_email");
+	                int subscriberFrozen = rs.getInt("subscriber_frozen");
 
 	                // Return the relevant Subscriber object
-	                return new Subscriber(subscriberId, subscriberName, detailedSubscriptionHistory, subscriberPhoneNumber, subscriberEmail);
+	                return new Subscriber(subscriberId, subscriberName, detailedSubscriptionHistory, subscriberPhoneNumber, subscriberEmail, subscriberFrozen);
 	            }
 	        } catch (SQLException ex) {
 	            System.out.println("SQLException: " + ex.getMessage());

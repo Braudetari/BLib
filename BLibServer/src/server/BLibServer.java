@@ -164,9 +164,13 @@ public class BLibServer extends AbstractServer
 		 if(message == null)
 			 return;
 		 Message reply;
+		 String replyStr;
 		 Subscriber subscriber;
 		 String str;
+		 Book book;
+		 LocalDate date;
 	 	 int subscriberId;
+	 	 int result;
 		 switch(message.getRequest()) {
 		 	case "connect":
 				 handleClientConnection(client, message.getMessage(), null);
@@ -192,7 +196,7 @@ public class BLibServer extends AbstractServer
 		 		reply = new Message("msg",clientInfo.getSessionId(),"updated subscriber");
 		 		handleMessageToClient(reply, client);
 		 	break;
-		 	case "getsubscriber":
+		 	case "getsubscriber": //expected message: "subscriberId"
 		 		try {
 			 		subscriberId = Integer.parseInt(message.getMessage());
 		 		}
@@ -242,7 +246,7 @@ public class BLibServer extends AbstractServer
 		 			str = message.getMessage();
 		 			try {
 		 				int bookId = Integer.parseInt(str);
-			 			Book book = BookController.GetBookById(dbConnection.getConnection(), bookId);
+			 			book = BookController.GetBookById(dbConnection.getConnection(), bookId);
 			 			reply = new Message("book", clientInfo.getSessionId(), book.toString());
 			 			handleMessageToClient(reply, client);
 		 			}
@@ -282,13 +286,23 @@ public class BLibServer extends AbstractServer
 		 			else {
 		 				str = message.getMessage();
 		 				try {
+		 					//Parse String
 			 				String[] split = str.split(";");
 			 				int bookOrSerialId = Integer.parseInt(split[0]);
 			 				subscriberId = Integer.parseInt(split[1]); 
 			 				LocalDate dateFrom = DateUtil.DateFromString(split[2]);
 			 				LocalDate dateTo = DateUtil.DateFromString(split[3]);
 			 				String borrowType = split[4];
-			 				int result = 0;
+			 				
+			 				//Make sure subscriber not frozen
+			 				subscriber = SubscriberController.getSubscriberById(dbConnection.getConnection(), subscriberId);
+			 				if(subscriber.isFrozen()) {
+			 					reply = new Message("error", clientInfo.getSessionId(), "Access Denied, Subscriber account frozen");
+			 					handleMessageToClient(reply, client);
+			 					break;
+			 				}
+			 				//Lend based on serial or id
+			 				result = 0;
 			 				if(borrowType.equals("serial")) {
 			 					result = LendController.LendBookSerialId(dbConnection.getConnection(), subscriberId, dateFrom, dateTo, bookOrSerialId);
 			 				}
@@ -313,6 +327,63 @@ public class BLibServer extends AbstractServer
 		 					break;
 		 				}
 		 			}
+		 	case "returnbook": //expected message : "book;subscriber;returnDate"
+		 			str = message.getMessage();
+		 			user = clientInfo.getUser();
+		 			//Permission Handling: Librarian
+		 			if(user == null) {
+		 				reply = new Message("error", clientInfo.getSessionId(), "Access denied, not logged in.");
+		 				handleMessageToClient(reply, client);
+		 				break;
+		 			}
+		 			if(!user.getType().equals(User.UserType.LIBRARIAN)) {
+		 				reply = new Message("error", clientInfo.getSessionId(), "Access denied, not a librarian.");
+		 				handleMessageToClient(reply, client);
+		 				break;
+		 			}
+		 			try {
+		 				//parse message to objects
+			 			String[] split = str.split(";");
+			 			book = Book.fromString(split[0]);
+			 			subscriber = Subscriber.subscriberFromString(split[1]);
+			 			date = DateUtil.DateFromString(split[2]);
+			 			//return book
+			 			result = LendController.ReturnBook(dbConnection.getConnection(), book, subscriber, date);
+			 			//error handling
+			 			if(result<=0) {
+			 				reply = new Message("error", clientInfo.getSessionId(), "Failed to return book");
+			 				handleMessageToClient(reply, client);
+			 				break;
+			 			}
+			 			//success message reply
+			 			replyStr = "Returned book successfully";
+			 			if(result == 2) {
+			 				replyStr += " but return date passed, account was frozen.";
+			 			}
+			 			reply = new Message("msg", clientInfo.getSessionId(), replyStr);
+			 			handleMessageToClient(reply, client);
+		 			}
+		 			catch(Exception e) {
+		 				System.err.println("Failed to parse returnbook message");
+		 				reply = new Message("error", clientInfo.getSessionId(), "Failed to parse message to return book");
+		 				handleMessageToClient(reply, client);
+		 			}
+	 			break;
+		 	case "gethistory": //expected message "historyid"
+		 			str = message.getMessage();
+		 			try {
+		 				int historyId = Integer.parseInt(str);
+		 				List<DetailedHistory> historyList = DetailedHistoryController.GetHistoryListFromDatabase(dbConnection.getConnection(), historyId);
+		 				replyStr = DetailedHistory.detailedHistoryListToString(historyList);
+		 				reply = new Message("history",clientInfo.getSessionId(), replyStr);
+		 				handleMessageToClient(reply, client);
+		 			}
+		 			catch(Exception e) {
+		 				System.err.println("Could not parse message in get history");
+		 				reply = new Message("error", clientInfo.getSessionId(), "Could not get history using");
+		 				handleMessageToClient(reply, client);
+		 			}
+		 		break;
 		 	default:
 		 		return;
 		 }
@@ -325,7 +396,7 @@ public class BLibServer extends AbstractServer
 		 e.printStackTrace();
 	 }
   }
-   
+  
   /**
    * This method overrides the one in the superclass.  Called
    * when the server starts listening for connections.

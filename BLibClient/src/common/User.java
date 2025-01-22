@@ -1,9 +1,10 @@
 package common;
 
+import java.io.Serializable;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
-public class User {
+public class User implements Serializable{
 	private int id;
 	private String username = null;
 	private String password = null;
@@ -16,6 +17,14 @@ public class User {
 		public static UserType fromInt(int value) {
 			for(UserType type : UserType.values()) {
 				if(type.getValue() == value) {
+					return type;
+				}
+			}
+			return null;
+		}
+		public static UserType fromString(String value) {
+			for(UserType type : UserType.values()) {
+				if(type.toString().equals(value.toUpperCase())) {
 					return type;
 				}
 			}

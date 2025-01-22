@@ -12,6 +12,7 @@ public class Subscriber {
     private int detailedSubscriptionHistory;
     private String subscriberPhoneNumber;
     private String subscriberEmail;
+    private int subscriberFrozen;
 
     public Subscriber() {
     	this.subscriberId = -1;
@@ -23,15 +24,17 @@ public class Subscriber {
     	this.detailedSubscriptionHistory = subscriber.detailedSubscriptionHistory;
     	this.subscriberPhoneNumber = subscriber.subscriberPhoneNumber;
     	this.subscriberEmail = subscriber.subscriberEmail;
+    	this.subscriberFrozen = subscriber.subscriberFrozen;
     }
     
     // Constructor
-    public Subscriber(int subscriberId, String subscriberName, int detailedSubscriptionHistory, String subscriberPhoneNumber, String subscriberEmail) {
+    public Subscriber(int subscriberId, String subscriberName, int detailedSubscriptionHistory, String subscriberPhoneNumber, String subscriberEmail, int frozen) {
         this.subscriberId = subscriberId;
         this.subscriberName = subscriberName;
         this.detailedSubscriptionHistory = detailedSubscriptionHistory;
         this.subscriberPhoneNumber = subscriberPhoneNumber;
         this.subscriberEmail = subscriberEmail;
+        this.subscriberFrozen = frozen;
     }
 
     // Getter and setter for subscriberId
@@ -79,6 +82,12 @@ public class Subscriber {
         this.subscriberEmail = subscriberEmail;
     }
 
+    public boolean isFrozen() {
+    	if(this.subscriberFrozen>0)
+    		return true;
+    	return false;
+    }
+    
     @Override
     public String toString() {
     	if(this.subscriberId == -1)
@@ -88,7 +97,9 @@ public class Subscriber {
         					+subscriberName+","
         					+detailedSubscriptionHistory+","
         					+subscriberPhoneNumber+","
-        					+subscriberEmail+"]");
+        					+subscriberEmail+","
+        					+subscriberFrozen
+        					+"]");
     }
     
     public static Subscriber subscriberFromString(String str) {
@@ -99,6 +110,7 @@ public class Subscriber {
     	int detailedSubscriptionHistory;
     	String subscriberPhoneNumber;
     	String subscriberEmail;
+    	int subscriberFrozen;
     	try{
     		subscriberId = Integer.parseInt(tokenizer.nextToken().trim());
     		subscriberName = tokenizer.nextToken().trim();
@@ -119,7 +131,13 @@ public class Subscriber {
     	catch(NoSuchElementException e) {
     		subscriberEmail = "";
     	}
-        Subscriber subscriber = new Subscriber(subscriberId, subscriberName, detailedSubscriptionHistory, subscriberPhoneNumber, subscriberEmail);
+        try {
+        	subscriberFrozen = Integer.parseInt(tokenizer.nextToken().trim());
+        }
+        catch(NoSuchElementException e) {
+        	subscriberFrozen = 0;
+        }
+        Subscriber subscriber = new Subscriber(subscriberId, subscriberName, detailedSubscriptionHistory, subscriberPhoneNumber, subscriberEmail, subscriberFrozen);
         return subscriber;
     }
     public static String subscriberListToString(List<Subscriber> subscriberList) {

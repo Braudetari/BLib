@@ -37,13 +37,17 @@ public class ChatClient extends AbstractClient
   public static boolean awaitResponse = false;
   public static String lastResponse = null;
   public static String lastResponseError = null;
+  public static String lastResponseMsg = null;
   public ConnectionStatus status;
   public static enum ConnectionStatus{Disconnected, Connected};
+  //Storage for Objects from Server
   private User user;
   private List<Subscriber> subscriberList;
   private Subscriber subscriber;
   private List<Book> books;
   private Book book;
+  private DetailedHistory history;
+  private List<DetailedHistory> historyList;
   private String sessionId;
   
   //Constructors ****************************************************
@@ -88,14 +92,14 @@ public class ChatClient extends AbstractClient
    */
   public void handleMessageFromServer(Object msg) 
   {
-	  System.out.println("--> " + msg);
 	  try {
 		  Message message = Message.decrypt((Message)msg, this.sessionId);
+		  System.out.println("--> " + message.getRequest() + " " + message.getMessage());
 		  if(message != null) {
 			  lastResponse = message.getRequest();
 			  switch(message.getRequest()) {
 			   case "msg":
-				   System.out.println(message.getMessage());
+				   lastResponseMsg = message.getMessage();
 				  break;
 			  	case "subscribers":
 			  			subscriberList = Subscriber.subscriberListFromString(message.getMessage());
@@ -141,6 +145,15 @@ public class ChatClient extends AbstractClient
 			  				e.printStackTrace();
 			  				System.err.println("Could not receive books list from server");
 			  			}
+			  		break;
+			  	case "history":
+			  		try {
+			  			this.historyList = DetailedHistory.detailedHistoryListFromString(message.getMessage());
+			  		}
+			  		catch(Exception e) {
+			  			e.printStackTrace();
+			  			System.err.println("Could not receive history list from server");
+			  		}
 			  		break;
 			  	//Display error as Notice
 			  	case "error":
@@ -244,17 +257,31 @@ public class ChatClient extends AbstractClient
 			 Message msg;
 			 msg = new Message("login", chat.client.getSessionId(), "wow sauce");
 			 chat.client.handleMessageFromClientUI(msg);
-			 LocalDate from = LocalDate.of(2025, 1, 27);
-			 LocalDate to = LocalDate.of(2025, 1, 28);
-			 msg = new Message("borrowbook", chat.client.getSessionId(), "11;4;"+DateUtil.DateToString(from)+";"+DateUtil.DateToString(to)+";"+"id");
+			 LocalDate from = LocalDate.of(2025, 1, 20);
+			 LocalDate to = LocalDate.of(2025, 1, 29);
+			 LocalDate late = LocalDate.of(2025, 1, 29);
+			 msg = new Message("getbook", chat.client.getSessionId(), "8");
+			 chat.client.handleMessageFromClientUI(msg);
+			 msg = new Message("getsubscriber", chat.client.getSessionId(), "4");
+			 chat.client.handleMessageFromClientUI(msg);
+			 msg = new Message("borrowbook", chat.client.getSessionId(), "102;4;"+DateUtil.DateToString(from)+";"+DateUtil.DateToString(to)+";serial");
+			 chat.client.handleMessageFromClientUI(msg);
+			 msg = new Message("returnbook", chat.client.getSessionId(), chat.client.book.toString()+";"+chat.client.subscriber.toString()+";"+DateUtil.DateToString(LocalDate.now()));
 			 chat.client.handleMessageFromClientUI(msg);
 			 String lr = chat.client.lastResponse;
 			 String lre = chat.client.lastResponseError;
-			 System.out.println(lr +" "+ lre);
+			 String lrm = chat.client.lastResponseMsg;
+			 System.out.println(lr +" ; "+ lre + " ; " + lrm);
 		 }
 		 catch(Exception e) {
 			 e.printStackTrace();
 		 }
+		 try {
+			chat.client.closeConnection();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
   }
 }
 //End of ChatClient class

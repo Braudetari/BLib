@@ -1,9 +1,10 @@
 package common;
 
+import java.io.Serializable;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
-public class User {
+public class User implements Serializable{
 	private int id;
 	private String username = null;
 	private String password = null;

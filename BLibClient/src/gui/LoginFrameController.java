@@ -68,7 +68,7 @@ public class LoginFrameController extends Application {
     // Method to handle the "Enter as Guest" button action
     @FXML
     private void getGuestBtn(ActionEvent event) throws Exception{
-    	Object[] values= ClientUI.chat.LoginToServer("Guest", "GUEST");
+    	Object[] values= ClientUI.chat.LoginToServer("GUEST", "GUEST");
     	String[] lr =ClientUI.chat.getClientLastResponses();
     	if(lr[0].equals("error")) {
             return;

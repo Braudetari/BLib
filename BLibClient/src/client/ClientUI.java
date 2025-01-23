@@ -4,6 +4,8 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import java.util.Vector;
 import gui.ConnectionFrameController;
+import gui.LoginFrameController;
+import gui.ScreenLoginController;
 import client.ClientController;
 import common.Message;
 
@@ -33,10 +35,12 @@ public class ClientUI extends Application {
 	 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated meWthod stub
 						  		
-		 ConnectionFrameController connectionFrameController = new ConnectionFrameController(); // create StudentFrame
-		connectionFrameController.start(primaryStage, ConnectionIP, port);
+//		LoginFrameController loginFrame = new LoginFrameController();
+//		loginFrame.start(primaryStage);
+		(new ScreenLoginController()).start(primaryStage);
+		
 	}
 	
 }

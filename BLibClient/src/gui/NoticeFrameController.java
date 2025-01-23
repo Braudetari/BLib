@@ -32,8 +32,7 @@ public class NoticeFrameController {
 		Stage primaryStage = new Stage();
 		Pane root = loader.load(getClass().getResource("/gui/NoticeFrame.fxml").openStream());
 		Scene scene = new Scene(root);			
-		scene.getStylesheets().add(getClass().getResource("/gui/styleNotice.css").toExternalForm());
-		primaryStage.setResizable(false);
+		scene.getStylesheets().add(getClass().getResource("/gui/NoticeFrame.css").toExternalForm());
 		primaryStage.setTitle(title);
 		primaryStage.setScene(scene);		
 		primaryStage.show();

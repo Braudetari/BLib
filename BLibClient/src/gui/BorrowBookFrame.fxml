@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.BorrowBookFrameController">
+   <children>
+      <Label layoutX="20.0" layoutY="40.0" text="Client ID" />
+      <TextField fx:id="clientIdTxt" layoutX="130.0" layoutY="35.0" prefWidth="200.0" />
+      
+      <Label layoutX="20.0" layoutY="80.0" text="Borrow Date" />
+      <DatePicker fx:id="borrowDatePicker" layoutX="130.0" layoutY="75.0" editable="false" />
+      
+      <Label layoutX="20.0" layoutY="120.0" text="Return Date" />
+      <DatePicker fx:id="returnDatePicker" layoutX="130.0" layoutY="115.0" editable="false" />
+      
+      <Button fx:id="borrowBtn" layoutX="130.0" layoutY="160.0" mnemonicParsing="false" onAction="#onBorrowBtnClick" text="Borrow Book" />
+   </children>
+</AnchorPane>

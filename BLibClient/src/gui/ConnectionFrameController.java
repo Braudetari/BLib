@@ -15,7 +15,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.SubScene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
@@ -55,20 +54,11 @@ public  class ConnectionFrameController   {
 		portTxt.setText(port);
 	}
 
-	public void start(Pane pane, String ConnectionIP, int ConnectionPort) throws Exception {	
-		FXMLLoader loader = new FXMLLoader();
-		Parent root = loader.load(getClass().getResource("/gui/ConnectionFrame.fxml").openStream());
-		pane = new Pane(root);
-		pane.getStylesheets().add(getClass().getResource("/gui/ConnectionFrame.css").toExternalForm());
-		ConnectionFrameController controller = loader.getController();
-		controller.initializeText(ConnectionIP, "" + ConnectionPort);
-	}
-	
 	public void start(Stage primaryStage, String ConnectionIP, int ConnectionPort) throws Exception {	
 		FXMLLoader loader = new FXMLLoader();
 		Parent root = loader.load(getClass().getResource("/gui/ConnectionFrame.fxml").openStream());
 		Scene scene = new Scene(root);
-		scene.getStylesheets().add(getClass().getResource("/gui/style.css").toExternalForm());
+		scene.getStylesheets().add(getClass().getResource("/gui/ConnectionFrame.css").toExternalForm());
 		ConnectionFrameController controller = loader.getController();
 		controller.initializeText(ConnectionIP, "" + ConnectionPort);
 		primaryStage.setTitle(title);
@@ -98,8 +88,8 @@ public  class ConnectionFrameController   {
 			 ClientUI.chat.connect();
 			 if(ClientUI.chat.getConnectionStatus().toString() == "Connected") { //Connection Success
 					((Stage)((Node)event.getSource()).getScene().getWindow()).close(); //close ConnectionFrame
-					SubscriberManagerFrameController subscriberManagerFrame = new SubscriberManagerFrameController();
-					subscriberManagerFrame.start(new Stage());
+					ScreenLoginController login = new ScreenLoginController();
+					login.start(new Stage());
 			 }
 			 else { //Connection Failed
 				 //Open Notice with error

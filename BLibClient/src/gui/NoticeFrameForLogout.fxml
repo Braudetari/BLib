@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="156.0" prefWidth="440.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.NoticeFrameForLogout">
+   <children>
+      <Button id="btnCancel" fx:id="btnCancel" layoutX="61.0" layoutY="108.0" mnemonicParsing="false" onAction="#getCancelBtn" text="Cancel" />
+      <Label fx:id="labelmsg" layoutX="14.0" layoutY="14.0" prefHeight="70.0" prefWidth="406.0" text="EMPTY" wrapText="true" />
+      <Button id="btnConfirm" fx:id="btnConfirm" layoutX="297.0" layoutY="108.0" mnemonicParsing="false" onAction="#getConfirmBtn" text="Confirm" />
+   </children>
+</AnchorPane>

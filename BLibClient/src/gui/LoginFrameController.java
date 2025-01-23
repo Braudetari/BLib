@@ -51,7 +51,6 @@ public class LoginFrameController extends Application {
     	Object[] values= ClientUI.chat.LoginToServer(username, password);
     	String[] lr =ClientUI.chat.getClientLastResponses();
     	if(lr[0].equals("error")) {
-    		(new NoticeFrameController()).start(lr[2]);
             return;
     	}
     	else {

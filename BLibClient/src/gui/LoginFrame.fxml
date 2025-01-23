@@ -5,7 +5,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="200.0" prefWidth="440.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ScreenLoginController">
+<AnchorPane prefHeight="200.0" prefWidth="440.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.LoginFrameController">
    <children>
       <Label fx:id="labelmsg" layoutX="14.0" layoutY="14.0" prefHeight="50.0" prefWidth="419.0" text="Please log in" textAlignment="CENTER" />
       

@@ -25,6 +25,8 @@ public class MenuUIController {
 	@FXML
 	private Button btnConnection = null;
 	@FXML
+	private Button btnLogout = null;
+	@FXML
 	private Button btnManager = null;
 	@FXML
 	private Pane pane=null;
@@ -32,6 +34,7 @@ public class MenuUIController {
 	private AnchorPane paneScreen=null;
 	@FXML
 	private AnchorPane paneButtons=null;
+
 	
 	private static Subscriber importedSubscriber;
 	
@@ -62,6 +65,23 @@ public class MenuUIController {
 	private void getManagerBtn(ActionEvent event) {
 		
 	}
+	
+	@FXML
+	private void getLogoutBtn(ActionEvent event) {
+		try {
+			Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			if (currentStage == null) {
+			    System.out.println("Error: currentStage is null");
+			}
+			else {
+				(new NoticeFrameForLogout()).start(currentStage);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	
 	@FXML 
 	private void getConnectionBtn(ActionEvent event) {

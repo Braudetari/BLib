@@ -120,7 +120,7 @@ public class ClientController implements ChatIF
    * @param subscriber_id
    * @return Subscriber
    */
-  public Subscriber requestSubscriberFromServer(String id){
+  public Subscriber requestServerForSubscriber(String id){
 	  SendRequestToServer("getsubscriber", id);
 	  return getClientSubscriber();
   }
@@ -129,7 +129,7 @@ public class ClientController implements ChatIF
    * Request Server for Subscriber List of all Subscribers
    * @return Subscriber List
    */
-  public List<Subscriber> requestServerForSubscriberList(String id){
+  public List<Subscriber> requestServerForSubscriberList(){
 	  SendRequestToServer("getsubscribers", null);
 	  return getClientSubscriberList();
   }

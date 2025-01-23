@@ -4,4 +4,4 @@
 # Ignore bin directories in specific projects
 BLibClient/bin/
 BLibServer/bin/
-OCSF/bin/
+OCFS/bin/

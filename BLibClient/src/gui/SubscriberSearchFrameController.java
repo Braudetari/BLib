@@ -46,7 +46,7 @@ public class SubscriberSearchFrameController {
         labelMessage.setText("Searching for Subscriber ID: " + subscriberId);
         
         // Request subscriber from server
-        subscriber = ClientUI.chat.requestServerForSubscriber(subscriberId);
+        subscriber = ClientUI.chat.requestSubscriberFromServer(subscriberId);
         
         // Check if subscriber is null
         if (subscriber == null) {

@@ -48,7 +48,7 @@ public class SubscriberManagerFrameController {
 	private Subscriber selectedSubscriber=null;
 	private static boolean flagKillInfoListenThread = false;
 	private void refreshSubscriberList() {
-		subscriberList = ClientUI.chat.requestServerForSubscriberList();
+		subscriberList = ClientUI.chat.requestSubscribersFromServer();
 	}
 	
 	@FXML

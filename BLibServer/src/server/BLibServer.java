@@ -224,7 +224,7 @@ public class BLibServer extends AbstractServer
 		 	case "login":
 		 			str = message.getMessage();
 		 			User user = null;
-		 			if(str.equals("guest")) { //user logged in as guest
+		 			if(str.toUpperCase().equals("GUEST")) { //user logged in as guest
 		 				user = new User(0, "GUEST", null, User.UserType.GUEST);
 		 			}
 		 			else { //User isn't logging in as guest

@@ -110,7 +110,12 @@ public class ClientController implements ChatIF
    * @return Object[] with Object[0]=(User)User, Object[1]=(String)User's Full Name
    */
   public Object[] LoginToServer(String username, String password) {
-	  SendRequestToServer("login", username+" "+password);
+	  if(username.toUpperCase().equals("GUEST")) {
+		  SendRequestToServer("login", "GUEST");
+	  }
+	  else {
+		  SendRequestToServer("login", username+" "+password);  
+	  }
 	  Object[] values = {getClientUser(), getClientName()};
 	  return values;
   }

@@ -90,6 +90,52 @@ public class UserController {
             System.out.println("SQLException: " + ex.getMessage());
             return false;
         }
-    }	
+    }
+	/**
+	 * Get's User's Name, goes through Librarian and Subscriber
+	 * Returns "No name" if name is Null or empty
+	 * @param connection
+	 * @param user
+	 * @return String user's name
+	 */
+	public static String getNameFromUser(Connection connection, User user) {
+		if (connection == null) {
+            System.err.println("Failed to connect to the database.");
+            return null;
+        }
+		if(user == null) {
+			System.err.println("Not a valid user");
+			return null;
+		}
+		
+		try {
+			String query;
+			switch(user.getType().toString()) {
+			case "LIBRARIAN":
+					query = "SELECT librarian_name FROM librarian WHERE librarian_id = ?";
+				break;
+			case "SUBSCRIBER":
+					query = "SELECT subscriber_name FROM subscriber WHERE subscriber_id = ?";
+				break;
+			case "GUEST":
+					return new String("GUEST");
+			default:
+				throw new Exception();
+			}
+			PreparedStatement pstmt = connection.prepareStatement(query);
+			pstmt.setInt(1, user.getId());
+			ResultSet rs = pstmt.executeQuery();
+			String name = "No name";
+			if(rs.next()) {
+				name = rs.getString(1);
+			}
+			return name;
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			System.err.println("Could not get user's name");
+			return null;
+		}
+	}
 
 }

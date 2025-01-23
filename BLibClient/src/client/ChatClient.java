@@ -41,6 +41,7 @@ public class ChatClient extends AbstractClient
   public ConnectionStatus status;
   public static enum ConnectionStatus{Disconnected, Connected};
   //Storage for Objects from Server
+  private String name;
   private User user;
   private List<Subscriber> subscriberList;
   private Subscriber subscriber;
@@ -120,10 +121,12 @@ public class ChatClient extends AbstractClient
 			  			
 			  	case "login":
 			  		try{
-			  			this.user = User.fromString(message.getMessage());
+			  			String[] split = message.getMessage().split(";");
+			  			this.user = User.fromString(split[0]);
+			  			this.name = split[1];
 			  		}
 			  		catch(Exception e) {
-			  			System.err.println("Could not receive user from server.");
+			  			System.err.println("Could not receive user and name from server.");
 			  		}
 			  		break;
 			  		

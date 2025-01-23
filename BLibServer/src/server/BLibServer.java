@@ -161,8 +161,14 @@ public class BLibServer extends AbstractServer
 	 try {
 		 Message message = Message.decrypt((Message)msg, clientSessionId);
 		 System.out.println("Decrypted message: " + message + " from " + client);
-		 if(message == null)
+		 if(message == null) //handle empty message
 			 return;
+		 //SessionId required post connect
+		 if(message.getSessionId() == null && !message.getRequest().equals("connect")) {
+			 handleMessageToClient(new Message("error",null,"Not connected to client"), client);
+			 
+		 }
+		 //Local Variables Storage
 		 Message reply;
 		 String replyStr;
 		 Subscriber subscriber;
@@ -238,7 +244,8 @@ public class BLibServer extends AbstractServer
 			 			}
 		 			}
 		 			clientInfo.setUser(user);
-		 			reply = new Message("login",clientInfo.getSessionId(), user.toString());
+		 			String name = UserController.getNameFromUser(dbConnection.getConnection(), user);
+		 			reply = new Message("login",clientInfo.getSessionId(), user.toString()+";"+name);
 		 			handleMessageToClient(reply, client);
 		 		break;
 		 		

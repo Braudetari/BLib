@@ -1,0 +1,28 @@
+/* JavaFX CSS */
+.root {
+    -fx-background-color: lightblue;
+    -fx-padding: 10;
+}
+
+Label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+TextField, PasswordField {
+    -fx-border-color: darkgray;
+    -fx-border-radius: 5;
+    -fx-padding: 5;
+}
+
+Button {
+    -fx-background-color: blue;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5;
+    -fx-padding: 5 10;
+}
+
+Button:hover {
+    -fx-background-color: darkblue;
+}

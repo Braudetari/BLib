@@ -1,0 +1,57 @@
+/* Root pane background */
+.root {
+    -fx-background-color: lightblue;
+}
+
+/* Label styling */
+.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: darkblue;
+    -fx-font-weight: bold;
+}
+
+/* Button styling */
+.button {
+    -fx-background-color: darkblue;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+    -fx-border-color: lightgray;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: navy;
+}
+
+.button:pressed {
+    -fx-background-color: royalblue;
+}
+
+/* TextField styling */
+.text-field {
+    -fx-border-color: darkblue;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 5px;
+    -fx-font-size: 12px;
+}
+
+/* ComboBox styling */
+.combo-box {
+    -fx-border-color: darkblue;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-padding: 5px;
+}
+
+.combo-box:hover {
+    -fx-border-color: navy;
+}

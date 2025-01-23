@@ -35,21 +35,21 @@ public class ChatClient extends AbstractClient
    */
   ChatIF clientUI; 
   public static boolean awaitResponse = false;
-  public static String lastResponse = null;
-  public static String lastResponseError = null;
-  public static String lastResponseMsg = null;
+  String lastResponse = null;
+  String lastResponseError = null;
+  String lastResponseMsg = null;
   public ConnectionStatus status;
   public static enum ConnectionStatus{Disconnected, Connected};
   //Storage for Objects from Server
-  public String name;
-  public User user;
-  public List<Subscriber> subscriberList;
-  public Subscriber subscriber;
-  public List<Book> books;
-  public Book book;
-  public DetailedHistory history;
-  public List<DetailedHistory> historyList;
-  public String sessionId;
+  String sessionId; //sessionId
+  String name; //Name recieved for User
+  User user; //User from server
+  List<Subscriber> subscriberList; //subscriberList received from server
+  Subscriber subscriber; //subscriber received from server
+  List<Book> books; //books list receieved from server 
+  Book book; //book received from server
+  DetailedHistory history; //detailed history received from server
+  List<DetailedHistory> historyList; //detailed history LIST received from server
   
   //Constructors ****************************************************
   

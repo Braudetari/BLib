@@ -189,7 +189,7 @@ public class BLibServer extends AbstractServer
 				 handleMessageToClient(reply, client);
 		 		break;
 		 	
-		 	case "subscribers":
+		 	case "getsubscribers":
 		 		List<Subscriber> subscriberList = SubscriberController.getAllSubscribers(dbConnection.getConnection());
 		 		reply = new Message("subscribers", clientInfo.getSessionId(),Subscriber.subscriberListToString(subscriberList));
 		 		handleMessageToClient(reply, client);
@@ -376,18 +376,18 @@ public class BLibServer extends AbstractServer
 		 				handleMessageToClient(reply, client);
 		 			}
 	 			break;
-		 	case "gethistory": //expected message "historyid"
+		 	case "gethistory": //expected message "userId"
 		 			str = message.getMessage();
 		 			try {
-		 				int historyId = Integer.parseInt(str);
-		 				List<DetailedHistory> historyList = DetailedHistoryController.GetHistoryListFromDatabase(dbConnection.getConnection(), historyId);
+		 				int userId = Integer.parseInt(str);
+		 				List<DetailedHistory> historyList = DetailedHistoryController.GetHistoryListFromDatabase(dbConnection.getConnection(), userId);
 		 				replyStr = DetailedHistory.detailedHistoryListToString(historyList);
 		 				reply = new Message("history",clientInfo.getSessionId(), replyStr);
 		 				handleMessageToClient(reply, client);
 		 			}
 		 			catch(Exception e) {
 		 				System.err.println("Could not parse message in get history");
-		 				reply = new Message("error", clientInfo.getSessionId(), "Could not get history using");
+		 				reply = new Message("error", clientInfo.getSessionId(), "Could not get history using userId");
 		 				handleMessageToClient(reply, client);
 		 			}
 		 		break;

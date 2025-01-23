@@ -132,27 +132,37 @@ public class DetailedHistoryController {
 	
 	
 	/**
-	 * Get History List from Database using HistoryId
+	 * Get History List from Database using userId
 	 * @param connection
-	 * @param historyId
+	 * @param userId
 	 * @return DetailedHistory List
 	 */
-	public static List<DetailedHistory> GetHistoryListFromDatabase(Connection connection, int historyId){
+	public static List<DetailedHistory> GetHistoryListFromDatabase(Connection connection, int userId){
 		if(connection == null) {
 			System.err.println("Could not connect to Database");
 			return null;
 		}
-		if(historyId == 0) {
-			System.err.println("Valid historyId not provided");
+		if(userId == 0) {
+			System.err.println("Valid userId not provided");
 			return null;
 		}
 		
 		try {
-			PreparedStatement pstmt = connection.prepareStatement("SELECT history_blob FROM history WHERE history_id = ?");
-			pstmt.setInt(1, historyId);
+			String query = "SELECT " +
+		               "    h.history_blob " +
+		               "FROM user u " +
+		               "LEFT JOIN subscriber s ON u.user_id = s.subscriber_id " +
+		               "LEFT JOIN librarian l ON u.user_id = l.librarian_id " +
+		               "LEFT JOIN history h ON ( " +
+		               "    (u.user_type = 'subscriber' AND s.detailed_subscription_history = h.history_id) OR " +
+		               "    (u.user_type = 'librarian' AND l.notification_history = h.history_id) " +
+		               ") " +
+		               "WHERE u.user_id = ?;";
+			PreparedStatement pstmt = connection.prepareStatement(query);
+			pstmt.setInt(1, userId);
 			ResultSet rs = pstmt.executeQuery();
 			if(!rs.next()) {
-				System.out.println("There is no such history_id in Database history: " + historyId);
+				System.out.println("There is no such history_id in Database history: " + userId);
 				return null;
 			}
 			byte[] blobBytes = rs.getBytes("history_blob");

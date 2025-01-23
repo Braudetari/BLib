@@ -400,6 +400,8 @@ public class BLibServer extends AbstractServer
 		 			}
 		 		break;
 		 	default:
+		 			reply = new Message("error", clientInfo.getSessionId(), "Not a valid request, received: " + message.getRequest());
+		 			handleMessageToClient(reply, client);
 		 		return;
 		 }
 		 if(!isClientInList(client)) {

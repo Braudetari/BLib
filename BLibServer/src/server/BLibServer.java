@@ -228,20 +228,28 @@ public class BLibServer extends AbstractServer
 		 				user = new User(0, "GUEST", null, User.UserType.GUEST);
 		 			}
 		 			else { //User isn't logging in as guest
-			 			String[] loginInfo = str.split(" ");
-			 			String username = loginInfo[0];
-			 			String password = loginInfo[1];
-			 			//try to find user in database
-			 			user = UserController.getUserByUsername(dbConnection.getConnection(), username);
-			 			Message replyLoginFail = new Message("error", clientInfo.getSessionId(), "Incorrect username or password");
-			 			if(user == null) {  //username doesnt exist
-			 				handleMessageToClient(replyLoginFail, client);
-			 				break;
+		 				try {
+				 			String[] loginInfo = str.split(" ");
+				 			String username = loginInfo[0];
+				 			String password = loginInfo[1];
+				 			//try to find user in database
+				 			user = UserController.getUserByUsername(dbConnection.getConnection(), username);
+				 			Message replyLoginFail = new Message("error", clientInfo.getSessionId(), "Incorrect username or password");
+				 			if(user == null) {  //username doesnt exist
+				 				handleMessageToClient(replyLoginFail, client);
+				 				break;
+				 			}
+				 			if(!password.equals(user.getPassword())) { //incorrect password
+				 				handleMessageToClient(replyLoginFail, client);
+				 				break;
+				 			}
 			 			}
-			 			if(!password.equals(user.getPassword())) { //incorrect password
-			 				handleMessageToClient(replyLoginFail, client);
-			 				break;
-			 			}
+		 				catch(Exception e) {
+		 					System.err.println("Could not parse username and password");
+		 					reply = new Message("error", clientInfo.getSessionId(), "Could not parse username and password");
+		 					handleMessageToClient(reply, client);
+		 					break;
+		 				}
 		 			}
 		 			clientInfo.setUser(user);
 		 			String name = UserController.getNameFromUser(dbConnection.getConnection(), user);

@@ -5,6 +5,7 @@ import javafx.stage.Stage;
 import java.util.Vector;
 import gui.ConnectionFrameController;
 import gui.LoginFrameController;
+import gui.NoticeFrameController;
 import gui.ScreenLoginController;
 import client.ClientController;
 import common.Message;
@@ -36,10 +37,14 @@ public class ClientUI extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// TODO Auto-generated meWthod stub
-						  		
-//		LoginFrameController loginFrame = new LoginFrameController();
-//		loginFrame.start(primaryStage);
-		(new ScreenLoginController()).start(primaryStage);
+		ClientUI.chat = new ClientController(ConnectionIP, port);
+		ClientUI.chat.connect();
+		if(ClientUI.chat.getConnectionStatus().toString().equals("Connected")) {
+			(new LoginFrameController()).start(primaryStage);
+		}
+		else {
+			(new NoticeFrameController()).start("Could not connect to server "+ConnectionIP+":"+port);
+		}
 		
 	}
 	

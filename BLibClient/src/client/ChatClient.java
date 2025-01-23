@@ -41,15 +41,15 @@ public class ChatClient extends AbstractClient
   public ConnectionStatus status;
   public static enum ConnectionStatus{Disconnected, Connected};
   //Storage for Objects from Server
-  private String name;
-  private User user;
-  private List<Subscriber> subscriberList;
-  private Subscriber subscriber;
-  private List<Book> books;
-  private Book book;
-  private DetailedHistory history;
-  private List<DetailedHistory> historyList;
-  private String sessionId;
+  public String name;
+  public User user;
+  public List<Subscriber> subscriberList;
+  public Subscriber subscriber;
+  public List<Book> books;
+  public Book book;
+  public DetailedHistory history;
+  public List<DetailedHistory> historyList;
+  public String sessionId;
   
   //Constructors ****************************************************
   

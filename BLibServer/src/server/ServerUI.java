@@ -1,6 +1,7 @@
 package server;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -45,6 +46,11 @@ public class ServerUI extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		// TODO Auto-generated method stub				  		
 		ServerPortFrameController ServerPortFrame = new ServerPortFrameController(); // create StudentFrame
+		primaryStage.setOnCloseRequest(event -> {
+			System.out.println("Server stopped: quit using X");
+			Platform.exit();
+			System.exit(0);
+		});
 		ServerPortFrame.start(primaryStage);
 	}
 	

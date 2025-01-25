@@ -66,6 +66,7 @@ public class ServerConnectionsFrameController  {
 		scene.getStylesheets().add(getClass().getResource("/gui/ServerConnections.css").toExternalForm());
 		primaryStage.setTitle(title);
 		primaryStage.setScene(scene);
+		primaryStage.centerOnScreen();
 		
 		primaryStage.show();
 		ServerConnectionsFrameController controller = loader.getController();

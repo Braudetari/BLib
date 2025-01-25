@@ -108,13 +108,6 @@ public class ChatClient extends AbstractClient
 			  	case "getsubscriber":
 			  		subscriber=Subscriber.subscriberFromString(message.getMessage());
 			  		break;
-			  	case "requestConnect":
-						try {
-							handleMessageFromClientUI(getConnectMessage());
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-			  		break;
 			  	case "connected":
 			  			this.sessionId = message.getMessage();
 			  			break;
@@ -178,7 +171,7 @@ public class ChatClient extends AbstractClient
   Message getConnectMessage() {
 	  try {
 		  String hostname = InetAddress.getLocalHost().getHostName();
-		  Message message = new Message("connect", getSessionId(), hostname);
+		  Message message = new Message("connect", null, hostname);
 		  return message;
 	  }
 	  catch (Exception e){

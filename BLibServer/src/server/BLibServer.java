@@ -153,21 +153,16 @@ public class BLibServer extends AbstractServer
    */
   public void handleMessageFromClient  (Object msg, ConnectionToClient client)
   {
-	 System.out.println("Message received: " + msg + " from " + client);
+	 //System.out.println("Message received: " + msg + " from " + client);
 	 ConnectionToClientInfo clientInfo = getClientInList(client);
 	 String clientSessionId = null;
 	 if(clientInfo != null)
 		 clientSessionId = clientInfo.getSessionId();
 	 try {
 		 Message message = Message.decrypt((Message)msg, clientSessionId);
-		 System.out.println("Decrypted message: " + message + " from " + client);
+		 System.out.println("Message received: " + message + " from " + client);
 		 if(message == null) //handle empty message
 			 return;
-		 //SessionId required post connect
-		 if(message.getSessionId() == null && !message.getRequest().equals("connect")) {
-			 handleMessageToClient(new Message("error",null,"Not connected to client"), client);
-			 
-		 }
 		 //Local Variables Storage
 		 Message reply;
 		 String replyStr;
@@ -219,7 +214,11 @@ public class BLibServer extends AbstractServer
 		 		reply = new Message("getsubscriber", clientInfo.getSessionId(), subscriber.toString());
 		 		handleMessageToClient(reply, client);
 		 		break;
-		 		
+		 	case "logout":
+		 			clientInfo.setUser(null);
+		 			reply = new Message("msg", clientInfo.getSessionId(), "logged out from server");
+		 			handleMessageToClient(reply, client);
+		 		break;
 		 	//Handle client login request, e.g. request:"login", msg:"username password"
 		 	case "login":
 		 			str = message.getMessage();
@@ -398,6 +397,8 @@ public class BLibServer extends AbstractServer
 		 				reply = new Message("error", clientInfo.getSessionId(), "Could not get history using userId");
 		 				handleMessageToClient(reply, client);
 		 			}
+		 		break;
+		 	case "encrypted":
 		 		break;
 		 	default:
 		 			reply = new Message("error", clientInfo.getSessionId(), "Not a valid request, received: " + message.getRequest());

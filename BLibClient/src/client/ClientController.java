@@ -121,6 +121,15 @@ public class ClientController implements ChatIF
   }
   
   /**
+   * Request server to Log out, removes user in fullName info from client
+   */
+  public void LogoutFromServer() {
+	  SendRequestToServer("logout", "");
+	  ClientUI.chat.client.user = null;
+	  ClientUI.chat.client.name = null;
+  }
+  
+  /**
    * Request Server for Subscriber
    * @param subscriber_id
    * @return Subscriber

@@ -2,6 +2,7 @@ package gui;
 
 import java.io.IOException;
 
+import client.ClientUI;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -69,6 +70,8 @@ public class NoticeFrameForLogout {
 		}
 		Stage thisStage = (Stage)((Node)event.getSource()).getScene().getWindow();
 		thisStage.close();
+		//request server to logout
+		ClientUI.chat.LogoutFromServer();
 		//return to the LoginUI
 		(new LoginFrameController()).start(thisStage);
 	}

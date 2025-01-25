@@ -52,13 +52,13 @@ public class ServerPortFrameController  {
 		}
 		else
 		{
-			((Stage)((Node)event.getSource()).getScene().getWindow()).close(); //close window
+			Stage thisStage = ((Stage)((Node)event.getSource()).getScene().getWindow());
 			server = ServerUI.runServer(p);
 			ServerConnectionsFrameController serverConnectionsFrameController = new ServerConnectionsFrameController();
-			serverConnectionsFrameController.start(new Stage(), server);
+			serverConnectionsFrameController.start(thisStage, server);
 		}
 	}
-
+	
 	public void start(Stage primaryStage) throws Exception {
 		Parent root = FXMLLoader.load(getClass().getResource("/gui/ServerPort.fxml"));			
 		Scene scene = new Scene(root);

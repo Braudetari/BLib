@@ -1,6 +1,6 @@
 package common;
 
-import java.sql.Date;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -9,8 +9,12 @@ import java.util.StringTokenizer;
 
 import common.User.UserType;
 
-public class Book {
-    private int id;
+public class Book implements Serializable{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private int id;
     private int serial_id;
     private String name;
     private String author;

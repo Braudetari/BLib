@@ -5,6 +5,10 @@ import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 public class User implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int id;
 	private String username = null;
 	private String password = null;

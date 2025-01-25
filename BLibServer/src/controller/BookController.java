@@ -79,7 +79,7 @@ public class BookController {
 				pstmt.setInt(1, Integer.parseInt(value));
 			}
 			else {
-				pstmt = connection.prepareStatement("SELECT * FROM book WHERE " + element + " LIKE ?");
+				pstmt = connection.prepareStatement("SELECT * FROM book WHERE LOWER(" + element + ") LIKE LOWER(?)");
 				pstmt.setString(1, "%" + value + "%");
 			}
 			ResultSet rs = pstmt.executeQuery();

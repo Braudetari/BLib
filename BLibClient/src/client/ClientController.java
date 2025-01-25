@@ -181,6 +181,26 @@ public class ClientController implements ChatIF
   }
   
   /**
+   * Request Server to Return Availiblity+ClosestReturnDate for books in bookList
+   * @param bookList
+   * @return Object[2] with Object[0]=List of availibility<p> Object[1]=List of Closest Return Date
+   */
+  public Object[] requestServerForBookListAvailibilityInfo(List<Book> bookList) {
+	  SendRequestToServer("bookinfo", Book.bookListToString(bookList));
+	  return getClientBookAvailibilityInfo();
+  }
+  
+  /**
+   * Request Server to Return Availiblity+ClosestReturnDate for books in bookList
+   * @param bookList
+   * @return
+   */
+  public Object[] requestServerForBookAvailibilityInfo(Book book) {
+	  SendRequestToServer("booksinfo", book.toString());
+	  return getClientBookAvailibilityInfo();
+  }
+  
+  /**
    * Request Server to Borrow Book
    * e.g. Borrow Book using book's serial id
    * requestServerToBorrowBook("bookSerialId", "subscriberId", dateBorrow, dateReturn, "serial")
@@ -217,6 +237,7 @@ public class ClientController implements ChatIF
 	  SendRequestToServer("gethistory", ""+userId);
 	  return client.historyList;
   }
+  
   
   ////////	Get Client Local Variables	/////////
   /**
@@ -276,6 +297,14 @@ public class ClientController implements ChatIF
 	 */
   public Book getClientBook() {
 	  return client.book;
+  }
+  
+  /**
+   * Get Client's Last Book Availibility Info
+   * @return Object[] with object[0]= boolean/booleans List, object[1]=return date/dates List
+   */
+  public Object[] getClientBookAvailibilityInfo() {
+	  return client.bookAvailibilityInfo;
   }
   
   /**

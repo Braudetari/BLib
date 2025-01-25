@@ -83,7 +83,8 @@ public class BLibServer extends AbstractServer
 	  return null;
   }
   
-  private void handleClientConnection(ConnectionToClient client, String clientName, User clientUser) {
+  private void handleClientConnection(ConnectionToClient client, Object msg, User clientUser) {
+	  String clientName = (String)msg;
 	  boolean clientExists = false;
 	  int clientIndex = -1;
 	  for(int i=0; i<clientConnections.size() && clientExists == false; i++) {
@@ -144,6 +145,11 @@ public class BLibServer extends AbstractServer
 	  }
   }
   
+  public void sendMessageToClient(String request, Object msg, ConnectionToClient client, ConnectionToClientInfo clientInfo) {
+	  Message reply = new Message(request, clientInfo.getSessionId(), msg);
+	  handleMessageToClient(reply, client);
+  }
+  
   /**
    * This method handles any messages received from the client.
    *
@@ -160,7 +166,10 @@ public class BLibServer extends AbstractServer
 		 clientSessionId = clientInfo.getSessionId();
 	 try {
 		 Message message = Message.decrypt((Message)msg, clientSessionId);
-		 System.out.println("Message received: " + message + " from " + client);
+		 if(clientInfo == null)
+			 System.out.println("Message from " + client + "--> request: " + message.getRequest() + " message: " + message.getMessage());
+		 else
+			 System.out.println("Message from " + clientInfo.getName() + " E--> request: " + message.getRequest() + " message: " + message.getMessage());
 		 if(message == null) //handle empty message
 			 return;
 		 //Local Variables Storage
@@ -169,6 +178,8 @@ public class BLibServer extends AbstractServer
 		 Subscriber subscriber;
 		 String str;
 		 Book book;
+		 BorrowedBook bb;
+		 Object[] object;
 		 LocalDate date;
 	 	 int subscriberId;
 	 	 int result;
@@ -192,14 +203,14 @@ public class BLibServer extends AbstractServer
 		 		
 		 	case "updatesubscriber":
 		 		//Update subscriber in DB sent from client in string form
-		 		subscriber = Subscriber.subscriberFromString(message.getMessage());
+		 		subscriber = Subscriber.subscriberFromString((String)message.getMessage());
 		 		SubscriberController.updateSubscriberInfo(dbConnection.getConnection(), subscriber.getSubscriberId(), subscriber.getSubscriberEmail(), subscriber.getSubscriberPhoneNumber());
 		 		reply = new Message("msg",clientInfo.getSessionId(),"updated subscriber");
 		 		handleMessageToClient(reply, client);
 		 	break;
 		 	case "getsubscriber": //expected message: "subscriberId"
 		 		try {
-			 		subscriberId = Integer.parseInt(message.getMessage());
+			 		subscriberId = Integer.parseInt((String)message.getMessage());
 		 		}
 		 		catch(Exception e) {
 		 			e.printStackTrace();
@@ -221,7 +232,7 @@ public class BLibServer extends AbstractServer
 		 		break;
 		 	//Handle client login request, e.g. request:"login", msg:"username password"
 		 	case "login":
-		 			str = message.getMessage();
+		 			str = (String) message.getMessage();
 		 			User user = null;
 		 			if(str.toUpperCase().contentEquals("GUEST")) { //user logged in as guest
 		 				user = new User(0, "GUEST", null, User.UserType.GUEST);
@@ -257,7 +268,7 @@ public class BLibServer extends AbstractServer
 		 		break;
 		 		
 		 	case "getbook": //return specific book_id
-		 			str = message.getMessage();
+		 			str = (String)message.getMessage();
 		 			try {
 		 				int bookId = Integer.parseInt(str);
 			 			book = BookController.GetBookById(dbConnection.getConnection(), bookId);
@@ -271,7 +282,7 @@ public class BLibServer extends AbstractServer
 		 		break;
 		 		
 		 	case "getbooks": // get books by element and value
-		 		str = message.getMessage();
+		 		str = (String)message.getMessage();
 	 			try {
 	 				String[] split = str.split(";");
 	 				String element = split[0];
@@ -298,7 +309,7 @@ public class BLibServer extends AbstractServer
 		 				break;
 		 			}
 		 			else {
-		 				str = message.getMessage();
+		 				str = (String)message.getMessage();
 		 				try {
 		 					//Parse String
 			 				String[] split = str.split(";");
@@ -342,7 +353,7 @@ public class BLibServer extends AbstractServer
 		 				}
 		 			}
 		 	case "returnbook": //expected message : "book;subscriber;returnDate"
-		 			str = message.getMessage();
+		 			str = (String)message.getMessage();
 		 			user = clientInfo.getUser();
 		 			//Permission Handling: Librarian
 		 			if(user == null) {
@@ -384,7 +395,7 @@ public class BLibServer extends AbstractServer
 		 			}
 	 			break;
 		 	case "gethistory": //expected message "userId"
-		 			str = message.getMessage();
+		 			str = (String)message.getMessage();
 		 			try {
 		 				int userId = Integer.parseInt(str);
 		 				List<DetailedHistory> historyList = DetailedHistoryController.GetHistoryListFromDatabase(dbConnection.getConnection(), userId);
@@ -396,6 +407,29 @@ public class BLibServer extends AbstractServer
 		 				System.err.println("Could not parse message in get history");
 		 				reply = new Message("error", clientInfo.getSessionId(), "Could not get history using userId");
 		 				handleMessageToClient(reply, client);
+		 			}
+		 		break;
+		 	case "bookinfo": //expected message "bookSerialId"
+		 			try {
+			 			str = (String)message.getMessage();
+			 			book = new Book();
+			 			book.setSerial_id(Integer.parseInt(str));
+		 				result = BookController.CheckBookSerialAvailability(dbConnection.getConnection(), book.getSerial_id());
+		 				if(result>0) {
+		 					object = new Object[] {(boolean)true, null}; //send availibility true and returnDate irrelevant
+		 				}
+		 				else {
+		 					date = LendController.GetClosestReturnDateOfBookSerialId(dbConnection.getConnection(), book.getSerial_id());
+		 					if(date == null) {
+		 						sendMessageToClient("error", "Could not get book availibility info, checking closest Return Date failed", client, clientInfo);
+		 					}
+		 					object = new Object[] {(boolean)false, date};
+		 				}
+		 				sendMessageToClient("bookinfo", object, client, clientInfo);
+		 			}
+		 			catch(Exception e) {
+		 				System.err.println("Could not get book info");
+		 				sendMessageToClient("error", "Could not get book availibility info", client, clientInfo);
 		 			}
 		 		break;
 		 	case "encrypted":

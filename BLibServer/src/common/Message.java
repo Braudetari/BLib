@@ -1,6 +1,8 @@
 package common;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -22,7 +24,7 @@ import javax.crypto.spec.SecretKeySpec;
 public class Message implements Serializable{
 	private String request;
 	private String sessionId;
-	private String msg;
+	private Object msg;
 	private boolean encrypted;
 	
 	public Message() {
@@ -33,7 +35,7 @@ public class Message implements Serializable{
 	}
 	
 	
-	public Message(String request, String sessionId, String msg) {
+	public Message(String request, String sessionId, Object msg) {
 		this.request = request;
 		this.sessionId = sessionId;
 		this.msg = msg;
@@ -64,7 +66,7 @@ public class Message implements Serializable{
 			this.sessionId = sessionId;
 		}
 		
-		public String getMessage() {
+		public Object getMessage() {
 			return this.msg;
 		}
 		
@@ -100,20 +102,22 @@ public class Message implements Serializable{
 	        random.nextBytes(iv);
 	        IvParameterSpec ivSpec = new IvParameterSpec(iv);
 	        cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
-	        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-	        outputStream.write(iv);
-	        CipherOutputStream cos = new CipherOutputStream(outputStream, cipher);
-	        if(message.getMessage() == null || message.getMessage().equals("") || message.getMessage().equals(" "))
-	        	message.setMessage("empty");
-	        Message messageSpaced = new Message(message.getRequest(), message.getSessionId(), message.getMessage().replace(" ", "%20"));
-	        byte[] plaintextBytes = messageSpaced.toString().getBytes(StandardCharsets.UTF_8);
-	        cos.write(plaintextBytes); 
-	        cos.close();
-	        byte[] encryptedBytes = outputStream.toByteArray();
+
+	        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+	        byteStream.write(iv); // Prepend IV for decryption
+
+	        CipherOutputStream cipherOut = new CipherOutputStream(byteStream, cipher);
+	        ObjectOutputStream objectOut = new ObjectOutputStream(cipherOut);
+	        objectOut.writeObject(message); // Serialize the entire Message object
+	        objectOut.flush();
+	        objectOut.close();
+
+	        byte[] encryptedBytes = byteStream.toByteArray();
 	        String encryptedBase64 = Base64.getEncoder().encodeToString(encryptedBytes);
+
 	        Message encryptedMsg = new Message("encrypted", null, encryptedBase64);
 	        encryptedMsg.encrypted = true;
-			return encryptedMsg;
+	        return encryptedMsg;
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -137,29 +141,22 @@ public class Message implements Serializable{
 			return message;
 		}
         try {
-        	byte[] keyBytes = digestKey(sessionId);
+            byte[] keyBytes = digestKey(sessionId);
             SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "AES");
-            byte[] encryptedBytes = Base64.getDecoder().decode(message.getMessage());
+            byte[] encryptedBytes = Base64.getDecoder().decode(message.getMessage().toString());
+
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             int blockSize = cipher.getBlockSize();
             byte[] iv = new byte[blockSize];
             System.arraycopy(encryptedBytes, 0, iv, 0, blockSize);
             IvParameterSpec ivSpec = new IvParameterSpec(iv);
             cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-            ByteArrayInputStream inputStream = 
-            new ByteArrayInputStream(encryptedBytes, blockSize, encryptedBytes.length - blockSize);
-            ByteArrayOutputStream decryptedOutput = new ByteArrayOutputStream();
-            CipherInputStream cis = new CipherInputStream(inputStream, cipher);
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = cis.read(buffer)) != -1) {
-                decryptedOutput.write(buffer, 0, bytesRead);
-            }
-            cis.close();
-            String decryptedText = new String(decryptedOutput.toByteArray(), StandardCharsets.UTF_8);
-            String[] msgFields = decryptedText.split(" ");
-            Message decryptedMsg = new Message(msgFields[0], msgFields[1], msgFields[2].replace("%20", " "));
-            decryptedMsg.encrypted = false;
+
+            ByteArrayInputStream byteStream = new ByteArrayInputStream(encryptedBytes, blockSize, encryptedBytes.length - blockSize);
+            CipherInputStream cipherIn = new CipherInputStream(byteStream, cipher);
+            ObjectInputStream objectIn = new ObjectInputStream(cipherIn);
+            Message decryptedMsg = (Message) objectIn.readObject();
+            objectIn.close();
             return decryptedMsg;
         }
         catch(Exception e) {

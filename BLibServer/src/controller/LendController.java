@@ -137,6 +137,35 @@ public class LendController {
 		}
 	}
 	
+	/**
+	 * Returns Book's Serial the closest return date
+	 * @param connection
+	 * @param bookSerialId
+	 * @return LocalDate closestReturnDate
+	 */
+	public static LocalDate GetClosestReturnDateOfBookSerialId(Connection connection, int bookSerialId) {
+		if(connection == null) {
+			System.err.println("Could not connect to Database");
+			return null;
+		}
+				
+		try {
+			List<BorrowedBook> borrowedBookList = GetAllBorrowedBooks(connection);
+			LocalDate minReturnDate = null;
+			for(BorrowedBook bb : borrowedBookList) {
+				if(bb.getBorrowedBook().getSerial_id() == bookSerialId) { //look at only relevant borrowed books
+					if(minReturnDate == null || bb.getReturnDate().isBefore(minReturnDate)) {
+						minReturnDate = bb.getReturnDate();
+					}
+				}
+			}
+			return minReturnDate;
+		}
+		catch(Exception e) {
+			System.err.println("Could not check Book's closest Return Date.");
+			return null;
+		}
+	}
 	
 	/**
 	 * Returns whether a certain book serial is already lent by this subscriber

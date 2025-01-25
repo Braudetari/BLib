@@ -50,6 +50,7 @@ public class ChatClient extends AbstractClient
   Book book; //book received from server
   DetailedHistory history; //detailed history received from server
   List<DetailedHistory> historyList; //detailed history LIST received from server
+  Object[] bookAvailibilityInfo;
   
   //Constructors ****************************************************
   
@@ -100,21 +101,21 @@ public class ChatClient extends AbstractClient
 			  lastResponse = message.getRequest();
 			  switch(message.getRequest()) {
 			   case "msg":
-				   lastResponseMsg = message.getMessage();
+				   lastResponseMsg = (String)message.getMessage();
 				  break;
 			  	case "subscribers":
-			  			subscriberList = Subscriber.subscriberListFromString(message.getMessage());
+			  			subscriberList = Subscriber.subscriberListFromString((String)message.getMessage());
 			  		break;
 			  	case "getsubscriber":
-			  		subscriber=Subscriber.subscriberFromString(message.getMessage());
+			  		subscriber=Subscriber.subscriberFromString((String)message.getMessage());
 			  		break;
 			  	case "connected":
-			  			this.sessionId = message.getMessage();
+			  			this.sessionId = (String)message.getMessage();
 			  			break;
 			  			
 			  	case "login":
 			  		try{
-			  			String[] split = message.getMessage().split(";");
+			  			String[] split = ((String)message.getMessage()).split(";");
 			  			this.user = User.fromString(split[0]);
 			  			this.name = split[1];
 			  		}
@@ -125,7 +126,7 @@ public class ChatClient extends AbstractClient
 			  		
 			  	case "book":
 			  			try {
-			  				this.book = Book.fromString(message.getMessage());
+			  				this.book = Book.fromString((String)message.getMessage());
 			  			}
 			  			catch(Exception e) {
 			  				e.printStackTrace();
@@ -135,16 +136,25 @@ public class ChatClient extends AbstractClient
 			  	
 			  	case "books":
 				  		try {
-			  				this.books = Book.bookListFromString(message.getMessage());
+			  				this.books = Book.bookListFromString((String)message.getMessage());
 			  			}
 			  			catch(Exception e) {
 			  				e.printStackTrace();
 			  				System.err.println("Could not receive books list from server");
 			  			}
 			  		break;
+			  	case "bookinfo":
+			  			try {
+			  				this.bookAvailibilityInfo = (Object[])message.getMessage();
+			  			}
+			  			catch(Exception e) {
+			  				e.printStackTrace();
+			  				System.err.println("Could not receive book availibility info from server");
+			  			}
+			  		break;
 			  	case "history":
 			  		try {
-			  			this.historyList = DetailedHistory.detailedHistoryListFromString(message.getMessage());
+			  			this.historyList = DetailedHistory.detailedHistoryListFromString((String)message.getMessage());
 			  		}
 			  		catch(Exception e) {
 			  			e.printStackTrace();
@@ -153,7 +163,7 @@ public class ChatClient extends AbstractClient
 			  		break;
 			  	//Display error as Notice
 			  	case "error":
-			  			lastResponseError = message.getMessage();
+			  			lastResponseError = (String)message.getMessage();
 			  			break;
 			  	default:
 			  		break;
@@ -253,17 +263,9 @@ public class ChatClient extends AbstractClient
 			 Message msg;
 			 msg = new Message("login", chat.client.getSessionId(), "wow sauce");
 			 chat.client.handleMessageFromClientUI(msg);
-			 LocalDate from = LocalDate.of(2025, 1, 20);
-			 LocalDate to = LocalDate.of(2025, 1, 29);
-			 LocalDate late = LocalDate.of(2025, 1, 29);
-			 msg = new Message("getbook", chat.client.getSessionId(), "8");
+			 msg = new Message("bookinfo", chat.client.getSessionId(), "101");
 			 chat.client.handleMessageFromClientUI(msg);
-			 msg = new Message("getsubscriber", chat.client.getSessionId(), "4");
-			 chat.client.handleMessageFromClientUI(msg);
-			 msg = new Message("borrowbook", chat.client.getSessionId(), "102;4;"+DateUtil.DateToString(from)+";"+DateUtil.DateToString(to)+";serial");
-			 chat.client.handleMessageFromClientUI(msg);
-			 msg = new Message("returnbook", chat.client.getSessionId(), chat.client.book.toString()+";"+chat.client.subscriber.toString()+";"+DateUtil.DateToString(LocalDate.now()));
-			 chat.client.handleMessageFromClientUI(msg);
+			 System.out.println(chat.client.bookAvailibilityInfo[0] +" "+ chat.client.bookAvailibilityInfo[1]);
 			 String lr = chat.client.lastResponse;
 			 String lre = chat.client.lastResponseError;
 			 String lrm = chat.client.lastResponseMsg;

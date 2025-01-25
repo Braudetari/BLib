@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+
+<AnchorPane fx:id="paneScreen" prefHeight="380.0" prefWidth="734.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GuestController">
+   <children>
+      <AnchorPane fx:id="paneButtons" prefHeight="380.0" prefWidth="210.0">
+         <children>
+            <Button id="btnUpdate" fx:id="btnSearch" layoutX="29.0" layoutY="177.0" mnemonicParsing="false" onAction="#getSearchBtn" prefHeight="26.0" prefWidth="152.0" text="Search" />
+            <Button fx:id="btnBack" layoutX="85.0" layoutY="330.0" mnemonicParsing="false" onAction="#getBackBtn" text="Back" />
+         </children>
+      </AnchorPane>
+      <Pane fx:id="pane" layoutX="210.0" layoutY="4.0" prefHeight="371.0" prefWidth="519.0">
+         <padding>
+            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+         </padding></Pane>
+   </children>
+</AnchorPane>

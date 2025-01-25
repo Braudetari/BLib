@@ -27,7 +27,6 @@ public class NoticeFrameForLogout {
 	@FXML
 	private Label labelmsg;
 	
-	@FXML
 	private Stage parentStage;
 	
 	public void loadText(String text) {
@@ -39,7 +38,7 @@ public class NoticeFrameForLogout {
 	}
 	
 	public void start(Stage parentStage) throws IOException{
-		//this.parentStage=parentStage;
+		this.parentStage=parentStage;
 		FXMLLoader loader = new FXMLLoader();
 		Stage primaryStage = new Stage();
 		Pane root = loader.load(getClass().getResource("/gui/NoticeFrameForLogout.fxml").openStream());
@@ -51,7 +50,6 @@ public class NoticeFrameForLogout {
 		primaryStage.show();
 		NoticeFrameForLogout controller = loader.getController();
 		controller.loadText("Are you sure you want to Logout?");
-	    controller.setParentStage(parentStage);
 	}
 	
 	
@@ -65,15 +63,12 @@ public class NoticeFrameForLogout {
 	@FXML
 	public void getConfirmBtn(ActionEvent event) throws Exception {
 		//Close the MenuUI
-		if (parentStage != null) {
-	        	parentStage.close(); 
-		}
 		Stage thisStage = (Stage)((Node)event.getSource()).getScene().getWindow();
 		thisStage.close();
-		//request server to logout
+		//Logout from server
 		ClientUI.chat.LogoutFromServer();
 		//return to the LoginUI
-		(new LoginFrameController()).start(thisStage);
+		(new LoginFrameController()).start(parentStage);
 	}
 	
 }

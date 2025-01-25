@@ -1,5 +1,6 @@
 package gui;
 
+import client.ClientUI;
 import common.Book;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -76,7 +77,8 @@ public class SearchBookFrameController {
         FXMLLoader loader = new FXMLLoader();
         Parent root = loader.load(getClass().getResource("/gui/SearchBookFrame.fxml").openStream());
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("/gui/SearchBookFrame.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/gui/style.css").toExternalForm());
+        primaryStage.setResizable(false);
         primaryStage.setTitle("Search Book");
         primaryStage.setScene(scene);
         primaryStage.show();

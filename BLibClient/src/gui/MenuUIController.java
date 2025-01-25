@@ -23,47 +23,120 @@ import javafx.stage.Stage;
 public class MenuUIController {
 
 	@FXML
-	private Button btnConnection = null;
+	private Button btnSearch = null;
 	@FXML
 	private Button btnLogout = null;
 	@FXML
 	private Button btnManager = null;
+	@FXML
+	private Button btnBorrow = null;
+	@FXML
+	private Button btnReturnABook = null;
+	@FXML
+	private Button btnNotifications = null;
+	@FXML
+	private Button btnBorrowedBooks = null;
+	@FXML
+	private Button btnReservations = null;
+	@FXML
+	private Button btnPersonalInfo = null;
+	@FXML
+	private Label lblWelocome = null;
 	@FXML
 	private Pane pane=null;
 	@FXML
 	private AnchorPane paneScreen=null;
 	@FXML
 	private AnchorPane paneButtons=null;
-
 	
+
+	private User.UserType permission;
+	private String name;
 	private static Subscriber importedSubscriber;
 	
-	private void initializeButtons() {
-		Button[] listOfButtons = {btnConnection, btnManager};
-		User.UserType[] buttonPermission = {User.UserType.GUEST, User.UserType.LIBRARIAN};
+	private void initializeButtons(User.UserType permission, String name) {
+		Button[] listOfButtons = {btnSearch,btnNotifications, btnManager, btnBorrow, btnReturnABook,btnBorrowedBooks,btnReservations,btnPersonalInfo};
+		User.UserType[] buttonPermission = {User.UserType.LIBRARIAN, User.UserType.SUBSCRIBER,User.UserType.GUEST};
 		int currentButtonPos = 50;
 		int buttonPadding = 50;
-		
+//		if(permission==buttonPermission[2]) {
+//			listOfButtons[0].setVisible(true);
+//			listOfButtons[0].setManaged(true);
+//		}
+		lblWelocome.setText("Welcome "+name);
+		for(int i=2;i<5;i++) {
+			if(permission==buttonPermission[0]) {
+				listOfButtons[i].setVisible(true);
+	            listOfButtons[i].setManaged(true);
+			}
+			else {
+				listOfButtons[i].setVisible(false);
+	            listOfButtons[i].setManaged(false);
+			}
+		}
+		for(int i=5;i<listOfButtons.length;i++) {
+			if(permission==buttonPermission[1]) {
+				listOfButtons[i].setVisible(true);
+	            listOfButtons[i].setManaged(true);
+			}
+			else {
+				listOfButtons[i].setVisible(false);
+	            listOfButtons[i].setManaged(false);
+			}
+		}
 		
 	}
 	
-	public void start( User.UserType permission, String name) throws IOException {
+	public void start(Stage primaryStage, User.UserType permission, String name) throws IOException {
+		//this.permission=permission;
+		//this.name=name;
 		FXMLLoader loader = new FXMLLoader();
 		Pane root = loader.load(getClass().getResource("/gui/MenuUI.fxml").openStream());
 		Scene scene = new Scene(root);			
 		scene.getStylesheets().add(getClass().getResource("/gui/style.css").toExternalForm());
-		Stage primaryStage= new Stage();
 		primaryStage.setResizable(false);
 		primaryStage.setTitle("MenuUI");
 		primaryStage.setScene(scene);		
+		primaryStage.centerOnScreen();
 		primaryStage.show();
 		MenuUIController frame = loader.getController();
+		frame.initializeButtons(permission, name);
 		
 	}
 	
 	@FXML
 	private void getManagerBtn(ActionEvent event) {
-		
+		loadFXMLIntoPane("/gui/SubscriberManagerFrame.fxml"); //need to be complete
+	}
+	
+	@FXML
+	private void getBorrowBtn(ActionEvent event) {
+		loadFXMLIntoPane("/gui/LoanBookFrame.fxml");
+	}
+	
+	@FXML
+	private void getReturnABookBtn(ActionEvent event) {
+		loadFXMLIntoPane("/gui/ReturnBookFrame.fxml");
+	}
+	
+	@FXML
+	private void getNotificationsBtn(ActionEvent event) {
+		loadFXMLIntoPane("/gui/NotificationsFrame.fxml");
+	}
+	
+	@FXML
+	private void getBorrowedBooksBtn(ActionEvent event) {
+		loadFXMLIntoPane("/gui/BorrowBookFrame.fxml");
+	}
+	
+	@FXML
+	private void getReservationsBtn(ActionEvent event) {
+		//loadFXMLIntoPane("/gui/ReservationBookFrame.fxml");//need to do it
+	}
+	
+	@FXML
+	private void getPersonalInfoBtn(ActionEvent event) {
+		loadFXMLIntoPane("/gui/SubscriberInfoFrame.fxml");
 	}
 	
 	@FXML
@@ -84,22 +157,22 @@ public class MenuUIController {
 	
 	
 	@FXML 
-	private void getConnectionBtn(ActionEvent event) {
-		loadFXMLIntoPane("/gui/ConnectionFrame.fxml");
+	private void getSearchBtn(ActionEvent event) {
+		loadFXMLIntoPane("/gui/SearchBookFrame.fxml");
 	}
 	
-	private void loadFXMLIntoPane(String fxmlFile) {
+	private <T> void loadFXMLIntoPane(String fxmlFile) {
 		try {
 			pane.getChildren().clear();
 			
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
 			Node node = loader.load();
-			Object controller = loader.getController();
-			if (controller instanceof ConnectionFrameController) {
-                ConnectionFrameController connectionController = (ConnectionFrameController) controller;
-                // Interact with the controller if needed
-                // e.g., connectionController.initializeData(someData);
-            }
+//			Object controller = loader.getController();
+//			if (controller instanceof controllerName) {
+//				SearchBookFrameController connectionController = (SearchBookFrameController) controller;
+//                // Interact with the controller if needed
+//                // e.g., connectionController.initializeData(someData);
+//            }
 			pane.getChildren().add(node);
 		}
 		catch(Exception e) {

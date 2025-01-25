@@ -37,6 +37,7 @@ public class ScreenLoginController {
         Pane root = loader.load(getClass().getResource("/gui/LoginFrame.fxml").openStream());
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("/gui/style.css").toExternalForm());
+        primaryStage.setResizable(false);
         primaryStage.setTitle("Login");
         primaryStage.setScene(scene);
         primaryStage.show();

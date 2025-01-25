@@ -2,21 +2,34 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="paneScreen" prefHeight="380.0" prefWidth="734.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MenuUIController">
+<AnchorPane fx:id="paneScreen" prefHeight="535.0" prefWidth="803.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MenuUIController">
    <children>
-      <AnchorPane fx:id="paneButtons" prefHeight="380.0" prefWidth="210.0">
+      <Label fx:id="lblWelocome" layoutX="277.0" layoutY="49.0" prefHeight="46.0" prefWidth="372.0" textAlignment="CENTER" wrapText="true">
+         <font>
+            <Font name="System Bold" size="30.0" />
+         </font></Label>
+      <AnchorPane fx:id="paneButtons" layoutX="-8.0" layoutY="96.0" prefHeight="318.0" prefWidth="210.0">
          <children>
-            <Button id="btnUpdate" fx:id="btnConnection" layoutX="27.0" layoutY="22.0" mnemonicParsing="false" onAction="#getConnectionBtn" prefHeight="26.0" prefWidth="152.0" text="Connection" />
-            <Button id="btnClose" fx:id="btnManager" layoutX="27.0" layoutY="66.0" mnemonicParsing="false" onAction="#getManagerBtn" prefHeight="26.0" prefWidth="152.0" text="Manager" />
-            <Button fx:id="btnLogout" layoutX="77.0" layoutY="330.0" mnemonicParsing="false" onAction="#getLogoutBtn" text="Logout" />
+            <Button id="btnUpdate" fx:id="btnSearch" layoutX="27.0" layoutY="40.0" mnemonicParsing="false" onAction="#getSearchBtn" prefHeight="26.0" prefWidth="152.0" text="Search" />
+            <Button id="btnClose" fx:id="btnManager" layoutX="27.0" layoutY="85.0" mnemonicParsing="false" onAction="#getManagerBtn" prefHeight="26.0" prefWidth="152.0" text="Manager" />
+            <Button fx:id="btnLogout" layoutX="62.0" layoutY="282.0" mnemonicParsing="false" onAction="#getLogoutBtn" text="Logout" />
+            <Button id="btnClose" fx:id="btnBorrow" layoutX="27.0" layoutY="135.0" mnemonicParsing="false" onAction="#getBorrowBtn" prefHeight="26.0" prefWidth="152.0" text="Borrow" />
+            <Button id="btnClose" fx:id="btnReturnABook" layoutX="27.0" layoutY="185.0" mnemonicParsing="false" onAction="#getReturnABookBtn" prefHeight="26.0" prefWidth="152.0" text="Return a Book" />
+            <Button id="btnClose" fx:id="btnNotifications" layoutX="27.0" layoutY="233.0" mnemonicParsing="false" onAction="#getNotificationsBtn" prefHeight="26.0" prefWidth="152.0" text="Notifications" />
+            <Button id="btnClose" fx:id="btnBorrowedBooks" layoutX="27.0" layoutY="85.0" mnemonicParsing="false" onAction="#getBorrowedBooksBtn" prefHeight="26.0" prefWidth="152.0" text="Borrowed Books" />
+            <Button id="btnClose" fx:id="btnPersonalInfo" layoutX="27.0" layoutY="135.0" mnemonicParsing="false" onAction="#getPersonalInfoBtn" prefHeight="26.0" prefWidth="152.0" text="Personal Info" />
+            <Button id="btnClose" fx:id="btnReservations" layoutX="27.0" layoutY="185.0" mnemonicParsing="false" onAction="#getReservationsBtn" prefHeight="26.0" prefWidth="152.0" text="Reservations" />
          </children>
       </AnchorPane>
-      <Pane fx:id="pane" layoutX="210.0" layoutY="4.0" prefHeight="371.0" prefWidth="519.0">
+      <Pane fx:id="pane" layoutX="195.0" layoutY="81.0" prefHeight="439.0" prefWidth="593.0">
          <padding>
             <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-         </padding></Pane>
+         </padding>
+      </Pane>
    </children>
 </AnchorPane>

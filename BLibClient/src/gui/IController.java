@@ -1,8 +1,10 @@
 package gui;
 
 import common.*;
+import javafx.stage.Stage;
 
 public interface IController {
 	public void initializeFrame();
 	public void setPermission(User.UserType type);
+	public void setMainController(MenuUIController controller);
 }

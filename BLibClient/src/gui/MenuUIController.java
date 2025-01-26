@@ -158,26 +158,31 @@ public class MenuUIController {
 		loadFXMLIntoPane("/gui/SearchBookFrame.fxml");
 	}
 	
-	private void loadFXMLIntoPane(String fxmlFile) {
+	/**
+	 * Load new FXML into MenuUI's pane
+	 * @param fxmlFile
+	 * @return controller of new Child
+	 */
+	IController loadFXMLIntoPane(String fxmlFile) {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
 			Node node = loader.load();
-			
-			Object genericController = loader.getController();
-			if(genericController instanceof IController) {
-				IController controller = (IController)genericController;
-				controller.setPermission(permission);
-				controller.initializeFrame();
-			}
-			
 			pane.getChildren().clear();
 			pane.getChildren().add(node);
-			double nodeWidth = node.getBoundsInLocal().getWidth();
-			double paneWidth = pane.getBoundsInLocal().getWidth();
-			//pane.setMargin(node, new Insets(0,0,0,nodeWidth/3));
+			//Requires all sub-controllers ot be IController
+			Object genericController = loader.getController();
+			IController controller = null;
+			if(genericController instanceof IController) {
+				controller = (IController)genericController;
+				controller.setPermission(permission);
+				controller.setMainController(this);
+				controller.initializeFrame();
+			}
+			return controller;
 		}
 		catch(Exception e) {
 			e.printStackTrace();
+			return null;
 		}
 	}
 	

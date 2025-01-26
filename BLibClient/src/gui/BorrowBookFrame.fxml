@@ -6,7 +6,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.BorrowBookFrameController">
+<AnchorPane fx:id="parentNode" prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.BorrowBookFrameController">
    <children>
       <Label layoutX="37.0" layoutY="40.0" text="Subscriber ID" wrapText="true" />
       <TextField fx:id="subscriberIdTxt" layoutX="130.0" layoutY="35.0" prefWidth="200.0" />

@@ -1,10 +1,12 @@
 package gui;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import client.ClientUI;
 import common.Book;
+import common.DateUtil;
 import common.User;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -16,11 +18,15 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class SearchBookFrameController implements IController {
-
+	@FXML
+	private AnchorPane parentNode = null;
     @FXML
     private ComboBox<String> searchOptions;
 
@@ -57,9 +63,12 @@ public class SearchBookFrameController implements IController {
     @FXML
     private TableColumn<Book, String> colReturnDate;
     
+    private MenuUIController mainController;
 	private Book selectedBook=null;
 	private User.UserType permission;
     private List<Book> booksList = null;
+    private List<String> booksAvailibility = null;
+    private List<String> booksClosestReturnDate = null;
     private ObservableList<Book> booksData = FXCollections.observableArrayList();
     //private User.UserType permission;
     
@@ -69,14 +78,37 @@ public class SearchBookFrameController implements IController {
         searchOptions.getItems().addAll("Search by Name", "Search by Description", "Search by Genre");
         searchOptions.setValue("Search by Name");
 
+        booksAvailibility = new ArrayList<String>();
+        booksClosestReturnDate = new ArrayList<String>();
+        
         colBookName.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getName()));
 		colCategory.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getGenre()));
 		colLocation.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getLocation()));
 		colDescription.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getDescription()));
-//		colReturnDate.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getClosestReturnDate()));
-//		colStatus.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getStatus()));
-		colReturnDate.setCellValueFactory(cellData -> new SimpleObjectProperty<>("EMPTY"));
-		colStatus.setCellValueFactory(cellData -> new SimpleObjectProperty<>("EMPTY"));
+		colStatus.setCellValueFactory(cellData -> {
+			Book book = cellData.getValue();
+			int row = booksData.indexOf(book);
+			if(row>=0){
+				String availibility = booksAvailibility.get(row);
+				return new SimpleObjectProperty(availibility);
+			}
+			else {
+				return new SimpleObjectProperty("");	
+			}
+			
+		});
+		colReturnDate.setCellValueFactory(cellData -> {
+			Book book = cellData.getValue();
+			int row = booksData.indexOf(book);
+			if(row>=0){
+				String closestReturnDate = booksClosestReturnDate.get(row);
+				return new SimpleObjectProperty(closestReturnDate);
+			}
+			else {
+				return new SimpleObjectProperty("");	
+			}
+			
+		});
 		booksTable.setItems(booksData);
         
     }
@@ -139,8 +171,34 @@ public class SearchBookFrameController implements IController {
         }
         
         //Get BookInfo For List
-        //Here
+        Object[] bookInfoList = ClientUI.chat.requestServerForBookListAvailibilityInfo(booksList);
+        if(bookInfoList == null) {
+        	showAlert(AlertType.ERROR, "Error", "Could not get book search info");
+        	return;
+        }
         
+        try {
+	        @SuppressWarnings("unchecked")
+			List<Boolean> booleanList = (List<Boolean>)bookInfoList[0];
+	        @SuppressWarnings("unchecked")
+			List<LocalDate> dateList = (List<LocalDate>)bookInfoList[1];
+	        //must be same size
+	        booksAvailibility.clear();
+	        booksClosestReturnDate.clear();
+	        for(int i=0;i<booleanList.size();i++) {
+	        	if(booleanList.get(i) == true)
+	        		booksAvailibility.add("Available");
+	        	else
+	        		booksAvailibility.add("Unavailable");
+	        	if(dateList.get(i) != null)
+	        		booksClosestReturnDate.add(DateUtil.DateToString(dateList.get(i)));
+	        	else
+	        		booksClosestReturnDate.add("");
+	        }
+        }
+        catch(Exception e) {
+        	System.err.println("Could not show book availibility info");
+        }
     	booksData.clear();
         if(booksList != null) {
             booksData.addAll(booksList);
@@ -150,7 +208,8 @@ public class SearchBookFrameController implements IController {
 	@FXML
 	private void SelectRow(MouseEvent event) throws Exception{
 		selectedBook = booksTable.getSelectionModel().getSelectedItem();
-		if(selectedBook != null) {
+		//if a book is selected and available
+		if(selectedBook != null && booksAvailibility.get(booksData.indexOf(selectedBook)).contentEquals("Available")){
 			btnReserve.setDisable(false);
 			btnLend.setDisable(false);
 		}
@@ -163,14 +222,21 @@ public class SearchBookFrameController implements IController {
     @FXML
     private void Lend(ActionEvent event) {
     	System.out.println("Lend" + selectedBook);
-    	Stage thisStage = ((Stage)((Node)event.getSource()).getScene().getWindow());
     	try {
-			(new BorrowBookFrameController()).start(thisStage,"" + selectedBook.getId());
-			
+    		IController genericController = mainController.loadFXMLIntoPane("/gui/BorrowBookFrame.fxml");
+    		if(genericController instanceof BorrowBookFrameController) {
+    			BorrowBookFrameController borrowController = (BorrowBookFrameController)genericController;
+    			borrowController.initializeText("" + selectedBook.getId());
+    		}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+    }
+    
+    @Override
+    public void setMainController(MenuUIController controller) {
+    	this.mainController = controller;
     }
     
     @FXML

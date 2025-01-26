@@ -186,7 +186,7 @@ public class ClientController implements ChatIF
    * @return Object[2] with Object[0]=List of availibility<p> Object[1]=List of Closest Return Date
    */
   public Object[] requestServerForBookListAvailibilityInfo(List<Book> bookList) {
-	  SendRequestToServer("booksinfo", Book.bookListToString(bookList));
+	  SendRequestToServer("booksinfo", bookList);
 	  return getClientBookAvailibilityInfo();
   }
   

@@ -496,7 +496,7 @@ public class BLibServer extends AbstractServer
 		 				}
 		 			}
 		 			object = new Object[] {availableList, returnDateList};
-	 				sendMessageToClient("booksinfo", object, client, clientInfo);
+	 				sendMessageToClient("bookinfo", object, client, clientInfo);
 	 			}
 	 			catch(Exception e) {
 	 				System.err.println("Could not get book info");

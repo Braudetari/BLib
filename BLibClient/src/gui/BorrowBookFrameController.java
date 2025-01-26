@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.fxml.FXMLLoader;
@@ -15,9 +16,11 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 import client.ClientUI;
+import common.User.UserType;
 
-public class BorrowBookFrameController {
-
+public class BorrowBookFrameController implements IController {
+	@FXML
+	private AnchorPane parentNode;
     @FXML
     private TextField subscriberIdTxt;
   
@@ -43,14 +46,17 @@ public class BorrowBookFrameController {
         primaryStage.setTitle("Borrow Book");
         primaryStage.setScene(scene);
         primaryStage.show();
-        if(bookId!=null) {
-        	bookIdTxt.setText(bookId);
-        }
+ 
         
         //frame.initializeBookId(bookId);
         
     }
     
+    public void initializeText(String bookId) {
+        if(bookId!=null) {
+        	bookIdTxt.setText(bookId);
+        }
+    }
     
 //    private void setBookId(String bookId) {
 //    	if(bookId!=null) {
@@ -113,4 +119,22 @@ public class BorrowBookFrameController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+	@Override
+	public void initializeFrame() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setPermission(UserType type) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setMainController(MenuUIController controller) {
+		//TODO Aut-generated method stub
+		
+	}
 }

@@ -201,6 +201,26 @@ public class ClientController implements ChatIF
   }
   
   /**
+   * Request Server to Register Subscriber
+   * @param username
+   * @param password
+   * @param name
+   * @param email
+   * @param phone
+   * @return boolean of success
+   */
+  public boolean requestServerToRegisterSubscriber(String username, String password, String name, String email, String phone) {
+	  SendRequestToServer("registersubscriber", username+";"+password+";"+name+";"+email+";"+phone);
+	  if(client.lastResponse.contentEquals("msg")) {
+		  return true;
+	  }
+	  else {
+		  return false;
+	  }
+	  
+  }
+  
+  /**
    * Request Server to Borrow Book
    * e.g. Borrow Book using book's serial id
    * requestServerToBorrowBook("bookSerialId", "subscriberId", dateBorrow, dateReturn, "serial")

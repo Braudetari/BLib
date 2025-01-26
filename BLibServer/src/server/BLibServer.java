@@ -236,6 +236,39 @@ public class BLibServer extends AbstractServer
 		 		reply = new Message("getsubscriber", clientInfo.getSessionId(), subscriber.toString());
 		 		handleMessageToClient(reply, client);
 		 		break;
+		 	case "registersubscriber": //expected message String "username;password;name;email;phone"
+		 			try {
+		 				str = (String)message.getMessage();
+		 				String[] split = str.split(";");
+		 				String username = split[0];
+		 				String password = split[1];
+		 				String name = split[2];
+		 				String email = split[3];
+		 				String phone = split[4];
+		 				object = new Object[] {username, password, name, email, phone};
+		 			}
+		 			catch(Exception e) {
+		 				e.printStackTrace();
+		 				System.err.println("Could not parse subscriber info for registration");
+		 				sendMessageToClient("error", "Failed to Register: Could not parse subscriber information", client, clientInfo);
+		 				break;
+		 			}
+		 			try { //parse success, try to register
+		 				boolean success = SubscriberController.RegisterSubscriber(dbConnection.getConnection(), (String)object[0], (String)object[1], (String)object[2], (String)object[3], (String)object[4]);
+		 				if(success) {
+		 					sendMessageToClient("msg", "Subscriber " + (String)object[0] + " registered successfuly.", client, clientInfo);
+		 				}
+		 				else {
+		 					throw new Exception();
+		 				}
+		 				break;
+		 			}
+		 			catch(Exception e) {
+		 				e.printStackTrace();
+		 				System.err.println("Could not register subscriber");
+		 				sendMessageToClient("error", "Failed to Register: Could not register subscriber " + (String)object[0], client, clientInfo);
+		 				break;
+		 			}
 		 	case "logout":
 		 			clientInfo.setUser(null);
 		 			reply = new Message("msg", clientInfo.getSessionId(), "logged out from server");

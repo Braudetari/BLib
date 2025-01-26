@@ -206,10 +206,19 @@ public class BLibServer extends AbstractServer
 				 handleMessageToClient(reply, client);
 		 		break;
 		 	
-		 	case "getsubscribers":
-		 		List<Subscriber> subscriberList = SubscriberController.getAllSubscribers(dbConnection.getConnection());
-		 		reply = new Message("subscribers", clientInfo.getSessionId(),Subscriber.subscriberListToString(subscriberList));
-		 		handleMessageToClient(reply, client);
+		 	case "getsubscribers": //expected message : String[2] = {element, value}
+		 		try {
+		 			String[] array = (String[])message.getMessage();
+		 			String element = array[0];
+		 			String value = array[1];
+			 		List<Subscriber> subscriberList = SubscriberController.getSubscribersByElement(dbConnection.getConnection(), element, value);
+			 		sendMessageToClient("subscribers", subscriberList, client, clientInfo);
+		 		}
+		 		catch(Exception e) {
+		 			e.printStackTrace();
+		 			System.err.println("Could not get subscribers by element");
+		 			sendMessageToClient("error", "Could not get subscribers list from server", client, clientInfo);
+		 		}
 		 		break;
 		 		
 		 	case "updatesubscriber":

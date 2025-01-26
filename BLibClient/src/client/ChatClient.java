@@ -74,20 +74,6 @@ public class ChatClient extends AbstractClient
     //openConnection();
   }
 
-  //More Methods
-  
-  public List<Subscriber> getSubscriberList(){
-	  if(subscriberList == null) {
-		  return null;
-	  }
-	  return Collections.unmodifiableList(subscriberList);
-  }
-  public Subscriber getSubscriber(){
-	  if(subscriber == null) {
-		  return null;
-	  }
-	  return (subscriber);
-  }
   //Instance methods ************************************************
    
   /**
@@ -107,7 +93,13 @@ public class ChatClient extends AbstractClient
 				   lastResponseMsg = (String)message.getMessage();
 				  break;
 			  	case "subscribers":
-			  			subscriberList = Subscriber.subscriberListFromString((String)message.getMessage());
+			  			try {
+			  				this.subscriberList = (List<Subscriber>)message.getMessage();
+			  			}
+			  			catch(Exception e) {
+			  				e.printStackTrace();
+			  				System.err.println("Could not search for subscriber from Server");
+			  			}
 			  		break;
 			  	case "getsubscriber":
 			  		subscriber=Subscriber.subscriberFromString((String)message.getMessage());

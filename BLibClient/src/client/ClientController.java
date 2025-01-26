@@ -136,16 +136,16 @@ public class ClientController implements ChatIF
    */
   public Subscriber requestServerForSubscriber(String id){
 	  SendRequestToServer("getsubscriber", id);
-	  return getClientSubscriber();
+	  return client.subscriber;
   }
   
   /**
    * Request Server for Subscriber List of all Subscribers
    * @return Subscriber List
    */
-  public List<Subscriber> requestServerForSubscriberList(){
-	  SendRequestToServer("getsubscribers", null);
-	  return getClientSubscriberList();
+  public List<Subscriber> requestServerForSubscriberList(String element, String value){
+	  SendRequestToServer("getsubscribers", new String[] {element, value});
+	  return client.subscriberList;
   }
   
   /**
@@ -367,7 +367,7 @@ public class ClientController implements ChatIF
    * @return Subscriber List
    */
   public List<Subscriber> getClientSubscriberList() {
-	  return client.getSubscriberList();
+	  return client.subscriberList;
   }
   
   /**

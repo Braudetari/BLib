@@ -6,13 +6,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
+import common.Book;
 import common.Subscriber;
 import common.User;
 import common.User.UserType;
 import server.DatabaseConnection;
 
 public class SubscriberController {
+	
 	   public static ArrayList<Subscriber> getAllSubscribers(Connection connection) {
 	        ArrayList<Subscriber> subscribers = new ArrayList<>();
 
@@ -43,6 +46,64 @@ public class SubscriberController {
 
 	        return subscribers;
 	    }
+	   
+	   
+	   
+	   public static List<Subscriber> getSubscribersByElement(Connection connection, String element, String value){
+		   if(connection == null) {
+				System.err.println("Could not connect to Database");
+				return null;
+			}
+			int integerValue;
+			boolean valueIsInteger = false;
+			PreparedStatement pstmt = null;
+			try {
+				integerValue = Integer.parseInt(value);
+				valueIsInteger = true;
+			}
+			catch(Exception e) {
+				valueIsInteger = false;
+			}
+			try {
+				//Incase value is of type Int
+				if(valueIsInteger) {
+					pstmt = connection.prepareStatement("SELECT * FROM subscriber WHERE " + element + " = ?");
+					pstmt.setInt(1, Integer.parseInt(value));
+				}
+				else {
+					pstmt = connection.prepareStatement("SELECT * FROM subscriber WHERE LOWER(" + element + ") LIKE LOWER(?)");
+					pstmt.setString(1, "%" + value + "%");
+				}
+				ResultSet rs = pstmt.executeQuery();
+				List<Subscriber> subscriberList = new ArrayList<Subscriber>();
+				while(rs.next()) {
+					try {
+						int subscriber_id = rs.getInt("subscriber_id");
+						Subscriber subscriber = SubscriberController.getSubscriberById(connection, subscriber_id);
+						subscriberList.add(subscriber);
+					}
+					catch(Exception e){
+						e.printStackTrace();
+						System.err.println("Could not add a subscriber to list using element "+element+" with value "+value+".");
+					}
+				}
+				return subscriberList;
+			}
+			catch(SQLException ex) {
+				ex.printStackTrace();
+				System.err.println("Could not Get Subscribers from Database");
+				return null;
+			}
+	   }
+	   
+	   /**
+	    * Update Subscriber Personal Information
+	    * @param connection
+	    * @param subscriberId
+	    * @param newEmail
+	    * @param newPhoneNumber
+	    * @return success/fail boolean
+	    */
 	    public static boolean updateSubscriberInfo(Connection connection, int subscriberId, String newEmail, String newPhoneNumber) {
 	        
 	        if (connection == null) {

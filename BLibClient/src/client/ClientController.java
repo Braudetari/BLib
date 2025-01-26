@@ -201,6 +201,41 @@ public class ClientController implements ChatIF
   }
   
   /**
+   * Request Server to check for books in a list whether they are extendable
+   * @param bookIdList
+   * @return Object data of Boolean List, entry for each book in the same order
+   */
+  public List<Boolean> requestServerForBookListExtendability(List<Integer> bookIdList) {
+	  SendRequestToServer("arebooksextendable", (Object)bookIdList);
+	  return (List<Boolean>)client.data;
+  }
+  
+  /**
+   * Request Server to check whether a book is extendable
+   * @param bookId
+   * @return Object data of Boolean (true/false)
+   */
+  public Boolean requestServerForBookExtendability(int bookId) {
+	  SendRequestToServer("isbookextendable", (Object)bookId);
+	  return (Boolean)client.data;
+  }
+  
+  /**
+   * Request Server to Extend a book By certain amount of days
+   * @param bookId
+   * @param amountOfDays
+   * @return 0=fail/error, 1=success
+   */
+  public int requestServerToExtendBookReturnDate(int bookId, int amountOfDays) {
+	  SendRequestToServer("extendbook", (new int[] {bookId, amountOfDays}));
+	  String lr[] = getClientLastResponses();
+	  if(lr[0].contentEquals("error"))
+		  return 0;
+	  else
+		  return 1;
+  }
+  
+  /**
    * Request Server to Register Subscriber
    * @param username
    * @param password
@@ -236,6 +271,17 @@ public class ClientController implements ChatIF
   public void requestServerToBorrowBook(String bookIdOrSerial, String subscriberId, LocalDate borrowDate, LocalDate returnDate, String bookIdType) {
 	  SendRequestToServer("borrowbook", bookIdOrSerial+";"+subscriberId+";"+DateUtil.DateToString(borrowDate)+";"+DateUtil.DateToString(returnDate)+";"+bookIdType);
   }
+  
+  /**
+   * Request client for borrowed books list by subscriber
+   * @param subscriberId
+   * @return List of BorrowedBooks
+   */
+  public List<BorrowedBook> requestServerForBorrowedBooksBySubscriber(int subscriberId){
+	  SendRequestToServer("borrowedbooks", (Integer)subscriberId);
+	  return client.borrowedBooks;
+  }
+  
   
   /**
    * Request Server to Return book

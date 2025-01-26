@@ -340,6 +340,21 @@ public class BLibServer extends AbstractServer
 	 				handleMessageToClient(reply, client);
 	 			}
 		 		break;
+		 	case "borrowedbooks": //expected to get message of "subscriberId"
+		 			try {
+		 				int subscriber_id = (Integer)message.getMessage();
+		 				List<BorrowedBook> borrowedBookList = LendController.GetBorrowedBooksBySubscriberId(dbConnection.getConnection(), subscriber_id);
+		 				if(borrowedBookList == null) {
+		 					throw new Exception();
+		 				}
+		 				sendMessageToClient("borrowedbooks", borrowedBookList, client, clientInfo);
+		 			}
+		 			catch(Exception e) {
+		 				str = "Could not retreive borrowed books by subscriber";
+		 				System.err.println(str);
+		 				sendMessageToClient("error", str, client, clientInfo);
+		 			}
+		 		break;
 		 	case "borrowbook": //expected to get message of "bookSerial/Id;subscriberId;dateFrom;dateTo;id/serial"
 		 			User clientUser = clientInfo.getUser();
 		 			if(clientUser == null) {
@@ -545,6 +560,77 @@ public class BLibServer extends AbstractServer
 		 				e.printStackTrace();
 		 				System.err.println("Could not reserve book");
 		 				sendMessageToClient("error","Could not reserve book", client, clientInfo);
+		 			}
+		 		break;
+		 	case "isbookextendable": //expected message: "bookId"
+		 			int bookId;
+		 			try {
+		 				bookId = Integer.parseInt((String)message.getMessage());
+		 				result = ExtendController.IsBookExtendable(dbConnection.getConnection(), bookId);
+		 				if(result<0)
+		 					throw new Exception();
+		 				else if(result==0)
+		 					sendMessageToClient("data",false,client,clientInfo);
+		 				else
+		 					sendMessageToClient("data",true,client,clientInfo);
+		 			}
+		 			catch(Exception e) {
+		 				e.printStackTrace();
+		 				str = "Could not check if book is extendable";
+		 				sendMessageToClient("error", str, client, clientInfo);
+		 				System.err.println(str);
+		 			}
+		 		break;
+		 	case "arebooksextendable": //expected message: "List<Integer> bookId"
+	 			try {
+	 				List<Integer> bookIds = (List<Integer>)message.getMessage();
+	 				if(bookIds == null)
+	 					throw new Exception();
+	 				List<Boolean> extendableList = new  ArrayList<Boolean>();
+	 				for(int id : bookIds) {
+		 				result = ExtendController.IsBookExtendable(dbConnection.getConnection(), id);
+		 				extendableList.add((result>0));
+	 				}
+	 				sendMessageToClient("data", extendableList, client, clientInfo);
+	 			}
+	 			catch(Exception e) {
+	 				e.printStackTrace();
+	 				str = "Could not check if books in list are extendable";
+	 				sendMessageToClient("error", str, client, clientInfo);
+	 				System.err.println(str);
+	 			}
+	 		break;
+		 	case "extendbook": //expected message "int[2] = {bookId, amountOfDays}"
+		 			try {
+		 				user = clientInfo.getUser();
+		 				subscriber = SubscriberController.getSubscriberById(dbConnection.getConnection(), user.getId());
+		 				if(subscriber.isFrozen()) {
+		 					sendMessageToClient("error", "Can't extend book, account is frozen.", client, clientInfo);
+		 					break;
+		 				}
+		 				//Extend Book by amountOfDays
+		 				int[] values = (int[])message.getMessage();
+		 				int book_id = values[0];
+		 				int amountOfDays = values[1];
+		 				LocalDate newDate = ExtendController.ExtendBookReturnDate(dbConnection.getConnection(), book_id, amountOfDays);
+		 				String newDateStr = DateUtil.DateToString(LocalDate.now().plusDays(amountOfDays));
+		 				if(newDate == null) {
+		 					sendMessageToClient("error", "Could not extend Book to " + newDateStr, client, clientInfo);
+		 					break;
+		 				}
+		 				//Notify client and record action
+		 				sendMessageToClient("msg", "Book's return date was extended by " + amountOfDays +" days", client, clientInfo);
+		 				book = BookController.GetBookById(dbConnection.getConnection(), book_id);
+		 				dh = new DetailedHistory(user, ActionType.EXTEND, LocalDate.now(), subscriber.getSubscriberName() + " Extended his book " + "\""+book.getName()+"\" to date "+ newDateStr);
+		 				int success = DetailedHistoryController.RecordHistory(dbConnection.getConnection(), dh);
+		 				if(success <= 0) {
+		 					System.err.println("Could not record history for extendbook");
+		 				}
+		 			}
+		 			catch(Exception e) {
+		 				str = "Could not parse info for extendbook";
+		 				System.err.println(str);
+		 				sendMessageToClient("error", str, client, clientInfo);
 		 			}
 		 		break;
 		 	case "encrypted":

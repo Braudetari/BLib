@@ -138,6 +138,36 @@ public class LendController {
 	}
 	
 	/**
+	 * Returns a list of borrowed books by a subscriber
+	 * @param connection
+	 * @param subscriberId
+	 * @return List<BorrowedBook> borrowedBookList
+	 */
+	public static List<BorrowedBook> GetBorrowedBooksBySubscriberId(Connection connection, int subscriberId){
+		if(connection == null) {
+			System.err.println("Could not connect to Database");
+			return null;
+		}
+		try {
+			PreparedStatement pstmt = connection.prepareStatement("SELECT book_id FROM borrowed_book WHERE subscriber_id = ?");
+			pstmt.setInt(1, subscriberId);
+			ResultSet rs = pstmt.executeQuery();
+			List<BorrowedBook> borrowedBookList = new ArrayList<BorrowedBook>();
+			while(rs.next()) {
+				int book_id = rs.getInt("book_id");
+				BorrowedBook bb = LendController.GetBorrowedBookByBookId(connection, book_id);
+				borrowedBookList.add(bb);
+			}
+			return borrowedBookList;
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			System.err.println("Could not get a borrowed book list by subscriber");
+			return null;
+		}
+	}
+	
+	/**
 	 * Returns Book's Serial the closest return date
 	 * @param connection
 	 * @param bookSerialId

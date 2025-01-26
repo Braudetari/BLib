@@ -51,7 +51,9 @@ public class ChatClient extends AbstractClient
   DetailedHistory history; //detailed history received from server
   List<DetailedHistory> historyList; //detailed history LIST received from server
   Object[] bookAvailibilityInfo;
-  int intResponse; 
+  Object data;
+  int intResponse;
+  List<BorrowedBook> borrowedBooks; 
   
   //Constructors ****************************************************
   
@@ -169,6 +171,24 @@ public class ChatClient extends AbstractClient
 			  		catch(Exception e) {
 			  			e.printStackTrace();
 			  			System.err.println("Could not receive history list from server");
+			  		}
+			  		break;
+			  	case "borrowedbooks":
+			  			try {
+			  				this.borrowedBooks = (List<BorrowedBook>)message.getMessage();
+			  			}
+			  			catch(Exception e) {
+			  				e.printStackTrace();
+			  				System.err.println("Could not receive borrowed book list from server");
+			  			}
+			  		break;
+			  	case "data":
+			  		try {
+			  			this.data = message.getMessage();
+			  		}
+			  		catch(Exception e) {
+			  			e.printStackTrace();
+			  			System.err.println("Could not receive data");
 			  		}
 			  		break;
 			  	//Display error as Notice

@@ -240,11 +240,11 @@ public class ClientController implements ChatIF
   /**
    * Request Server to Return book
    * Return Date set as time of method activation
-   * @param book
+   * @param bookId
    * @param subscriber
    */
-  public void requestServerToReturnBook(Book book, Subscriber subscriber) {
-	  SendRequestToServer("returnbook", book+";"+subscriber+";"+DateUtil.DateToString(LocalDate.now()));
+  public void requestServerToReturnBook(String bookId) {
+	  SendRequestToServer("returnbook", bookId+";"+DateUtil.DateToString(LocalDate.now()));
   }
   
   /**

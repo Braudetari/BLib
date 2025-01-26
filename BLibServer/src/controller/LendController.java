@@ -303,21 +303,20 @@ public class LendController {
 	}
 	
 	/**
-	 * Return a bookSerialId from a subscriber at certain date
+	 * Return a book using bookId at returnDate
 	 * @param connection
-	 * @param bookSerialId
-	 * @param subscriberId
+	 * @param bookId
 	 * @param returnDate
 	 * @return -1=error, 0=fail, 1=success
 	 */
-	public static int ReturnBook(Connection connection, Book book, Subscriber subscriber, LocalDate returnDate) {
+	public static int ReturnBook(Connection connection, Book book, LocalDate returnDate) {
 		if(connection == null) {
 			System.err.println("Could not connect to Database");
 			return -1;
 		}
 		
 		try {
-			BorrowedBook borrowedbook = GetBorrowedBookByBookSerialIdAndSubscriberId(connection, book.getSerial_id(), subscriber.getSubscriberId());
+			BorrowedBook borrowedbook = GetBorrowedBookByBookId(connection, book.getId());
 			PreparedStatement pstmt = connection.prepareStatement("DELETE FROM borrowed_book WHERE subscriber_id = ? AND book_id IN (SELECT book_id FROM book WHERE book_serial_id = ?)");
 			pstmt.setInt(1, borrowedbook.getBorrowingSubscriber().getSubscriberId());
 			pstmt.setInt(2, borrowedbook.getBorrowedBook().getSerial_id());
@@ -327,13 +326,13 @@ public class LendController {
 				return 0;
 			}
 			//Record action
-			User user = UserController.getUserById(connection, subscriber.getSubscriberId());
+			User user = UserController.getUserById(connection, borrowedbook.getBorrowingSubscriber().getSubscriberId());
 			DetailedHistory dh = new DetailedHistory(user,ActionType.RETURN,returnDate,"Returned bookId "+book.getId()+"");
 			int result = DetailedHistoryController.RecordHistory(connection, dh);
 			
 			//Freeze subscriber if returned late
 			if(borrowedbook.getReturnDate().isBefore(returnDate) && result>0) {
-				SubscriberController.SetFreezeSubscriber(connection, subscriber.getSubscriberId(), true);
+				SubscriberController.SetFreezeSubscriber(connection, borrowedbook.getBorrowingSubscriber().getSubscriberId(), true);
 				dh = new DetailedHistory(user, ActionType.FREEZE,returnDate,"Subscriber frozen for returning book "+book.getId()+" after return time "+DateUtil.DateToString(borrowedbook.getBorrowedDate()));
 				DetailedHistoryController.RecordHistory(connection, dh);
 				result = 2;

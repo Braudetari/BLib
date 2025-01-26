@@ -396,7 +396,7 @@ public class BLibServer extends AbstractServer
 		 					break;
 		 				}
 		 			}
-		 	case "returnbook": //expected message : "book;subscriber;returnDate"
+		 	case "returnbook": //expected message : "bookId;returnDate"
 		 			str = (String)message.getMessage();
 		 			user = clientInfo.getUser();
 		 			//Permission Handling: Librarian
@@ -413,11 +413,10 @@ public class BLibServer extends AbstractServer
 		 			try {
 		 				//parse message to objects
 			 			String[] split = str.split(";");
-			 			book = Book.fromString(split[0]);
-			 			subscriber = Subscriber.subscriberFromString(split[1]);
-			 			date = DateUtil.DateFromString(split[2]);
+			 			book = BookController.GetBookById(dbConnection.getConnection(),Integer.parseInt(split[0]));
+			 			date = DateUtil.DateFromString(split[1]);
 			 			//return book
-			 			result = LendController.ReturnBook(dbConnection.getConnection(), book, subscriber, date);
+			 			result = LendController.ReturnBook(dbConnection.getConnection(), book, date);
 			 			//error handling
 			 			if(result<=0) {
 			 				reply = new Message("error", clientInfo.getSessionId(), "Failed to return book");

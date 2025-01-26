@@ -1,5 +1,6 @@
 package gui;
 
+import client.ClientUI;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -33,9 +34,13 @@ public class ReturnBookFrameController {
     }
 
     private boolean returnBook(String bookId) {
-        // Placeholder for actual logic to handle the book return (e.g., update the database or inventory)
-        // Here, we simulate a successful return for any valid book ID.
-        return true;  // In a real system, you'd check if the book ID exists and update the status.
+	        ClientUI.chat.requestServerToReturnBook(bookId);
+	        String[] lr = ClientUI.chat.getClientLastResponses();
+	        if(lr[0] != null && lr[0].contentEquals("error")) {
+	        	showAlert("Return Book error", lr[2]);
+	        	return false;
+	        }
+	        return true;
     }
 
     private void showAlert(String title, String message) {

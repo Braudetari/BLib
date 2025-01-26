@@ -50,6 +50,7 @@ public class ChatClient extends AbstractClient
   Book book; //book received from server
   DetailedHistory history; //detailed history received from server
   List<DetailedHistory> historyList; //detailed history LIST received from server
+  List<Notification> notifications;
   Object[] bookAvailibilityInfo;
   Object data;
   int intResponse;
@@ -161,7 +162,6 @@ public class ChatClient extends AbstractClient
 			  			this.historyList = DetailedHistory.detailedHistoryListFromString((String)message.getMessage());
 			  		}
 			  		catch(Exception e) {
-			  			e.printStackTrace();
 			  			System.err.println("Could not receive history list from server");
 			  		}
 			  		break;
@@ -170,9 +170,15 @@ public class ChatClient extends AbstractClient
 			  				this.borrowedBooks = (List<BorrowedBook>)message.getMessage();
 			  			}
 			  			catch(Exception e) {
-			  				e.printStackTrace();
 			  				System.err.println("Could not receive borrowed book list from server");
 			  			}
+			  		break;
+			  	case "notifications":
+			  		try {
+			  			this.notifications = (List<Notification>)message.getMessage();
+			  		}catch(Exception e) {
+			  			System.err.println("Could not receive notifications");
+			  		}
 			  		break;
 			  	case "data":
 			  		try {

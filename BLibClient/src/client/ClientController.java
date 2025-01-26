@@ -255,6 +255,7 @@ public class ClientController implements ChatIF
 	  
   }
   
+  
   /**
    * Request Server to Borrow Book
    * e.g. Borrow Book using book's serial id
@@ -302,6 +303,16 @@ public class ClientController implements ChatIF
   public List<DetailedHistory> requestServerForHistoryList(int userId){
 	  SendRequestToServer("gethistory", ""+userId);
 	  return client.historyList;
+  }
+  
+  /**
+   * Request Server for Notifications for a specific subscriber
+   * @param subscriberId
+   * @return List<Notification>
+   */
+  public List<Notification> requestServerForNotifications(int subscriberId){
+	  SendRequestToServer("getnotifications", (Integer)subscriberId);
+	  return client.notifications;
   }
   
   /**

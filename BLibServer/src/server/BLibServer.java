@@ -653,6 +653,24 @@ public class BLibServer extends AbstractServer
 		 				sendMessageToClient("error", str, client, clientInfo);
 		 			}
 		 		break;
+		 	case "getnotifications": //expected message "(Integer)subscriberId"
+		 		try {
+		 			subscriberId = (Integer)message.getMessage();
+		 			subscriber = SubscriberController.getSubscriberById(dbConnection.getConnection(), subscriberId);
+		 			if(subscriber == null)
+		 				throw new Exception();
+		 			List<Notification> notificationList = NotificationController.GetNotificationsFromDatabase(dbConnection.getConnection(), subscriber.getNotificationHistory());
+		 			if(notificationList == null)
+		 				notificationList = new ArrayList<Notification>();
+		 			
+		 			sendMessageToClient("notifications", notificationList, client, clientInfo);
+		 			
+		 		}
+		 		catch(Exception e) {
+		 			e.printStackTrace();
+		 			System.err.println("Could not get notifications for subscriber");
+		 		}
+		 		break;
 		 	case "encrypted":
 		 		break;
 		 	default:

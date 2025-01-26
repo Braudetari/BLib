@@ -432,6 +432,34 @@ public class BLibServer extends AbstractServer
 		 				sendMessageToClient("error", "Could not get book availibility info", client, clientInfo);
 		 			}
 		 		break;
+		 	case "booksinfo": //expected message "List<Book>"
+	 			try {
+		 			List<Book> bookList = (List<Book>)message.getMessage();
+		 			List<Boolean> availableList = new ArrayList<Boolean>();
+		 			List<LocalDate> returnDateList = new ArrayList<LocalDate>();
+		 			for(Book bookInList : bookList) {
+		 				result = BookController.CheckBookSerialAvailability(dbConnection.getConnection(), bookInList.getSerial_id());
+		 				if(result>0) {
+		 					returnDateList.add(null);
+		 					availableList.add(true);
+		 				}
+		 				else {
+		 					date = LendController.GetClosestReturnDateOfBookSerialId(dbConnection.getConnection(), bookInList.getSerial_id());
+		 					if(date == null) {
+		 						sendMessageToClient("error", "Could not get book availibility info, checking closest Return Date failed", client, clientInfo);
+		 					}
+		 					returnDateList.add(date);
+		 					availableList.add(false);
+		 				}
+		 			}
+		 			object = new Object[] {availableList, returnDateList};
+	 				sendMessageToClient("booksinfo", object, client, clientInfo);
+	 			}
+	 			catch(Exception e) {
+	 				System.err.println("Could not get book info");
+	 				sendMessageToClient("error", "Could not get book availibility info", client, clientInfo);
+	 			}
+	 		break;
 		 	case "encrypted":
 		 		break;
 		 	default:

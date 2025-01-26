@@ -117,6 +117,42 @@ public class ReserveController {
 		}
 	}
 	
+	
+	/**
+	 * Returns the subscriber that reserved a bookId
+	 * @param connection
+	 * @param bookId
+	 * @return Subscriber
+	 */
+	public static Subscriber GetSubscriberThatReservedBook(Connection connection, int bookId) {
+		if(connection == null) {
+			System.err.println("Could not connect to database");
+			return null;
+		}
+		
+		try {
+			PreparedStatement pstmt = connection.prepareStatement("SELECT subscriber_id FROM `order` WHERE book_id = ?");
+			pstmt.setInt(1, bookId);
+			ResultSet rs = pstmt.executeQuery();
+			int subscriberId = 0;
+			if(rs.next()) {
+				subscriberId = rs.getInt("subscriber_id");
+			}
+			if(subscriberId <= 0) {
+				throw new Exception();
+			}
+			Subscriber subscriber = SubscriberController.getSubscriberById(connection, subscriberId);
+			if(subscriber == null)
+				throw new Exception();
+			return subscriber;
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			System.err.println("Could not return subscriber who reserved a book");
+			return null;
+		}
+	}
+	
 	/**
 	 * Reserve a book
 	 * @param connection

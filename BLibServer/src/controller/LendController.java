@@ -27,7 +27,7 @@ public class LendController {
 			List<BorrowedBook> borrowedBooks = new ArrayList<BorrowedBook>();
 			while(rs.next()) {
 				int book_id = rs.getInt("book_id");
-				int subscriber_id = rs.getInt("book_id");
+				int subscriber_id = rs.getInt("subscriber_id");
 				int return_date_id = rs.getInt("return_date_id");
 				int borrowed_date_id = rs.getInt("borrowed_date_id");
 				Book book = BookController.GetBookById(connection, book_id); 
@@ -363,8 +363,12 @@ public class LendController {
 			//Freeze subscriber if returned late by a week
 			if(borrowedbook.getReturnDate().isAfter(returnDate.plusDays(6)) && result>0) {
 				SubscriberController.SetFreezeSubscriber(connection, borrowedbook.getBorrowingSubscriber().getSubscriberId(), true);
+				//Record History
 				dh = new DetailedHistory(user, ActionType.FREEZE,returnDate,"Subscriber frozen for returning book "+book.getId()+" after return time "+DateUtil.DateToString(borrowedbook.getBorrowedDate()));
 				DetailedHistoryController.RecordHistory(connection, dh);
+				//Notify User on Freeze
+				Notification n = new Notification(borrowedbook.getBorrowingSubscriber(), LocalDate.now(), "Returned book "+borrowedbook.getBorrowedBook().getName()+" late, account has been frozen for a month.");
+				NotificationController.Notify(connection, n);
 				result = 2;
 			}
 			

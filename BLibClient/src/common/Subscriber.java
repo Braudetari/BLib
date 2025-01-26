@@ -15,6 +15,7 @@ public class Subscriber implements Serializable{
 	private int subscriberId;
     private String subscriberName;
     private int detailedSubscriptionHistory;
+    private int notificationHistory;
     private String subscriberPhoneNumber;
     private String subscriberEmail;
     private int subscriberFrozen;
@@ -27,16 +28,18 @@ public class Subscriber implements Serializable{
     	this.subscriberId = subscriber.subscriberId;
     	this.subscriberName = subscriber.subscriberName;
     	this.detailedSubscriptionHistory = subscriber.detailedSubscriptionHistory;
+    	this.notificationHistory = subscriber.notificationHistory;
     	this.subscriberPhoneNumber = subscriber.subscriberPhoneNumber;
     	this.subscriberEmail = subscriber.subscriberEmail;
     	this.subscriberFrozen = subscriber.subscriberFrozen;
     }
     
     // Constructor
-    public Subscriber(int subscriberId, String subscriberName, int detailedSubscriptionHistory, String subscriberPhoneNumber, String subscriberEmail, int frozen) {
+    public Subscriber(int subscriberId, String subscriberName, int detailedSubscriptionHistory, int notificationHistory, String subscriberPhoneNumber, String subscriberEmail, int frozen) {
         this.subscriberId = subscriberId;
         this.subscriberName = subscriberName;
         this.detailedSubscriptionHistory = detailedSubscriptionHistory;
+        this.notificationHistory = notificationHistory;
         this.subscriberPhoneNumber = subscriberPhoneNumber;
         this.subscriberEmail = subscriberEmail;
         this.subscriberFrozen = frozen;
@@ -67,6 +70,15 @@ public class Subscriber implements Serializable{
 
     public void setDetailedSubscriptionHistory(int detailedSubscriptionHistory) {
         this.detailedSubscriptionHistory = detailedSubscriptionHistory;
+    }
+    
+ // Getter and setter for notificationHistory
+    public int getNotificationHistory() {
+        return notificationHistory;
+    }
+
+    public void setNotificationHistory(int notificationHistory) {
+        this.notificationHistory = notificationHistory;
     }
 
     // Getter and setter for subscriberPhoneNumber
@@ -101,6 +113,7 @@ public class Subscriber implements Serializable{
         return new String("["+subscriberId+","
         					+subscriberName+","
         					+detailedSubscriptionHistory+","
+        					+notificationHistory+","
         					+subscriberPhoneNumber+","
         					+subscriberEmail+","
         					+subscriberFrozen
@@ -113,6 +126,7 @@ public class Subscriber implements Serializable{
     	int subscriberId;
     	String subscriberName;
     	int detailedSubscriptionHistory;
+    	int notificationHistory;
     	String subscriberPhoneNumber;
     	String subscriberEmail;
     	int subscriberFrozen;
@@ -120,6 +134,7 @@ public class Subscriber implements Serializable{
     		subscriberId = Integer.parseInt(tokenizer.nextToken().trim());
     		subscriberName = tokenizer.nextToken().trim();
             detailedSubscriptionHistory = Integer.parseInt(tokenizer.nextToken().trim());
+            notificationHistory = Integer.parseInt(tokenizer.nextToken().trim());
     	}
         catch(NoSuchElementException e) {
         	   return null;
@@ -142,7 +157,7 @@ public class Subscriber implements Serializable{
         catch(NoSuchElementException e) {
         	subscriberFrozen = 0;
         }
-        Subscriber subscriber = new Subscriber(subscriberId, subscriberName, detailedSubscriptionHistory, subscriberPhoneNumber, subscriberEmail, subscriberFrozen);
+        Subscriber subscriber = new Subscriber(subscriberId, subscriberName, detailedSubscriptionHistory, notificationHistory, subscriberPhoneNumber, subscriberEmail, subscriberFrozen);
         return subscriber;
     }
     public static String subscriberListToString(List<Subscriber> subscriberList) {

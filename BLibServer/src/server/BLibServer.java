@@ -454,6 +454,12 @@ public class BLibServer extends AbstractServer
 			 			}
 			 			reply = new Message("msg", clientInfo.getSessionId(), replyStr);
 			 			handleMessageToClient(reply, client);
+			 			//notify reserved
+			 			subscriber = ReserveController.GetSubscriberThatReservedBook(dbConnection.getConnection(), book.getId());
+			 			if(subscriber != null) {
+			 				Notification n = new Notification(subscriber , LocalDate.now(), "Book "+book.getName()+ " has been returned and become Available");
+			 				NotificationController.Notify(dbConnection.getConnection(), n);
+			 			}
 		 			}
 		 			catch(Exception e) {
 		 				System.err.println("Failed to parse returnbook message");
@@ -558,6 +564,11 @@ public class BLibServer extends AbstractServer
 		 				object = (Object[])message.getMessage();
 		 				book = (Book)object[0];
 		 				subscriberId = (int)object[1];
+		 				subscriber = SubscriberController.getSubscriberById(dbConnection.getConnection(), subscriberId);
+		 				if(subscriber.isFrozen()) {
+		 					sendMessageToClient("error", "Can't reserve book, Account is frozen.", client, clientInfo);
+		 					break;
+		 				}
 		 				result = ReserveController.ReserveBook(dbConnection.getConnection(), book.getSerial_id(), subscriberId);
 		 				if(result==-1) {
 		 					throw new Exception();

@@ -109,7 +109,7 @@ public class DetailedHistoryController {
 			//GET history_id from USER (either subscriber or librarian)
 			PreparedStatement pstmt;
 			if(user.getType().equals(User.UserType.LIBRARIAN)) { //is librarian
-				pstmt = connection.prepareStatement("SELECT notification_history FROM librarian");
+				pstmt = connection.prepareStatement("SELECT detailed_librarian_history FROM librarian");
 			}
 			else {
 				pstmt = connection.prepareStatement("SELECT detailed_subscription_history FROM subscriber WHERE subscriber_id = ?");
@@ -228,7 +228,7 @@ public class DetailedHistoryController {
 			//GET history_id from USER (either subscriber or librarian)
 			PreparedStatement pstmt;
 			if(user.getType().equals(User.UserType.LIBRARIAN)) { //is librarian
-				pstmt = connection.prepareStatement("UPDATE librarian SET notification_history = ? WHERE librarian_id = ?");
+				pstmt = connection.prepareStatement("UPDATE librarian SET detailed_librarian_history = ? WHERE librarian_id = ?");
 			}
 			else {
 				pstmt = connection.prepareStatement("UPDATE subscriber SET detailed_subscription_history = ? WHERE subscriber_id = ?");

@@ -103,7 +103,10 @@ public class DateController {
 			pstmt.setInt(2, givenDate.getMonth().getValue());
 			pstmt.setInt(3, givenDate.getDayOfMonth());
 			int success = pstmt.executeUpdate();
-			return success;
+			if(success <= 0)
+				return 0;
+			ResultSet rs = pstmt.getGeneratedKeys();
+			return rs.getInt(1);
 		}
 		catch(SQLException ex) {
 			ex.printStackTrace();

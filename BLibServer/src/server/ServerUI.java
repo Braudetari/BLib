@@ -6,7 +6,16 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Vector;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import controller.NotificationController;
 import gui.ServerPortFrameController;
 import server.BLibServer;
 
@@ -21,6 +30,7 @@ public class ServerUI extends Application {
 	public static String DB_USER = DEFAULT_DB_USER;
 	public static String DB_PASS = DEFAULT_DB_PASS;
 	static BLibServer server;
+	private static boolean listenNotifiers;
 	
 	public static void main( String args[] ) throws Exception
 	   {   
@@ -52,6 +62,8 @@ public class ServerUI extends Application {
 			System.exit(0);
 		});
 		ServerPortFrame.start(primaryStage);
+		
+		
 	}
 	
 	public static BLibServer runServer(String p)
@@ -73,6 +85,14 @@ public class ServerUI extends Application {
 	        		BLibServer.dbConnection = DatabaseConnection.getInstance(DB_IP, DB_SCHEME, DB_USER, DB_PASS);
 	        	else
 	        		BLibServer.dbConnection = DatabaseConnection.getInstance();
+	        	
+	    		//Schedule Notifiers
+	    		ServerUI.listenNotifiers = true;
+	    		Thread notifiersThread = new Thread(() -> {
+	    			NotifiersListener();
+	    		});
+	    		notifiersThread.setDaemon(true);
+	    		notifiersThread.start();
 	        }
 	        catch(Exception e) {
 	        	System.out.println("ERROR - could not connect to DB");
@@ -96,7 +116,7 @@ public class ServerUI extends Application {
 		
 		server.stopListening();
 		try {
-			
+			ServerUI.listenNotifiers = false;
 			server.close();
 			System.exit(0);
 			
@@ -106,5 +126,26 @@ public class ServerUI extends Application {
 		}
 	}
 	
+	private static void NotifiersListener() {
+		try {
+			LocalDate dateOld = null;
+			while(ServerUI.listenNotifiers == true) {
+				LocalDate dateNow = LocalDate.now();
+				if(dateOld == null || dateNow.isAfter(dateOld)) { //if new dawn
+					//Run Notifiers
+					Platform.runLater(() -> {
+						NotificationController.BorrowReminderDayBefore(BLibServer.dbConnection.getConnection());
+						NotificationController.UnfreezeAfterAMonth(BLibServer.dbConnection.getConnection());
+					});
+				}
+				Thread.sleep(3600000); //sleep for hour
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			System.err.println("Could not listner to Notifiers");
+		}
+	}
+
 
 }

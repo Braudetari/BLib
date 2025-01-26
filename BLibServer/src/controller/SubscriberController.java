@@ -32,12 +32,13 @@ public class SubscriberController {
 	                int subscriberId = rs.getInt("subscriber_id");
 	                String subscriberName = rs.getString("subscriber_name");
 	                int detailedSubscriptionHistory = rs.getInt("detailed_subscription_history");
+	                int notificationHistory = rs.getInt("notification_history");
 	                String subscriberPhoneNumber = rs.getString("subscriber_phone_number");
 	                String subscriberEmail = rs.getString("subscriber_email");
 	                int subscriberFrozen = rs.getInt("subscriber_frozen");
 
 	                // Create Subscriber object and add to the list
-	                Subscriber subscriber = new Subscriber(subscriberId, subscriberName, detailedSubscriptionHistory, subscriberPhoneNumber, subscriberEmail, subscriberFrozen);
+	                Subscriber subscriber = new Subscriber(subscriberId, subscriberName, detailedSubscriptionHistory, notificationHistory, subscriberPhoneNumber, subscriberEmail, subscriberFrozen);
 	                subscribers.add(subscriber);
 	            }
 	        } catch (SQLException ex) {
@@ -150,9 +151,10 @@ public class SubscriberController {
 	                String subscriberPhoneNumber = rs.getString("subscriber_phone_number");
 	                String subscriberEmail = rs.getString("subscriber_email");
 	                int subscriberFrozen = rs.getInt("subscriber_frozen");
+	                int notificationHistory = rs.getInt("notification_history");
 
 	                // Return the relevant Subscriber object
-	                return new Subscriber(subscriberId, subscriberName, detailedSubscriptionHistory, subscriberPhoneNumber, subscriberEmail, subscriberFrozen);
+	                return new Subscriber(subscriberId, subscriberName, detailedSubscriptionHistory, notificationHistory, subscriberPhoneNumber, subscriberEmail, subscriberFrozen);
 	            }
 	        } catch (SQLException ex) {
 	            System.out.println("SQLException: " + ex.getMessage());
@@ -177,12 +179,13 @@ public class SubscriberController {
 	            	int subscriberId = rs.getInt("subscriber_id");
 	                String subscriberName = rs.getString("subscriber_name");
 	                int detailedSubscriptionHistory = rs.getInt("detailed_subscription_history");
+	                int notificationHistory = rs.getInt("notification_history");
 	                String subscriberPhoneNumber = rs.getString("subscriber_phone_number");
 	                String subscriberEmail = rs.getString("subscriber_email");
 	                int subscriberFrozen = rs.getInt("subscriber_frozen");
 
 	                // Return the relevant Subscriber object
-	                return new Subscriber(subscriberId, subscriberName, detailedSubscriptionHistory, subscriberPhoneNumber, subscriberEmail, subscriberFrozen);
+	                return new Subscriber(subscriberId, subscriberName, detailedSubscriptionHistory, notificationHistory, subscriberPhoneNumber, subscriberEmail, subscriberFrozen);
 	            }
 	        } catch (SQLException ex) {
 	            System.out.println("SQLException: " + ex.getMessage());
@@ -214,14 +217,15 @@ public class SubscriberController {
 	    	
 	    	//Add subscriber to database
 	        try {
-	            String query = "INSERT INTO subscriber (subscriber_id, subscriber_name, detailed_subscription_history, subscriber_phone_number, subscriber_email , subscriber_frozen) VALUES (?,?,?,?,?,?)";
+	            String query = "INSERT INTO subscriber (subscriber_id, subscriber_name, detailed_subscription_history, notification_history, subscriber_phone_number, subscriber_email , subscriber_frozen) VALUES (?,?,?,?,?,?,?)";
 	            PreparedStatement pstmt = connection.prepareStatement(query);
 	            pstmt.setInt(1, user.getId()); 
 	            pstmt.setString(2, name);
 	            pstmt.setInt(3, 0);
-	            pstmt.setString(4, phone);
-	            pstmt.setString(5, email);
-	            pstmt.setInt(6, 0);
+	            pstmt.setInt(4, 0);
+	            pstmt.setString(5, phone);
+	            pstmt.setString(6, email);
+	            pstmt.setInt(7, 0);
 
 	            int success = pstmt.executeUpdate();
 

@@ -130,22 +130,32 @@ public class ReserveController {
 		}
 		
 		try {
-	        String query = "SELECT b.book_id " +
-                    "FROM \"book\" b " +
-                    "LEFT JOIN \"order\" o ON b.book_id = o.book_id " +
-                    "WHERE o.order_id IS NULL AND b.book_serial_id = ?";
+			//Get book id's that are not ordered yet with serialid
+			String query = "SELECT b.book_id, "
+			           + "       d.some_date_column AS return_date "  // replace with the actual date column
+			           + "FROM borrowed_book b "
+			           + "JOIN book bk ON b.book_id = bk.book_id "
+			           + "JOIN \"date\" d ON b.return_date_id = d.date_id "
+			           + "LEFT JOIN \"order\" o "
+			           + "       ON b.book_id = o.book_id "
+			           + "      AND b.subscriber_id = o.subscriber_id "
+			           + "WHERE o.order_id IS NULL "
+			           + "  AND bk.book_serial_id = ?;"; 
 	        PreparedStatement pstmt = connection.prepareStatement(query);
 	        pstmt.setInt(1, bookSerialId);
 	        ResultSet rs = pstmt.executeQuery();
 	        int bookId = 0;
-	        if(rs.next()) {
-	        	bookId = rs.getInt("book_id");
-	        }
-	        else {
-	        	return 0;
+	        LocalDate closestReturnDate = null;
+	        while(rs.next()) { //get book_id of the closest return date
+	        	LocalDate date = DateController.GetDateById(connection, rs.getInt("return_date"));
+	        	if(closestReturnDate == null || date.isBefore(closestReturnDate)) {
+		        	bookId = rs.getInt("book_id");
+		        	closestReturnDate = date;
+	        	}
 	        }
 	        LocalDate dateNow = LocalDate.now();
 	        int dateId = DateController.GetOrCreateDateIdByDate(connection, dateNow);
+	        //Reserve Book
 			pstmt = connection.prepareStatement("INSERT INTO `order`(book_id, subscriber_id, order_date_id) VALUES (?,?,?)");
 			pstmt.setInt(1, bookId);
 			pstmt.setInt(2, subscriberId);

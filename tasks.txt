@@ -1,17 +1,16 @@
 Tasks to do: BLib
 
-Database:
-	- Populate database
-	- use java code to quickly populate detailedhistory after implementation
 
 BLibServer:
-	- DetailedHistory
-	- DetailedHistoryController
-	- SubscriberController
+	- LendController
 		• SendSMSReminder
 		• SendEmailReminder
-	- BookController
-	- LendController 
 	- ReportController
+	- LendController
+		• Change Freeze for Week After original Return Date
+	- Listeners/Time Checkers (daily checkers)
+		• Return Reminders Notice
+		• Unfreeze after Month Notice
+		• Book is Available Notice
 	
 BLibClient:

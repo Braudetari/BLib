@@ -209,9 +209,15 @@ public class SearchBookFrameController implements IController {
 	private void SelectRow(MouseEvent event) throws Exception{
 		selectedBook = booksTable.getSelectionModel().getSelectedItem();
 		//if a book is selected and available
-		if(selectedBook != null && booksAvailibility.get(booksData.indexOf(selectedBook)).contentEquals("Available")){
-			btnReserve.setDisable(false);
-			btnLend.setDisable(false);
+		if(selectedBook != null){
+			if(booksAvailibility.get(booksData.indexOf(selectedBook)).contentEquals("Available")) {
+				btnReserve.setDisable(false);
+				btnLend.setDisable(true);
+			}
+			else {
+				btnReserve.setDisable(true);
+				btnLend.setDisable(false);
+			}
 		}
 		else {
 			btnReserve.setDisable(true);

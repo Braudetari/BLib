@@ -360,8 +360,8 @@ public class LendController {
 			DetailedHistory dh = new DetailedHistory(user,ActionType.RETURN,returnDate,"Returned bookId "+book.getId()+"");
 			int result = DetailedHistoryController.RecordHistory(connection, dh);
 			
-			//Freeze subscriber if returned late
-			if(borrowedbook.getReturnDate().isBefore(returnDate) && result>0) {
+			//Freeze subscriber if returned late by a week
+			if(borrowedbook.getReturnDate().isAfter(returnDate.plusDays(6)) && result>0) {
 				SubscriberController.SetFreezeSubscriber(connection, borrowedbook.getBorrowingSubscriber().getSubscriberId(), true);
 				dh = new DetailedHistory(user, ActionType.FREEZE,returnDate,"Subscriber frozen for returning book "+book.getId()+" after return time "+DateUtil.DateToString(borrowedbook.getBorrowedDate()));
 				DetailedHistoryController.RecordHistory(connection, dh);

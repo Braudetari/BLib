@@ -100,7 +100,7 @@ public class ClientController implements ChatIF
    * @param request
    * @param message
    */
-  public void SendRequestToServer(String request, String message) {
+  public void SendRequestToServer(String request, Object message) {
 	  accept(new Message(request, null, message));
   } 
   /**
@@ -236,6 +236,35 @@ public class ClientController implements ChatIF
   public List<DetailedHistory> requestServerForHistoryList(int userId){
 	  SendRequestToServer("gethistory", ""+userId);
 	  return client.historyList;
+  }
+  
+  /**
+   * Request Server to check whether a book is reservable
+   * @param book
+   * @param subscriber
+   * @return int 0=nope, 1=yep, 2=already reserved by subscriber
+   */
+  public int requestServerWhetherBookIsReservable(Book book, int subscriberId) {
+	  Object[] object = new Object[] {book, subscriberId};
+	  SendRequestToServer("isbookreservable", object);
+	  return client.intResponse;
+  }
+  
+  /**
+   * Requests Server to a Reserve Book
+   * @param book
+   * @param subscriber
+   * @return int 0=fail, 1=success
+   */
+  public int requestServerToReserveBook(Book book, int subscriberId) {
+	  Object[] object = new Object[] {book, subscriberId};
+	  SendRequestToServer("reservebook", object);
+	  if(client.lastResponse.contentEquals("msg")) {
+		  return 1;
+	  }
+	  else {
+		  return 0;
+	  }
   }
   
   

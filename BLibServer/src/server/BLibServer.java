@@ -17,6 +17,7 @@ import java.util.UUID;
 import java.util.Vector;
 
 import common.*;
+import common.DetailedHistory.ActionType;
 import ocsf.server.*;
 import server.ConnectionToClientInfo.ClientConnectionStatus;
 
@@ -146,7 +147,12 @@ public class BLibServer extends AbstractServer
   }
   
   public void sendMessageToClient(String request, Object msg, ConnectionToClient client, ConnectionToClientInfo clientInfo) {
-	  Message reply = new Message(request, clientInfo.getSessionId(), msg);
+	  Message reply;
+	  if(clientInfo != null)
+		  reply = new Message(request, clientInfo.getSessionId(), msg);
+	  else {
+		  reply = new Message(request, null, msg);
+	  }
 	  handleMessageToClient(reply, client);
   }
   
@@ -166,12 +172,16 @@ public class BLibServer extends AbstractServer
 		 clientSessionId = clientInfo.getSessionId();
 	 try {
 		 Message message = Message.decrypt((Message)msg, clientSessionId);
+		 if(message == null) {//handle empty message
+			 System.err.println("Empty message");
+			 sendMessageToClient("error", "empty message", client, clientInfo);
+			 return;
+		 }
+			 
 		 if(clientInfo == null)
 			 System.out.println("Message from " + client + "--> request: " + message.getRequest() + " message: " + message.getMessage());
 		 else
 			 System.out.println("Message from " + clientInfo.getName() + " E--> request: " + message.getRequest() + " message: " + message.getMessage());
-		 if(message == null) //handle empty message
-			 return;
 		 //Local Variables Storage
 		 Message reply;
 		 String replyStr;
@@ -179,6 +189,7 @@ public class BLibServer extends AbstractServer
 		 String str;
 		 Book book;
 		 BorrowedBook bb;
+		 DetailedHistory dh;
 		 Object[] object;
 		 LocalDate date;
 	 	 int subscriberId;
@@ -276,7 +287,7 @@ public class BLibServer extends AbstractServer
 			 			handleMessageToClient(reply, client);
 		 			}
 		 			catch(Exception e) {
-		 				reply = new Message("error", clientInfo.getSessionId(), str+" is not a bookId integer");
+		 				reply = new Message("error", clientInfo.getSessionId(), "bookId "+str+" could not be retreived");
 		 				handleMessageToClient(reply, client);
 		 			}
 		 		break;
@@ -460,6 +471,50 @@ public class BLibServer extends AbstractServer
 	 				sendMessageToClient("error", "Could not get book availibility info", client, clientInfo);
 	 			}
 	 		break;
+		 	case "isbookreservable": //expected message "object[] = {book,subscriberId}"
+		 			user = clientInfo.getUser();
+		 			if(!user.getType().equals(User.UserType.SUBSCRIBER)) {
+		 				sendMessageToClient("error", "Cant check reservability, Not a subscriber", client, clientInfo);
+		 				break;
+		 			}
+		 			try {
+		 				object = (Object[])message.getMessage();
+		 				book = (Book)object[0];
+		 				subscriberId = (int)object[1];
+		 				result = ReserveController.IsBookReservable(dbConnection.getConnection(), book.getSerial_id(), subscriberId);
+		 				if(result==-1) {
+		 					throw new Exception();
+		 				}
+		 				sendMessageToClient("isbookreservable","" + result,client,clientInfo);
+		 			}catch(Exception e) {
+		 				e.printStackTrace();
+		 				System.err.println("Could not check if book is reservable");
+		 				sendMessageToClient("error","Could not check if book is reservable", client, clientInfo);
+		 			}
+		 		break;
+		 	case "reservebook": //expected message: object[] = {book, subscriberId}
+			 		user = clientInfo.getUser();
+		 			if(!user.getType().equals(User.UserType.SUBSCRIBER)) {
+		 				sendMessageToClient("error", "Cant reserve book, Not a subscriber", client, clientInfo);
+		 				break;
+		 			}
+		 			try {
+		 				object = (Object[])message.getMessage();
+		 				book = (Book)object[0];
+		 				subscriberId = (int)object[1];
+		 				result = ReserveController.ReserveBook(dbConnection.getConnection(), book.getSerial_id(), subscriberId);
+		 				if(result==-1) {
+		 					throw new Exception();
+		 				}
+		 				dh = new DetailedHistory(clientInfo.getUser(), ActionType.RESERVE, LocalDate.now(),  " reserved book " + book.getName() + " on " + DateUtil.DateToString(LocalDate.now()));
+		 				DetailedHistoryController.RecordHistory(dbConnection.getConnection(), dh);
+		 				sendMessageToClient("msg","Book " +book.getName()+ " has been reserved",client,clientInfo);
+		 			}catch(Exception e) {
+		 				e.printStackTrace();
+		 				System.err.println("Could not reserve book");
+		 				sendMessageToClient("error","Could not reserve book", client, clientInfo);
+		 			}
+		 		break;
 		 	case "encrypted":
 		 		break;
 		 	default:

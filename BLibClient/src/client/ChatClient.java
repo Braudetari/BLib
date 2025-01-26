@@ -51,6 +51,7 @@ public class ChatClient extends AbstractClient
   DetailedHistory history; //detailed history received from server
   List<DetailedHistory> historyList; //detailed history LIST received from server
   Object[] bookAvailibilityInfo;
+  int intResponse; 
   
   //Constructors ****************************************************
   
@@ -152,6 +153,15 @@ public class ChatClient extends AbstractClient
 			  				System.err.println("Could not receive book availibility info from server");
 			  			}
 			  		break;
+			  	case "isbookreserved":
+		  			try {
+		  				this.intResponse = Integer.parseInt((String)message.getMessage());
+		  			}
+		  			catch(Exception e) {
+		  				e.printStackTrace();
+		  				System.err.println("Could not receive wheter book is reservable from server");
+		  			}
+		  		break;
 			  	case "history":
 			  		try {
 			  			this.historyList = DetailedHistory.detailedHistoryListFromString((String)message.getMessage());
@@ -261,11 +271,19 @@ public class ChatClient extends AbstractClient
 		 
 		 try {
 			 Message msg;
-			 msg = new Message("login", chat.client.getSessionId(), "wow sauce");
+			 msg = new Message("login", chat.client.getSessionId(), "man sauce2");
 			 chat.client.handleMessageFromClientUI(msg);
-			 msg = new Message("bookinfo", chat.client.getSessionId(), "101");
+			 msg = new Message("getbook", chat.client.getSessionId(), "1");
 			 chat.client.handleMessageFromClientUI(msg);
-			 System.out.println(chat.client.bookAvailibilityInfo[0] +" "+ chat.client.bookAvailibilityInfo[1]);
+			 Book book1 = new Book(chat.client.book);
+			 msg = new Message("getbook", chat.client.getSessionId(), "6");
+			 chat.client.handleMessageFromClientUI(msg);
+			 Book book2 = new Book(chat.client.book);
+			 Object[] object = new Object[] {book1, chat.client.user.getId()};
+			 msg = new Message("isbookreservable", chat.client.getSessionId(), object);
+			 chat.client.handleMessageFromClientUI(msg);
+			 msg = new Message("reservebook", chat.client.getSessionId(), object);
+			 chat.client.handleMessageFromClientUI(msg);
 			 String lr = chat.client.lastResponse;
 			 String lre = chat.client.lastResponseError;
 			 String lrm = chat.client.lastResponseMsg;

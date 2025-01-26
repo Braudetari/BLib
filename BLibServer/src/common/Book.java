@@ -1,5 +1,6 @@
 package common;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -9,7 +10,7 @@ import java.util.StringTokenizer;
 
 import common.User.UserType;
 
-public class Book {
+public class Book implements Serializable{
     private int id;
     private int serial_id;
     private String name;

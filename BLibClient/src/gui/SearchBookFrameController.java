@@ -153,6 +153,9 @@ public class SearchBookFrameController implements IController {
         	default:
         		break;
         }
+        if(booksList == null) {
+        	booksList = new ArrayList<Book>();
+        }
         //Show only unique values by SerialId if Subscriber
         if(!permission.equals(User.UserType.LIBRARIAN)) {
         	List<Book> booksListUnique = new ArrayList<Book>();

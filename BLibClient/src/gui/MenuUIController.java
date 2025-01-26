@@ -60,6 +60,7 @@ public class MenuUIController {
 	private String name;
 	private static Subscriber importedSubscriber;
 	
+	
 	private void initializeButtons() {
 		Button[] listOfButtons = {btnSearch,btnNotifications, btnManager, btnBorrow, btnReturnABook,btnBorrowedBooks,btnReservations,btnPersonalInfo};
 		User.UserType[] buttonPermission = {User.UserType.GUEST,User.UserType.SUBSCRIBER, User.UserType.LIBRARIAN,User.UserType.LIBRARIAN, User.UserType.LIBRARIAN,User.UserType.SUBSCRIBER, User.UserType.SUBSCRIBER, User.UserType.SUBSCRIBER};

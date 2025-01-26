@@ -103,13 +103,13 @@ public abstract class SubscriberManagerFrameController implements IController{
         
         switch(selectedOption){
         	case "Search by Name":
-        			subscriberList = ClientUI.chat.requestServer;
+        			subscriberList = ClientUI.chat.requestServerForSubscriberList("subscriber_name", searchText);
         		break;
         	case "Search by Subscriber ID":
-        		subscriberList  = ClientUI.chat.requestServerSearchForBooks("book_description", searchText);
+        		subscriberList  = ClientUI.chat.requestServerForSubscriberList("subscriber_id", searchText);
     		break;
         	case "Search by Frozen Subscriber":
-        		subscriberList  = ClientUI.chat.requestServerSearchForBooks("book_genre", searchText);
+        		subscriberList  = ClientUI.chat.requestServerForSubscriberList("subscriber_frozen", searchText);
     		break;
         	default:
         		break;

@@ -1,5 +1,6 @@
 package gui;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import client.ClientUI;
@@ -20,7 +21,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-public class ShowBorrowedBooksController{
+public class ShowBorrowedBooksController implements IController{
 
     @FXML
     private Button btnExtend;
@@ -40,6 +41,7 @@ public class ShowBorrowedBooksController{
     private BorrowedBook selectedBook = null;
 
     private List<BorrowedBook> borrowedBooksList = null;
+    private List<Boolean> extendableList = null;
     private ObservableList<BorrowedBook> borrowedBooksData = FXCollections.observableArrayList();
     
     public void initializeFrame() {
@@ -54,8 +56,18 @@ public class ShowBorrowedBooksController{
         borrowedBooksTable.setItems(borrowedBooksData);
 
         // Fetch and display all borrowed books for the client
-        //borrowedBooksList = ClientUI.chat.requestServerForBorrowedBooks();
+        
         borrowedBooksData.clear();
+        
+        User user = ClientUI.chat.getClientUser();
+        borrowedBooksList = ClientUI.chat.requestServerForBorrowedBooksBySubscriber(user.getId());
+        
+        List<Integer> intList = new ArrayList<Integer>();
+        for(BorrowedBook bb : borrowedBooksList) {
+        	intList.add(bb.getBorrowedBook().getId());
+        }
+        extendableList = ClientUI.chat.requestServerForBookListExtendability(intList);
+        
         if (borrowedBooksList != null) {
             borrowedBooksData.addAll(borrowedBooksList);
         }
@@ -66,7 +78,13 @@ public class ShowBorrowedBooksController{
         selectedBook = borrowedBooksTable.getSelectionModel().getSelectedItem();
         if (selectedBook != null) {
             // Show the "Extend" button when a row is selected
-            btnExtend.setVisible(true);
+        	int index = borrowedBooksList.indexOf(selectedBook);
+        	if(extendableList.get(index)){
+                btnExtend.setVisible(true);
+        	}
+        	else {
+        		btnExtend.setVisible(false);
+        	}
         } else {
             // Hide the "Extend" button when no row is selected
             btnExtend.setVisible(false);
@@ -98,6 +116,17 @@ public class ShowBorrowedBooksController{
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
+	@Override
+	public void setPermission(UserType type) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setMainController(MenuUIController controller) {
+		//
+	}
 
 	
 }

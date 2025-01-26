@@ -121,7 +121,7 @@ public class NotificationController {
 		}
 		
 		try {
-			String query = "SELECT notification_blob FROM history WHERE notification_id = ?";
+			String query = "SELECT notification_blob FROM notification WHERE notification_id = ?";
 			PreparedStatement pstmt = connection.prepareStatement(query);
 			pstmt.setInt(1, notificationId);
 			ResultSet rs = pstmt.executeQuery();
@@ -131,7 +131,7 @@ public class NotificationController {
 			}
 			byte[] blobBytes = rs.getBytes("notification_blob");
 			if(blobBytes == null) {
-				System.err.println("Could not get history_blob from database");
+				System.err.println("Could not get notification_blob from database");
 				return null;
 			}
 			try{
@@ -149,7 +149,7 @@ public class NotificationController {
 		}
 		catch(Exception e) {
 			e.printStackTrace();
-			System.err.println("Could not get history List from Database");
+			System.err.println("Could not get notification List from Database");
 			return null;
 		}
 	}
@@ -159,7 +159,7 @@ public class NotificationController {
 	 * Update Notification Blob in Database, if notification_id = 0 then create one and return it
 	 * @param connection
 	 * @param nList
-	 * @return -1=error, 0=fail, >0=history_id (success)
+	 * @return -1=error, 0=fail, >0=notification_id (success)
 	 */
 	public static int UpdateNotificationInDatabase(Connection connection, List<Notification> nList, int notificationId) {
 		if(connection == null) {
@@ -185,7 +185,7 @@ public class NotificationController {
 			return -1;
 		}
 		
-		//Store (or Create) History List as Blob in Database
+		//Store (or Create) notification List as Blob in Database
 		try {
 			PreparedStatement pstmt;
 			String query;
@@ -246,7 +246,7 @@ public class NotificationController {
 			return 0;
 		}
 		try {
-			//GET history_id from USER (either subscriber or librarian)
+			//GET notification_id from USER (either subscriber or librarian)
 			PreparedStatement pstmt;
 			pstmt = connection.prepareStatement("UPDATE subscriber SET notification_history = ? WHERE subscriber_id = ?");
 			pstmt.setInt(1, notificationId);
@@ -330,7 +330,7 @@ public class NotificationController {
 				//update new notificationId for subscriber
 				result = UpdateNotificationIdForSubscriberId(connection, subscriberId, resultId);
 			}
-			//Update subscriber history
+			//Update subscriber notification
 			subscriberNotifications.add(n);
 			int notificationId = GetNotificationIdForSubscriber(connection, subscriberId);
 			int resultSubscriber = UpdateNotificationInDatabase(connection, subscriberNotifications,  notificationId);

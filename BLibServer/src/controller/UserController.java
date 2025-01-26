@@ -112,10 +112,10 @@ public class UserController {
 			String query;
 			switch(user.getType().toString()) {
 			case "LIBRARIAN":
-					query = "SELECT librarian_name FROM librarian WHERE librarian_id = ?";
+					query = "SELECT librarian_name as name FROM librarian WHERE librarian_id = ?";
 				break;
 			case "SUBSCRIBER":
-					query = "SELECT subscriber_name FROM subscriber WHERE subscriber_id = ?";
+					query = "SELECT subscriber_name as name FROM subscriber WHERE subscriber_id = ?";
 				break;
 			case "GUEST":
 					return new String("GUEST");
@@ -127,7 +127,7 @@ public class UserController {
 			ResultSet rs = pstmt.executeQuery();
 			String name = "No name";
 			if(rs.next()) {
-				name = rs.getString("librarian_name");
+				name = rs.getString("name");
 			}
 			return name;
 		}

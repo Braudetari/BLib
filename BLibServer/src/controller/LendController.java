@@ -278,6 +278,9 @@ public class LendController {
 			}
 			int dateFromId = DateController.GetOrCreateDateIdByDate(connection, from);
 			int dateToId = DateController.GetOrCreateDateIdByDate(connection, to);
+			if(dateFromId<=0 || dateToId <=0) {
+				return -1;
+			}
 			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO borrowed_book(book_id, subscriber_id, borrowed_date_id, return_date_id) VALUES (?,?,?,?)");
 			pstmt.setInt(1, book_id);
 			pstmt.setInt(2, subscriberId);

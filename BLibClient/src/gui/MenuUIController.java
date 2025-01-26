@@ -4,20 +4,25 @@ import java.io.IOException;
 
 import client.ChatClient;
 import client.ClientUI;
-import common.Message;
-import common.Subscriber;
-import common.User;
+import common.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class MenuUIController {
@@ -43,49 +48,40 @@ public class MenuUIController {
 	@FXML
 	private Label lblWelocome = null;
 	@FXML
-	private Pane pane=null;
+	private VBox pane=null;
+	@FXML
+	private ScrollPane scrollPane=null;
 	@FXML
 	private AnchorPane paneScreen=null;
 	@FXML
 	private AnchorPane paneButtons=null;
 	
-
 	private User.UserType permission;
 	private String name;
 	private static Subscriber importedSubscriber;
 	
-	private void initializeButtons(User.UserType permission, String name) {
+	private void initializeButtons() {
 		Button[] listOfButtons = {btnSearch,btnNotifications, btnManager, btnBorrow, btnReturnABook,btnBorrowedBooks,btnReservations,btnPersonalInfo};
-		User.UserType[] buttonPermission = {User.UserType.LIBRARIAN, User.UserType.SUBSCRIBER,User.UserType.GUEST};
+		User.UserType[] buttonPermission = {User.UserType.GUEST,User.UserType.LIBRARIAN, User.UserType.LIBRARIAN,User.UserType.LIBRARIAN, User.UserType.LIBRARIAN,User.UserType.SUBSCRIBER, User.UserType.SUBSCRIBER, User.UserType.SUBSCRIBER};
 		int currentButtonPos = 50;
 		int buttonPadding = 50;
-//		if(permission==buttonPermission[2]) {
-//			listOfButtons[0].setVisible(true);
-//			listOfButtons[0].setManaged(true);
-//		}
 		lblWelocome.setText("Welcome "+name);
-		for(int i=2;i<5;i++) {
-			if(permission==buttonPermission[0]) {
-				listOfButtons[i].setVisible(true);
-	            listOfButtons[i].setManaged(true);
+		for(int i=0; i < listOfButtons.length; i++) {
+			boolean checkPermission = buttonPermission[i].equals(permission);
+			if(buttonPermission[i].equals(User.UserType.GUEST)) {
+				checkPermission = true;
 			}
-			else {
-				listOfButtons[i].setVisible(false);
-	            listOfButtons[i].setManaged(false);
-			}
-		}
-		for(int i=5;i<listOfButtons.length;i++) {
-			if(permission==buttonPermission[1]) {
-				listOfButtons[i].setVisible(true);
-	            listOfButtons[i].setManaged(true);
-			}
-			else {
-				listOfButtons[i].setVisible(false);
-	            listOfButtons[i].setManaged(false);
-			}
+			listOfButtons[i].setVisible(checkPermission);
+			listOfButtons[i].setDisable(!checkPermission);
 		}
 		
 	}
+	
+	private void initialize(User.UserType permission, String name) {
+		this.permission = permission;
+		this.name = name;
+	}
+	
 	
 	public void start(Stage primaryStage, User.UserType permission, String name) throws IOException {
 		//this.permission=permission;
@@ -100,8 +96,9 @@ public class MenuUIController {
 		primaryStage.centerOnScreen();
 		primaryStage.show();
 		MenuUIController frame = loader.getController();
-		frame.initializeButtons(permission, name);
-		
+		frame.initialize(permission, name);
+		frame.initializeButtons();
+			
 	}
 	
 	@FXML
@@ -111,7 +108,7 @@ public class MenuUIController {
 	
 	@FXML
 	private void getBorrowBtn(ActionEvent event) {
-		loadFXMLIntoPane("/gui/LoanBookFrame.fxml");
+		loadFXMLIntoPane("/gui/BorrowBookFrame.fxml");
 	}
 	
 	@FXML
@@ -161,19 +158,23 @@ public class MenuUIController {
 		loadFXMLIntoPane("/gui/SearchBookFrame.fxml");
 	}
 	
-	private <T> void loadFXMLIntoPane(String fxmlFile) {
+	private void loadFXMLIntoPane(String fxmlFile) {
 		try {
-			pane.getChildren().clear();
-			
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
 			Node node = loader.load();
-//			Object controller = loader.getController();
-//			if (controller instanceof controllerName) {
-//				SearchBookFrameController connectionController = (SearchBookFrameController) controller;
-//                // Interact with the controller if needed
-//                // e.g., connectionController.initializeData(someData);
-//            }
+			
+			Object genericController = loader.getController();
+			if(genericController instanceof IController) {
+				IController controller = (IController)genericController;
+				controller.setPermission(permission);
+				controller.initializeFrame();
+			}
+			
+			pane.getChildren().clear();
 			pane.getChildren().add(node);
+			double nodeWidth = node.getBoundsInLocal().getWidth();
+			double paneWidth = pane.getBoundsInLocal().getWidth();
+			//pane.setMargin(node, new Insets(0,0,0,nodeWidth/3));
 		}
 		catch(Exception e) {
 			e.printStackTrace();

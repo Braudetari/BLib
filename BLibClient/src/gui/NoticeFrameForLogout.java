@@ -36,9 +36,9 @@ public class NoticeFrameForLogout {
 	public void setParentStage(Stage parentStage) {
 		this.parentStage=parentStage;
 	}
-	
+
 	public void start(Stage parentStage) throws IOException{
-		this.parentStage=parentStage;
+		//this.parentStage=parentStage;
 		FXMLLoader loader = new FXMLLoader();
 		Stage primaryStage = new Stage();
 		Pane root = loader.load(getClass().getResource("/gui/NoticeFrameForLogout.fxml").openStream());
@@ -49,6 +49,7 @@ public class NoticeFrameForLogout {
 		primaryStage.setScene(scene);		
 		primaryStage.show();
 		NoticeFrameForLogout controller = loader.getController();
+		controller.setParentStage(parentStage);
 		controller.loadText("Are you sure you want to Logout?");
 	}
 	

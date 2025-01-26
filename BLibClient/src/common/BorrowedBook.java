@@ -1,5 +1,6 @@
 package common;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.time.LocalDate;
 
@@ -7,8 +8,12 @@ import java.time.LocalDate;
  * Represents a borrowed book record, including borrowed and return dates
  * and references to the borrowed Book.
  */
-public class BorrowedBook {
-    private Book borrowedBook;
+public class BorrowedBook implements Serializable{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Book borrowedBook;
     private Subscriber borrowingSubscriber;
     private LocalDate borrowed_date;
     private LocalDate return_date;

@@ -8,15 +8,17 @@
 
 <AnchorPane prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.BorrowBookFrameController">
    <children>
-      <Label layoutX="20.0" layoutY="40.0" text="Client ID" />
-      <TextField fx:id="clientIdTxt" layoutX="130.0" layoutY="35.0" prefWidth="200.0" />
+      <Label layoutX="37.0" layoutY="40.0" text="Subscriber ID" wrapText="true" />
+      <TextField fx:id="subscriberIdTxt" layoutX="130.0" layoutY="35.0" prefWidth="200.0" />
       
-      <Label layoutX="20.0" layoutY="80.0" text="Borrow Date" />
-      <DatePicker fx:id="borrowDatePicker" layoutX="130.0" layoutY="75.0" editable="false" />
+      <Label layoutX="37.0" layoutY="80.0" text="Borrow Date" />
+      <DatePicker fx:id="borrowDatePicker" editable="false" layoutX="130.0" layoutY="75.0" />
       
-      <Label layoutX="20.0" layoutY="120.0" text="Return Date" />
-      <DatePicker fx:id="returnDatePicker" layoutX="130.0" layoutY="115.0" editable="false" />
+      <Label layoutX="37.0" layoutY="120.0" text="Return Date" />
+      <DatePicker fx:id="returnDatePicker" editable="false" layoutX="130.0" layoutY="115.0" />
       
-      <Button fx:id="borrowBtn" layoutX="130.0" layoutY="160.0" mnemonicParsing="false" onAction="#onBorrowBtnClick" text="Borrow Book" />
+      <Button fx:id="borrowBtn" layoutX="158.0" layoutY="218.0" mnemonicParsing="false" onAction="#onBorrowBtnClick" text="Borrow Book" />
+      <Label layoutX="37.0" layoutY="154.0" text="Book ID" wrapText="true" />
+      <TextField fx:id="bookIdTxt" layoutX="130.0" layoutY="150.0" prefWidth="200.0" />
    </children>
 </AnchorPane>

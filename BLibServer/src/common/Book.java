@@ -11,6 +11,7 @@ import java.util.StringTokenizer;
 import common.User.UserType;
 
 public class Book implements Serializable{
+	private static final long serialVersionUID = 1L;
     private int id;
     private int serial_id;
     private String name;
@@ -195,7 +196,7 @@ public class Book implements Serializable{
     			this.serial_id+","+
     			this.name+","+
     			this.author+","+
-    			this.description+","+
+    			this.description.replace(",", "~")+","+
     			this.genre+","+
     			this.location
     			+"]");
@@ -217,6 +218,7 @@ public class Book implements Serializable{
     		name = tokenizer.nextToken();
     		author = tokenizer.nextToken();
     		description = tokenizer.nextToken();
+    		description.replace("~", ",");
     		genre = tokenizer.nextToken();
     		location = tokenizer.nextToken();
     	}

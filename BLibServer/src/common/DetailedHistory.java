@@ -14,7 +14,7 @@ import common.User.UserType;
  */
 public class DetailedHistory implements Serializable {
 
-	private static final long serialVersionUID = 8018958152928909570L;
+	private static final long serialVersionUID = 1L;
 
 	/**
      * Recorded action type

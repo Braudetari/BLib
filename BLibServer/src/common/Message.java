@@ -22,6 +22,7 @@ import javax.crypto.spec.SecretKeySpec;
 * Encrypts and decrypts messages with Base64 <p>
 */
 public class Message implements Serializable{
+	private static final long serialVersionUID = 1L;
 	private String request;
 	private String sessionId;
 	private Object msg;

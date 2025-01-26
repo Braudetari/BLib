@@ -23,7 +23,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-public class SubscriberManagerFrameController {
+public abstract class SubscriberManagerFrameController implements IController{
 
 	@FXML
 	private Button btnRefresh = null;
@@ -39,6 +39,10 @@ public class SubscriberManagerFrameController {
 	private TableColumn<Subscriber, Integer> tblColumnId = null;
 	@FXML
 	private TableColumn<Subscriber, String> tblColumnName = null;
+	@FXML
+	private TableColumn<Subscriber, String> tblColumnUsername = null;
+	@FXML
+	private TableColumn<Subscriber, String> tblStatus = null;
 	@FXML
 	private Button btnShowAll=null;
 	@FXML
@@ -61,6 +65,7 @@ public class SubscriberManagerFrameController {
 		
 		tblColumnId.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getSubscriberId()));
 		tblColumnName.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getSubscriberName()));
+
         tblSubscribers.setItems(observableSubscribers);
 	}
 	
@@ -72,7 +77,6 @@ public class SubscriberManagerFrameController {
 		primaryStage.setTitle("Subscriber Management");
 		primaryStage.setScene(scene);		
 		primaryStage.show();
-		
 		SubscriberManagerFrameController controller = loader.getController();
 		controller.initializeTable();
 	}
@@ -138,8 +142,8 @@ public class SubscriberManagerFrameController {
 	
 	@FXML
 	private void getStudent(ActionEvent event) throws Exception {
-	    SubscriberSearchFrameController subscriberManagerFrame = new SubscriberSearchFrameController();
-	    subscriberManagerFrame.start(new Stage());
+//	    SubscriberSearchFrameController subscriberManagerFrame = new SubscriberSearchFrameController();
+//	    subscriberManagerFrame.start(new Stage());
 	    
 	}
 

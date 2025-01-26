@@ -53,7 +53,8 @@ public class LoginFrameController extends Application {
     	Object[] values= ClientUI.chat.LoginToServer(username, password);
     	String[] lr =ClientUI.chat.getClientLastResponses();
     	if(lr[0].equals("error")) {
-            return;
+            (new NoticeFrameController()).start(lr[2]);
+    		return;
     	}
     	else {
     		String fullName= (String) values[1];
@@ -68,7 +69,8 @@ public class LoginFrameController extends Application {
     // Method to handle the "Enter as Guest" button action
     @FXML
     private void getGuestBtn(ActionEvent event) throws Exception{
-    	(new GuestController()).start();
+    	Stage thisStage = ((Stage)((Node)event.getSource()).getScene().getWindow());
+    	(new MenuUIController()).start(thisStage, User.UserType.GUEST,"GUEST");
     	
 //    	Object[] values= ClientUI.chat.LoginToServer("GUEST", "GUEST");
 //    	String[] lr =ClientUI.chat.getClientLastResponses();

@@ -10,20 +10,23 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.SearchBookFrameController">
    <children>
-      <Label layoutX="20.0" layoutY="20.0" text="Search Book" styleClass="label" />
+      <Label layoutX="20.0" layoutY="20.0" styleClass="label" text="Search Book" />
       <ComboBox fx:id="searchOptions" layoutX="150.0" layoutY="20.0" prefWidth="200.0" />
       <TextField fx:id="searchField" layoutX="150.0" layoutY="60.0" prefWidth="300.0" promptText="Enter search text" />
-      <Button fx:id="btnSearch" layoutX="470.0" layoutY="60.0" mnemonicParsing="false" onAction="#handleSearchAction" text="Search" styleClass="button" />
+      <Button fx:id="btnSearch" layoutX="470.0" layoutY="60.0" mnemonicParsing="false" onAction="#handleSearchAction" styleClass="button" text="Search" />
 
       <!-- TableView for displaying books -->
-      <TableView fx:id="booksTable" layoutX="20.0" layoutY="120.0" prefHeight="250.0" prefWidth="560.0">
+      <TableView fx:id="booksTable" onMouseClicked="#SelectRow" layoutX="20.0" layoutY="99.0" prefHeight="247.0" prefWidth="560.0">
          <columns>
-            <TableColumn fx:id="colBookName" text="Book Name" prefWidth="150.0" />
-            <TableColumn fx:id="colCategory" text="Category" prefWidth="100.0" />
-            <TableColumn fx:id="colStatus" text="Status" prefWidth="100.0" />
-            <TableColumn fx:id="colLocation" text="Location" prefWidth="100.0" />
-            <TableColumn fx:id="colReturnDate" text="Closest Return Date" prefWidth="110.0" />
+            <TableColumn fx:id="colBookName" prefWidth="150.0" text="Book Name" />
+            <TableColumn fx:id="colCategory" prefWidth="100.0" text="Category" />
+            <TableColumn fx:id="colDescription" prefWidth="150.0" text="Description" />
+            <TableColumn fx:id="colStatus" prefWidth="100.0" text="Status" />
+            <TableColumn fx:id="colLocation" prefWidth="100.0" text="Location" />
+            <TableColumn fx:id="colReturnDate" prefWidth="110.0" text="Closest Return Date" />
          </columns>
       </TableView>
+      <Button fx:id="btnReserve" disable="true" layoutX="223.0" layoutY="360.0" mnemonicParsing="false" onAction="#Reserve" prefHeight="26.0" prefWidth="99.0" text="Reserve" textAlignment="CENTER" visible="false" wrapText="true" />
+      <Button fx:id="btnLend" disable="true" layoutX="223.0" layoutY="360.0" mnemonicParsing="false" onAction="#Lend" prefHeight="26.0" prefWidth="99.0" text="Lend" textAlignment="CENTER" visible="false" wrapText="true" />
    </children>
 </AnchorPane>

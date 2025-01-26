@@ -14,13 +14,13 @@ import common.User.UserType;
  */
 public class DetailedHistory implements Serializable {
 
-	private static final long serialVersionUID = 8018958152928909570L;
+	private static final long serialVersionUID = 1L;
 
 	/**
      * Recorded action type
      */
     public enum ActionType implements Serializable{
-        BORROW(0), RETURN(1), ORDER(2), FREEZE(3), UNFREEZE(4), EXTEND(5);
+        BORROW(0), RETURN(1), RESERVE(2), FREEZE(3), UNFREEZE(4), EXTEND(5);
     	public static ActionType fromInt(int value) {
 			for(ActionType type : ActionType.values()) {
 				if(type.getValue() == value) {

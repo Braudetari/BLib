@@ -86,7 +86,7 @@ public class DateController {
 	 * Creates DateId from given Date in database and returns it
 	 * @param connection
 	 * @param date
-	 * @return -1=error, 0=fail, 1=success
+	 * @return -1=error, 0=fail, >0=dateId
 	 */
 	@SuppressWarnings("deprecation")
 	public static int CreateDateIdByDate(Connection connection, LocalDate givenDate) {
@@ -103,7 +103,7 @@ public class DateController {
 			pstmt.setInt(2, givenDate.getMonth().getValue());
 			pstmt.setInt(3, givenDate.getDayOfMonth());
 			int success = pstmt.executeUpdate();
-			return (success>0) ? 1 : 0;
+			return success;
 		}
 		catch(SQLException ex) {
 			ex.printStackTrace();
@@ -118,7 +118,7 @@ public class DateController {
 			return -1;
 		if(givenDateInt>0) //DateId received
 			return givenDateInt;
-		//GetDate doesnt exist, create one
+		//GetDate doesnt exist, create one.
 		givenDateInt = CreateDateIdByDate(connection, givenDate);
 		if(givenDateInt<=0)  //create error or fail
 			return -1;

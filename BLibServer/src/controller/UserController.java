@@ -127,7 +127,7 @@ public class UserController {
 			ResultSet rs = pstmt.executeQuery();
 			String name = "No name";
 			if(rs.next()) {
-				name = rs.getString(1);
+				name = rs.getString("librarian_name");
 			}
 			return name;
 		}

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="paneScreen" prefHeight="535.0" prefWidth="803.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MenuUIController">
+<AnchorPane fx:id="paneScreen" prefHeight="544.0" prefWidth="810.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MenuUIController">
    <children>
-      <Label fx:id="lblWelocome" layoutX="277.0" layoutY="49.0" prefHeight="46.0" prefWidth="372.0" textAlignment="CENTER" wrapText="true">
+      <Label fx:id="lblWelocome" layoutX="273.0" layoutY="14.0" prefHeight="46.0" prefWidth="372.0" textAlignment="CENTER" wrapText="true">
          <font>
             <Font name="System Bold" size="30.0" />
          </font></Label>
-      <AnchorPane fx:id="paneButtons" layoutX="-8.0" layoutY="96.0" prefHeight="318.0" prefWidth="210.0">
+      <AnchorPane fx:id="paneButtons" layoutX="7.0" layoutY="78.0" prefHeight="318.0" prefWidth="210.0">
          <children>
             <Button id="btnUpdate" fx:id="btnSearch" layoutX="27.0" layoutY="40.0" mnemonicParsing="false" onAction="#getSearchBtn" prefHeight="26.0" prefWidth="152.0" text="Search" />
             <Button id="btnClose" fx:id="btnManager" layoutX="27.0" layoutY="85.0" mnemonicParsing="false" onAction="#getManagerBtn" prefHeight="26.0" prefWidth="152.0" text="Manager" />
@@ -26,10 +26,10 @@
             <Button id="btnClose" fx:id="btnReservations" layoutX="27.0" layoutY="185.0" mnemonicParsing="false" onAction="#getReservationsBtn" prefHeight="26.0" prefWidth="152.0" text="Reservations" />
          </children>
       </AnchorPane>
-      <Pane fx:id="pane" layoutX="195.0" layoutY="81.0" prefHeight="439.0" prefWidth="593.0">
-         <padding>
-            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-         </padding>
-      </Pane>
+      <ScrollPane fx:id="scrollPane" layoutX="197.0" layoutY="78.0" prefHeight="451.0" prefWidth="598.0">
+         <content>
+            <VBox fx:id="pane" alignment="CENTER" prefHeight="34.0" prefWidth="33.0" />
+         </content>
+      </ScrollPane>
    </children>
 </AnchorPane>

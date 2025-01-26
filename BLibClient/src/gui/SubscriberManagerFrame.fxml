@@ -12,7 +12,7 @@
       <Button id="btnExit" fx:id="btnExit" layoutX="277.0" layoutY="504.0" mnemonicParsing="false" onAction="#Exit" text="Exit" />
       <Button id="btnRefresh" fx:id="btnRefresh" layoutX="257.0" layoutY="29.0" mnemonicParsing="false" onAction="#Refresh" prefHeight="26.0" prefWidth="62.0" text="Refresh" />
             <Button id="btnShowAll" fx:id="btnShowAll" layoutX="29.0" layoutY="29.0" mnemonicParsing="false" onAction="#showAll" prefHeight="26.0" prefWidth="62.0" text="showAll" />
-             <Button id="getStudentbtn" fx:id="getStudentbtn" layoutX="29.0" layoutY="504.0" mnemonicParsing="false" onAction="#getStudent" prefHeight="26.0" prefWidth="62.0" text="search" />
+             <Button id="getStudentbtn" fx:id="getStudentbtn" layoutX="29.0" layoutY="504.0" mnemonicParsing="false" onAction="#getStudent" prefHeight="26.0" prefWidth="62.0" text="search" wrapText="true" />
 
       <Label fx:id="lblText" layoutX="122.0" layoutY="27.0" text="Subscribers">
          <font>

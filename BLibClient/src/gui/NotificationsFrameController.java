@@ -12,8 +12,6 @@ public class NotificationsFrameController {
     @FXML
     private ListView<String> notificationsListView;
 
-    @FXML
-    private Button btnClose;
 
     // Simulated list of notifications (you can replace this with actual data from your system)
     private ObservableList<String> notifications = FXCollections.observableArrayList(
@@ -28,10 +26,4 @@ public class NotificationsFrameController {
         notificationsListView.setItems(notifications);
     }
 
-    // Method to handle the Close button click event
-    @FXML
-    public void onCloseBtnClick(ActionEvent event) {
-        // Close the window when the button is clicked
-        ((Button) event.getSource()).getScene().getWindow().hide();
-    }
 }

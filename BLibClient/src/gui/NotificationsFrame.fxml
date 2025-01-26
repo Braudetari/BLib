@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
@@ -8,12 +7,9 @@
 <AnchorPane prefHeight="400.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.NotificationsFrameController">
     <children>
         <!-- Title Label -->
-        <Text layoutX="20.0" layoutY="20.0" text="Notifications" style="-fx-font-size: 20px; -fx-font-weight: bold;" />
+        <Text layoutX="20.0" layoutY="20.0" style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Notifications" />
         
         <!-- ListView for displaying messages -->
         <ListView fx:id="notificationsListView" layoutX="20.0" layoutY="60.0" prefHeight="250.0" prefWidth="460.0" />
-        
-        <!-- Close Button -->
-        <Button fx:id="btnClose" layoutX="200.0" layoutY="330.0" text="Close" onAction="#onCloseBtnClick" />
     </children>
 </AnchorPane>

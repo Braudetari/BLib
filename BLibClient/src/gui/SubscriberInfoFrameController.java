@@ -5,6 +5,7 @@ import java.io.IOException;
 import client.ClientUI;
 import common.Message;
 import common.Subscriber;
+import common.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,11 +14,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class SubscriberInfoFrameController {
-
+	
+	
+	@FXML
+	private ToggleButton toggleStatus=null;
 	@FXML
 	private Button btnClose = null;
 	@FXML
@@ -33,6 +38,16 @@ public class SubscriberInfoFrameController {
 	@FXML
 	private TextField txtEmail=null;
 	private static Subscriber importedSubscriber;
+	
+	public void initialize() {
+	    boolean isLibrarian = checkUserType(); // Implement logic to check user type
+	    toggleStatus.setDisable(!isLibrarian); // Disable for subscribers
+	}
+
+	private boolean checkUserType() {
+	    // Replace this with your actual user type check
+	    return ClientUI.chat.getClientUser().getType().equals(User.UserType.LIBRARIAN);
+	}
 	
 	private void loadText(Subscriber subscriber) {
 		txtId.setText("" + subscriber.getSubscriberId());
@@ -68,6 +83,19 @@ public class SubscriberInfoFrameController {
 	@FXML
 	private void getCloseButton(ActionEvent event) throws Exception {
 		((Stage)((Node)event.getSource()).getScene().getWindow()).close(); //exit window
+	}
+	
+	@FXML
+	private void handleToggleStatus() {
+	    if (toggleStatus.isSelected()) {
+	        toggleStatus.setText("Active");
+	        System.out.println("Status changed to Active");
+	        // Update logic for Active
+	    } else {
+	        toggleStatus.setText("Frozen");
+	        System.out.println("Status changed to Frozen");
+	        // Update logic for Frozen
+	    }
 	}
 	
 	

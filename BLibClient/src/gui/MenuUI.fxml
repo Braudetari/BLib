@@ -9,9 +9,9 @@
 
 <AnchorPane fx:id="paneScreen" prefHeight="544.0" prefWidth="810.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MenuUIController">
    <children>
-      <Label fx:id="lblWelocome" layoutX="273.0" layoutY="14.0" prefHeight="46.0" prefWidth="372.0" textAlignment="CENTER" wrapText="true">
+      <Label fx:id="lblWelocome" layoutX="26.0" layoutY="14.0" prefHeight="46.0" prefWidth="744.0" textAlignment="CENTER" wrapText="true">
          <font>
-            <Font name="System Bold" size="30.0" />
+            <Font name="System Bold" size="28.0" />
          </font></Label>
       <AnchorPane fx:id="paneButtons" layoutX="7.0" layoutY="78.0" prefHeight="318.0" prefWidth="210.0">
          <children>

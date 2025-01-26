@@ -62,7 +62,7 @@ public class MenuUIController {
 	
 	private void initializeButtons() {
 		Button[] listOfButtons = {btnSearch,btnNotifications, btnManager, btnBorrow, btnReturnABook,btnBorrowedBooks,btnReservations,btnPersonalInfo};
-		User.UserType[] buttonPermission = {User.UserType.GUEST,User.UserType.LIBRARIAN, User.UserType.LIBRARIAN,User.UserType.LIBRARIAN, User.UserType.LIBRARIAN,User.UserType.SUBSCRIBER, User.UserType.SUBSCRIBER, User.UserType.SUBSCRIBER};
+		User.UserType[] buttonPermission = {User.UserType.GUEST,User.UserType.SUBSCRIBER, User.UserType.LIBRARIAN,User.UserType.LIBRARIAN, User.UserType.LIBRARIAN,User.UserType.SUBSCRIBER, User.UserType.SUBSCRIBER, User.UserType.SUBSCRIBER};
 		int currentButtonPos = 50;
 		int buttonPadding = 50;
 		lblWelocome.setText("Welcome "+name);
@@ -81,6 +81,7 @@ public class MenuUIController {
 		this.permission = permission;
 		this.name = name;
 	}
+	
 	
 	
 	public void start(Stage primaryStage, User.UserType permission, String name) throws IOException {
@@ -123,12 +124,12 @@ public class MenuUIController {
 	
 	@FXML
 	private void getBorrowedBooksBtn(ActionEvent event) {
-		loadFXMLIntoPane("/gui/BorrowBookFrame.fxml");
+		loadFXMLIntoPane("/gui/ShowBorrowedBooksFrame.fxml");
 	}
 	
 	@FXML
 	private void getReservationsBtn(ActionEvent event) {
-		//loadFXMLIntoPane("/gui/ReservationBookFrame.fxml");//need to do it
+		loadFXMLIntoPane("/gui/ReservationsFrame.fxml");
 	}
 	
 	@FXML

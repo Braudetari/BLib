@@ -132,7 +132,7 @@ public class DetailedHistoryController {
 	
 	
 	/**
-	 * Get History List from Database using userId
+	 * Get History List from Database using historyId
 	 * @param connection
 	 * @param historyId
 	 * @return DetailedHistory List

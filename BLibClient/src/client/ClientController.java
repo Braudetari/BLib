@@ -312,6 +312,23 @@ public class ClientController implements ChatIF
   }
   
   /**
+   * Request server to add a history into a history list
+   * (subscribers have historyId btw) 
+   * @param DetailedHistory
+   * @param historyId int
+   * @return boolean success/fail
+   */
+  public boolean requestServerToAddHistory(DetailedHistory dh, int historyId){
+	  SendRequestToServer("addhistory", new Object[] {dh, (Integer)historyId});
+	  String[] lr = ClientUI.chat.getClientLastResponses();
+	  if(lr[0].contentEquals("error")) {
+		  return false;
+	  }
+	  return true;
+  }
+  
+  
+  /**
    * Request Server for Notifications for a specific subscriber
    * @param subscriberId
    * @return List<Notification>

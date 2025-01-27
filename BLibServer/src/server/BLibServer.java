@@ -511,11 +511,11 @@ public class BLibServer extends AbstractServer
 		 				handleMessageToClient(reply, client);
 		 			}
 	 			break;
-		 	case "gethistory": //expected message "userId"
+		 	case "gethistory": //expected message "historyId"
 		 			str = (String)message.getMessage();
 		 			try {
-		 				int userId = Integer.parseInt(str);
-		 				List<DetailedHistory> historyList = DetailedHistoryController.GetHistoryListFromDatabase(dbConnection.getConnection(), userId);
+		 				int historyId = Integer.parseInt(str);
+		 				List<DetailedHistory> historyList = DetailedHistoryController.GetHistoryListFromDatabase(dbConnection.getConnection(), historyId);
 		 				replyStr = DetailedHistory.detailedHistoryListToString(historyList);
 		 				reply = new Message("history",clientInfo.getSessionId(), replyStr);
 		 				handleMessageToClient(reply, client);
@@ -523,6 +523,31 @@ public class BLibServer extends AbstractServer
 		 			catch(Exception e) {
 		 				System.err.println("Could not parse message in get history");
 		 				reply = new Message("error", clientInfo.getSessionId(), "Could not get history using userId");
+		 				handleMessageToClient(reply, client);
+		 			}
+		 		break;
+		 	case "addhistory": //expected message Object[] = {(DetailedHistory), (Integer)historyId}
+			 		if(!clientInfo.getUser().getType().equals(User.UserType.LIBRARIAN)) {
+		 				reply = new Message("error", clientInfo.getSessionId(), "Access denied, not a librarian.");
+		 				handleMessageToClient(reply, client);
+		 				break;
+		 			}
+		 			try {
+		 				object = (Object[])message.getMessage();
+				 		dh = (DetailedHistory)object[0];
+		 				Integer historyId = (Integer)object[1];
+		 				List<DetailedHistory> historyList = DetailedHistoryController.GetHistoryListFromDatabase(dbConnection.getConnection(), historyId);
+		 				if(historyList == null) {
+		 					historyList = new ArrayList<DetailedHistory>();
+		 				}
+		 				historyList.add(dh);
+		 				DetailedHistoryController.RecordHistory(dbConnection.getConnection(), dh);
+		 				sendMessageToClient("msg", "added history to user " + dh.getUser().getId(), client, clientInfo);
+
+		 			}
+		 			catch(Exception e) {
+		 				System.err.println("Could not parse message in add history");
+		 				reply = new Message("error", clientInfo.getSessionId(), "Could not add history using historyId");
 		 				handleMessageToClient(reply, client);
 		 			}
 		 		break;

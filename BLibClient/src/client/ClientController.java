@@ -180,6 +180,11 @@ public class ClientController implements ChatIF
 	  return getClientBookList();
   }
   
+  public List<Book> requestServerForReservedBooks(int userId){
+	  SendRequestToServer("getreservedbooks", (Integer)userId);
+	  return getClientBookList();
+  }
+
   /**
    * Request Server to Return Availiblity+ClosestReturnDate for books in bookList
    * @param bookList
@@ -269,14 +274,21 @@ public class ClientController implements ChatIF
    * @param returnDate
    * @param bookIdType "id" for book_id or "serial" for bookSerialId
    */
-  public int requestServerToBorrowBook(String bookIdOrSerial, String subscriberId, LocalDate borrowDate, LocalDate returnDate, String bookIdType) {
-	  SendRequestToServer("borrowbook", bookIdOrSerial+";"+subscriberId+";"+DateUtil.DateToString(borrowDate)+";"+DateUtil.DateToString(returnDate)+";"+bookIdType);
-	  if(client.lastResponse.contentEquals("msg")) {
-		  return 1;
+  public int requestServerToBorrowBook(String bookId, String subscriberId, LocalDate borrowDate, LocalDate returnDate) {
+	  try {
+		  SendRequestToServer("borrowbook", new Object[] {Integer.parseInt(bookId), Integer.parseInt(subscriberId), borrowDate, returnDate});
+		  if(client.lastResponse.contentEquals("msg")) {
+			  return 1;
+		  }
+		  else {
+			  return 0;
+		  }
 	  }
-	  else {
+	  catch(Exception e) {
+		  System.err.println("Could not parse variables to borrow book");
 		  return 0;
 	  }
+
   }
   
   /**

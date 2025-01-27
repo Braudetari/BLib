@@ -152,7 +152,7 @@ public class MenuUIController {
 	
 	@FXML
 	private void getReservationsBtn(ActionEvent event) {
-		loadFXMLIntoPane("/gui/ReservationsFrame.fxml");
+		loadFXMLIntoPane("/gui/ReservationFrame.fxml");
 		lblPane.setText("Reservation");
 	}
 	

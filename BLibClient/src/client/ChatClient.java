@@ -136,7 +136,7 @@ public class ChatClient extends AbstractClient
 			  	
 			  	case "books":
 				  		try {
-			  				this.books = Book.bookListFromString((String)message.getMessage());
+			  				this.books = (List<Book>)message.getMessage();
 			  			}
 			  			catch(Exception e) {
 			  				e.printStackTrace();

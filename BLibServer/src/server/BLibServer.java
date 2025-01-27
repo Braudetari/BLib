@@ -384,8 +384,21 @@ public class BLibServer extends AbstractServer
 	 				String element = ((String[])message.getMessage())[0];
 	 				String value = ((String[])message.getMessage())[1];
 		 			List<Book> books = BookController.GetBooksByElement(dbConnection.getConnection(), element, value);
-		 			reply = new Message("books", clientInfo.getSessionId(), Book.bookListToString(books));
-		 			handleMessageToClient(reply, client);
+		 			sendMessageToClient("books", books, client, clientInfo);
+	 			}
+	 			catch(Exception e) {
+	 				reply = new Message("error", clientInfo.getSessionId(), "Could not parse not correct element and value for books search");
+	 				handleMessageToClient(reply, client);
+	 			}
+		 		break;
+		 	case "getreservedbooks": //expected message : userId
+		 		try {
+	 				Integer userId = (Integer)message.getMessage();
+		 			List<Book> books = ReserveController.GetReservedBookBySubscriber(dbConnection.getConnection(), userId);
+		 			if(books == null) {
+		 				sendMessageToClient("error", "Could not get reserved books for subscriber " + userId, client, clientInfo);
+		 			}
+		 			sendMessageToClient("books", books, client, clientInfo);
 	 			}
 	 			catch(Exception e) {
 	 				reply = new Message("error", clientInfo.getSessionId(), "Could not parse not correct element and value for books search");
@@ -407,7 +420,7 @@ public class BLibServer extends AbstractServer
 		 				sendMessageToClient("error", str, client, clientInfo);
 		 			}
 		 		break;
-		 	case "borrowbook": //expected to get message of "bookSerial/Id;subscriberId;dateFrom;dateTo;id/serial"
+		 	case "borrowbook": //expected to get message of Object[] =  {bookId, subscriberId, (LocalDate)borrow, (LocalDate)return}
 		 			User clientUser = clientInfo.getUser();
 		 			if(clientUser == null) {
 		 				reply = new Message("error", clientInfo.getSessionId(), "You are not logged in.");
@@ -420,15 +433,13 @@ public class BLibServer extends AbstractServer
 		 				break;
 		 			}
 		 			else {
-		 				str = (String)message.getMessage();
 		 				try {
 		 					//Parse String
-			 				String[] split = str.split(";");
-			 				int bookOrSerialId = Integer.parseInt(split[0]);
-			 				subscriberId = Integer.parseInt(split[1]); 
-			 				LocalDate dateFrom = DateUtil.DateFromString(split[2]);
-			 				LocalDate dateTo = DateUtil.DateFromString(split[3]);
-			 				String borrowType = split[4];
+			 				object = (Object[])message.getMessage();
+			 				int bookId = (Integer)object[0];
+			 				subscriberId = (Integer)object[1];
+			 				LocalDate dateFrom = (LocalDate)object[2];
+			 				LocalDate dateTo = (LocalDate)object[3];
 			 				
 			 				//Make sure subscriber not frozen
 			 				subscriber = SubscriberController.getSubscriberById(dbConnection.getConnection(), subscriberId);
@@ -437,28 +448,29 @@ public class BLibServer extends AbstractServer
 			 					handleMessageToClient(reply, client);
 			 					break;
 			 				}
+			 				//Check if book is reserved by another subscriber
+			 				subscriber = ReserveController.GetSubscriberThatReservedBook(dbConnection.getConnection(), bookId);
+			 				if(subscriber != null && subscriber.getSubscriberId() != subscriberId) {
+			 					sendMessageToClient("error", "Book is already reserved by another user.", client, clientInfo);
+			 					break;
+			 				}
+			 				result = ReserveController.RemoveReservation(dbConnection.getConnection(), bookId, subscriberId);
+			 				if(result<=0) {
+			 					System.err.println("Could not remove reservation during borrow");
+			 				}
 			 				//Lend based on serial or id
-			 				result = 0;
-			 				if(borrowType.contentEquals("serial")) {
-			 					result = LendController.LendBookSerialId(dbConnection.getConnection(), subscriberId, dateFrom, dateTo, bookOrSerialId);
-			 				}
-			 				else if(borrowType.contentEquals("id")) {
-			 					result = LendController.LendBookId(dbConnection.getConnection(), subscriberId, dateFrom, dateTo, bookOrSerialId);
-			 				}
-			 				else {
-			 					throw new Exception("Not a valid borrow type");
-			 				}
+			 				result = LendController.LendBookId(dbConnection.getConnection(), subscriberId, dateFrom, dateTo, bookId);
 			 				if(result<=0) {
 			 					reply = new Message("error", clientInfo.getSessionId(), "Could not borrow book, it might be taken");
 			 					handleMessageToClient(reply, client);
 			 					break;
 			 				}
-			 				reply = new Message("msg", clientInfo.getSessionId(), "Book " + bookOrSerialId + " Lent to Subscriber " + subscriberId + " successfully.");
+			 				reply = new Message("msg", clientInfo.getSessionId(), "Book " + bookId + " Lent to Subscriber " + subscriberId + " successfully.");
 			 				handleMessageToClient(reply, client);
 			 				break;
 		 				}
 		 				catch(Exception e) {
-		 					reply = new Message("error", clientInfo.getSessionId(), "Could not borrow book, expected \"bookSerialId;subscriberId;dateFrom;dateTo\"");
+		 					reply = new Message("error", clientInfo.getSessionId(), "Could not borrow book");
 		 					handleMessageToClient(reply, client);
 		 					break;
 		 				}

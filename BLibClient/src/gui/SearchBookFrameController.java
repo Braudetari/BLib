@@ -249,7 +249,18 @@ public class SearchBookFrameController implements IController {
     
     @FXML
     private void Reserve(ActionEvent event) {
-    	System.out.println("Reserve" + selectedBook);
+    	try {
+    		int success = ClientUI.chat.requestServerToReserveBook(selectedBook, ClientUI.chat.getClientUser().getId());
+    		if(success>0) {
+    			showAlert(AlertType.INFORMATION, "Reservation", "The book "+ selectedBook.getName() +"(id:"+selectedBook.getId()+") was reserved successfuly");
+    		}
+    		else {
+    			throw new Exception();
+    		}
+    	}
+    	catch(Exception e) {
+    		showAlert(AlertType.ERROR, "Reservation", ClientUI.chat.getClientLastResponses()[2]);
+    	}
     	
     }
     

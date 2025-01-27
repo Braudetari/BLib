@@ -362,7 +362,7 @@ public class LendController {
 			int result = DetailedHistoryController.RecordHistory(connection, dh);
 			
 			//Freeze subscriber if returned late by a week
-			if(borrowedbook.getReturnDate().isBefore(returnDate.plusDays(6)) && result>0) {
+			if((returnDate.minusDays(7).isAfter(borrowedbook.getReturnDate())) && result>0) {
 				boolean booleanSuccess = SubscriberController.SetFreezeSubscriber(connection, borrowedbook.getBorrowingSubscriber().getSubscriberId(), true);
 				//Record History
 				if(booleanSuccess) {

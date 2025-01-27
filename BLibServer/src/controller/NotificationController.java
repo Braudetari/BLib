@@ -14,6 +14,37 @@ import java.util.List;
 import common.*;
 public class NotificationController {
 	
+	public static void ReservationRemovalAfterTwoDays(Connection connection) {
+		if(connection == null) {
+			System.err.println("Cant connect to database");
+			return;
+		}
+		try {
+			LocalDate today = LocalDate.now();
+			Object[] lists = ReserveController.GetAllReservations(connection);
+			List<Book> bookList = (List<Book>)lists[0];
+			List<Subscriber> subscriberList = (List<Subscriber>)lists[1];
+			List<LocalDate> dateList = (List<LocalDate>)lists[2];
+			for(int i=0; i<dateList.size(); i++) {
+				if(today.minusDays(2).isAfter(dateList.get(i))) {
+					Subscriber subscriber = subscriberList.get(i);
+					Book book = bookList.get(i);
+					int success = ReserveController.RemoveReservation(connection, book.getId(), subscriber.getSubscriberId());
+					if(success>0) {
+						String reply = "Reservation of book "+book.getName()+"("+book.getId()+") was removed after 2 days.";
+						Notification n = new Notification(subscriber, today, reply);
+						Notify(connection, n);
+						SendSmsNotification(reply, subscriber);
+						SendEmailNotification(reply, subscriber);
+					}
+				}
+			}
+		}
+		catch(Exception e) {
+			System.err.println("Couldn't remove reservations for subscribers after 2 days");
+		}
+	}
+	
 	/**
 	 * Remind every subscriber a day before borrow that their return date is due
 	 * @param connection

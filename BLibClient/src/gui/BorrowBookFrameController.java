@@ -106,7 +106,7 @@ public class BorrowBookFrameController implements IController {
             return;
         }
         
-        int success =  ClientUI.chat.requestServerToBorrowBook(bookId, clientId, borrowDate, returnDate, "id");
+        int success =  ClientUI.chat.requestServerToBorrowBook(bookId, clientId, borrowDate, returnDate);
         String message= String.format("Subscriber ID: %s\nCould not borrow book\n%s", clientId, ClientUI.chat.getClientLastResponses()[2]);
         if(success>0) {
             message = String.format("Subscriber ID: %s\nBorrow Date: %s\nReturn Date: %s", clientId, borrowDate, returnDate);

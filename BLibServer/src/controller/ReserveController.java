@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import common.*;
 
@@ -117,6 +119,29 @@ public class ReserveController {
 		}
 	}
 	
+	public static List<Book> GetReservedBookBySubscriber(Connection connection, int subscriberId){
+		if(connection == null) {
+			System.err.println("Could not connect to database");
+			return null;
+		}
+		try {
+			PreparedStatement pstmt = connection.prepareStatement("SELECT book_id FROM `order` WHERE subscriber_id = ?");
+			pstmt.setInt(1, subscriberId);
+			ResultSet rs = pstmt.executeQuery();
+			List<Book> books = new ArrayList<Book>();
+			while(rs.next()) {
+				int book_id = rs.getInt("book_id");
+				Book book = BookController.GetBookById(connection, book_id);
+				books.add(book);
+			}
+			return books;
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			System.err.println("Could not get reserved books by subscriberId");
+			return null;
+		}
+	}
 	
 	/**
 	 * Returns the subscriber that reserved a bookId
@@ -168,15 +193,15 @@ public class ReserveController {
 		try {
 			//Get book id's that are not ordered yet with serialid
 			String query = "SELECT b.book_id, "
-			           + "       d.some_date_column AS return_date "  // replace with the actual date column
-			           + "FROM borrowed_book b "
-			           + "JOIN book bk ON b.book_id = bk.book_id "
-			           + "JOIN \"date\" d ON b.return_date_id = d.date_id "
-			           + "LEFT JOIN \"order\" o "
-			           + "       ON b.book_id = o.book_id "
-			           + "      AND b.subscriber_id = o.subscriber_id "
-			           + "WHERE o.order_id IS NULL "
-			           + "  AND bk.book_serial_id = ?;"; 
+                    + "       d.date_id AS return_date " 
+                    + "FROM borrowed_book b "
+                    + "JOIN book bk ON b.book_id = bk.book_id "
+                    + "JOIN \"date\" d ON b.return_date_id = d.date_id "
+                    + "LEFT JOIN \"order\" o "
+                    + "       ON b.book_id = o.book_id "
+                    + "      AND b.subscriber_id = o.subscriber_id "
+                    + "WHERE o.order_id IS NULL "
+                    + "  AND bk.book_serial_id = ?;"; 
 	        PreparedStatement pstmt = connection.prepareStatement(query);
 	        pstmt.setInt(1, bookSerialId);
 	        ResultSet rs = pstmt.executeQuery();
@@ -205,6 +230,75 @@ public class ReserveController {
 			e.printStackTrace();
 			System.err.println("Could not check if a book is reservable");
 			return -1;
+		}
+	}
+
+	/**
+	 * Removes Reservation from Database with bookId and subscriberId
+	 * @param connection
+	 * @param bookId
+	 * @param subscriberId
+	 * @return -1=error, 0=fail, 1=success
+	 */
+	public static int RemoveReservation(Connection connection, int bookId, int subscriberId) {
+		if(connection == null) {
+			System.err.println("Could not connect to database");
+			return -1;
+		}
+		
+		try {
+			PreparedStatement pstmt = connection.prepareStatement("DELETE FROM `order` WHERE book_id = ? AND subscriber_id = ?");
+			pstmt.setInt(1, bookId);
+			pstmt.setInt(2, subscriberId);
+			int success = pstmt.executeUpdate();
+			if(success<=0) {
+				return 0;
+			}
+			return 1;
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			System.err.println("Could not remove reservation");
+			return -1;
+		}
+	}
+	
+	/**
+	 * Get all Reservations in Database
+	 * @param connection
+	 * @return
+	 * Object[0] = List<Book> reservedBooks <p>
+	 * Object[1] = List<Subscriber> subscribersThatReserved
+	 * Object[2] = List<LocalDate> reservedDates
+	 */
+	public static Object[] GetAllReservations(Connection connection) {
+		if(connection == null) {
+			System.err.println("Could not connect to database");
+			return null;
+		}
+		try {
+			PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM `order`");
+			ResultSet rs = pstmt.executeQuery();
+			List<Book> books = new ArrayList<Book>();
+			List<Subscriber> subscribers = new ArrayList<Subscriber>();
+			List<LocalDate> dates = new ArrayList<LocalDate>();
+			while(rs.next()) {
+				int bookId = rs.getInt("book_id");
+				int subscriberId = rs.getInt("subscriber_id");
+				int order_date_id = rs.getInt("order_date_id");
+				Book book = BookController.GetBookById(connection, bookId);
+				Subscriber subscriber = SubscriberController.getSubscriberById(connection, subscriberId);
+				LocalDate date = DateController.GetDateById(connection, order_date_id);
+				books.add(book);
+				subscribers.add(subscriber);
+				dates.add(date);
+			}
+			return new Object[] {books, subscribers, dates};
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			System.err.println("Could not remove reservation");
+			return null;
 		}
 	}
 }

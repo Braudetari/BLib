@@ -149,6 +149,7 @@ public class ServerUI extends Application {
 					Platform.runLater(() -> {
 						NotificationController.BorrowReminderDayBefore(BLibServer.dbConnection.getConnection());
 						NotificationController.UnfreezeAfterAMonth(BLibServer.dbConnection.getConnection());
+						NotificationController.ReservationRemovalAfterTwoDays(BLibServer.dbConnection.getConnection());
 					});
 				}
 				Thread.sleep(3600000); //sleep for hour

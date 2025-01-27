@@ -1,5 +1,6 @@
 package gui;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import client.ClientUI;
@@ -20,73 +21,66 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-public class ReservationsFrameController{
+public class ReservationsFrameController implements IController{
 
     @FXML
     private Button btnExtend;
 
     @FXML
-    private TableView<BorrowedBook> borrowedBooksTable;
+    private TableView<Book> reservedTable;
 
     @FXML
-    private TableColumn<BorrowedBook, String> colBookName;
+    private TableColumn<Book, String> colBookName;
 
     @FXML
-    private TableColumn<BorrowedBook, String> colBorrowedDate;
+    private TableColumn<Book, Integer> colBookId;
 
     @FXML
-    private TableColumn<BorrowedBook, String> colReturnDate;
+    private TableColumn<Book, String> colStatus;
 
-    private BorrowedBook selectedBook = null;
-
-    private List<BorrowedBook> borrowedBooksList = null;
-    private ObservableList<BorrowedBook> borrowedBooksData = FXCollections.observableArrayList();
+    private List<Book> reservedList = null;
+    private List<String> booksAvailibilityString = null;
+    private List<Boolean> booksAvailibility = null;
+    private ObservableList<Book> reservedData;
     
     public void initializeFrame() {
-        // Initialize the button and hide it initially
-        btnExtend.setVisible(false);
-
-        // Set up table columns
-        colBookName.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getBorrowedBook().getName()));
-        colBorrowedDate.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getBorrowedDate().toString()));
-        colReturnDate.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getReturnDate().toString()));
+    	reservedData = FXCollections.observableArrayList();
+        colBookId.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getId()));
+        colBookName.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getName()));
+		colStatus.setCellValueFactory(cellData -> {
+			Book book = cellData.getValue();
+			int row = reservedData.indexOf(book);
+			if(row>=0){
+				boolean available = booksAvailibility.get(row);
+				return new SimpleObjectProperty((available)? "Available" : "Reserved");
+			}
+			else {
+				return new SimpleObjectProperty("");	
+			}
+			
+		});
+		
+		reservedTable.setItems(reservedData);
+		
+        reservedList = ClientUI.chat.requestServerForReservedBooks(ClientUI.chat.getClientUser().getId());
+        if(reservedList == null) {
+        	reservedList = new ArrayList<Book>();
+        }
+        Object[] bookInfoList = ClientUI.chat.requestServerForBookListAvailibilityInfo(reservedList);
+        try {
+            booksAvailibility = (List<Boolean>)bookInfoList[0];
+        }
+        catch(Exception e) {
+        	booksAvailibility = new ArrayList<Boolean>();
+        }
         
-        borrowedBooksTable.setItems(borrowedBooksData);
-
-        // Fetch and display all borrowed books for the client
-        //borrowedBooksList = ClientUI.chat.requestServerForBorrowedBooks();
-        borrowedBooksData.clear();
-        if (borrowedBooksList != null) {
-            borrowedBooksData.addAll(borrowedBooksList);
+        reservedData.clear();
+        if (reservedList != null) {
+        	reservedData.addAll(reservedList);
         }
     }
 
-    @FXML
-    private void SelectRow(MouseEvent event) throws Exception {
-        selectedBook = borrowedBooksTable.getSelectionModel().getSelectedItem();
-        if (selectedBook != null) {
-            // Show the "Extend" button when a row is selected
-            btnExtend.setVisible(true);
-        } else {
-            // Hide the "Extend" button when no row is selected
-            btnExtend.setVisible(false);
-        }
-    }
     
-    @FXML
-    private void Extend(ActionEvent event) {
-        System.out.println("Extend the loan for: " + selectedBook);
-
-        // Logic to extend the loan (You can implement the actual extension logic here)
-        // You can send a request to the server or update the database accordingly
-
-        // For now, let's just show an alert
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Extend Loan");
-        alert.setHeaderText("Loan Extended Successfully");
-        alert.setContentText("The loan for '" + selectedBook.getBorrowedBook().getName() + "' has been extended.");
-        alert.showAndWait();
-    }
 
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader();
@@ -98,6 +92,38 @@ public class ReservationsFrameController{
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
+
+
+	@Override
+	public void initializeFrame(Object object) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void setPermission(UserType type) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void setObject(Object object) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void setMainController(MenuUIController controller) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	
 }

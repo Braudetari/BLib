@@ -20,9 +20,10 @@
          <columns>
             <TableColumn fx:id="colDate" prefWidth="101.5999755859375" text="Date" />
             <TableColumn fx:id="colAction" prefWidth="140.800048828125" text="Action" />
-            <TableColumn fx:id="colDescription" prefWidth="316.79998779296875" text="Description" />
+            <TableColumn fx:id="colDescription" prefWidth="300.0" text="Description" />
          </columns>
       </TableView>
       <Button fx:id="btnBack" layoutX="20.0" layoutY="383.0" mnemonicParsing="false" onAction="#handleBackBtn" prefHeight="26.0" prefWidth="74.0" styleClass="button" text="Back" />
+      <Button fx:id="btnAddNote" disable="true" layoutX="266.0" layoutY="383.0" mnemonicParsing="false" onAction="#OpenAddNote" text="Add Note" textAlignment="CENTER" visible="false" />
    </children>
 </AnchorPane>

@@ -112,6 +112,7 @@ public class BLibServer extends AbstractServer
   
   private void handleClientDisconnection(ConnectionToClientInfo clientInfo) {
 	  clientInfo.setStatus(ClientConnectionStatus.Disconnected);
+	  clientInfo.setUser(null);
   }
   
   /**
@@ -526,7 +527,7 @@ public class BLibServer extends AbstractServer
 		 				handleMessageToClient(reply, client);
 		 			}
 		 		break;
-		 	case "addhistory": //expected message Object[] = {(DetailedHistory), (Integer)historyId}
+		 	case "addhistory": //expected message Object[] = {(DetailedHistory w/out user), (Integer)historyId, (Integer)userId}
 			 		if(!clientInfo.getUser().getType().equals(User.UserType.LIBRARIAN)) {
 		 				reply = new Message("error", clientInfo.getSessionId(), "Access denied, not a librarian.");
 		 				handleMessageToClient(reply, client);
@@ -536,11 +537,9 @@ public class BLibServer extends AbstractServer
 		 				object = (Object[])message.getMessage();
 				 		dh = (DetailedHistory)object[0];
 		 				Integer historyId = (Integer)object[1];
-		 				List<DetailedHistory> historyList = DetailedHistoryController.GetHistoryListFromDatabase(dbConnection.getConnection(), historyId);
-		 				if(historyList == null) {
-		 					historyList = new ArrayList<DetailedHistory>();
-		 				}
-		 				historyList.add(dh);
+		 				Integer userId = (Integer)object[1];
+		 				user = UserController.getUserById(dbConnection.getConnection(), userId);
+		 				dh.setUser(user);
 		 				DetailedHistoryController.RecordHistory(dbConnection.getConnection(), dh);
 		 				sendMessageToClient("msg", "added history to user " + dh.getUser().getId(), client, clientInfo);
 

@@ -43,6 +43,9 @@ public class HistoryFrameController implements IController {
     private Button btnBack;
     
     @FXML
+    private Button btnAddNote;
+    
+    @FXML
     private TableView<DetailedHistory> historyTable;
 
     @FXML
@@ -71,6 +74,13 @@ public class HistoryFrameController implements IController {
     }
     
     public void initializeHistory() {
+    	if(ClientUI.chat.getClientUser().getType().equals(User.UserType.LIBRARIAN)) {
+        	btnAddNote.setVisible(true);
+    	}
+    	else {
+    		btnAddNote.setVisible(false);
+    	}
+    	
     	// Add search options
         searchOptions.getItems().addAll("Action", "Description", "Note");
         searchOptions.setValue("Action");
@@ -136,6 +146,22 @@ public class HistoryFrameController implements IController {
     @FXML
     private void SelectRow(MouseEvent event) throws Exception{
         selectedLine = historyTable.getSelectionModel().getSelectedItem();
+        if(selectedLine != null) {
+        	btnAddNote.setDisable(false);
+        }
+        else {
+        	btnAddNote.setDisable(true);
+        }
+    }
+    
+    @FXML
+    private void OpenAddNote(ActionEvent event) {
+    	IController genericController = mainController.loadFXMLIntoPane("/gui/AddNoteFrame.fxml");
+    	if(genericController instanceof AddNoteFrameController) {
+    		AddNoteFrameController addNote = (AddNoteFrameController)genericController;
+    		addNote.setObject(new Object[] {selectedLine, importedSubscriber, userHistoryId});
+    		
+    	}
     }
     
     @FXML

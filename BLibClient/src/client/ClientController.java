@@ -314,12 +314,12 @@ public class ClientController implements ChatIF
   /**
    * Request server to add a history into a history list
    * (subscribers have historyId btw) 
-   * @param DetailedHistory
+   * @param DetailedHistory (user can be null)
    * @param historyId int
    * @return boolean success/fail
    */
-  public boolean requestServerToAddHistory(DetailedHistory dh, int historyId){
-	  SendRequestToServer("addhistory", new Object[] {dh, (Integer)historyId});
+  public boolean requestServerToAddHistoryToSubscriber(DetailedHistory dh, int historyId, int userId){
+	  SendRequestToServer("addhistory", new Object[] {dh, (Integer)historyId, (Integer)userId});
 	  String[] lr = ClientUI.chat.getClientLastResponses();
 	  if(lr[0].contentEquals("error")) {
 		  return false;

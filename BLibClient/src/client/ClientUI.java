@@ -5,10 +5,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Vector;
-import gui.ConnectionFrameController;
 import gui.LoginFrameController;
 import gui.NoticeFrameController;
-import gui.ScreenLoginController;
 import client.ClientController;
 import common.Message;
 

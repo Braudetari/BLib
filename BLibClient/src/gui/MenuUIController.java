@@ -30,6 +30,8 @@ public class MenuUIController {
 	@FXML
 	private Button btnSearch = null;
 	@FXML
+	private Button btnReport = null;
+	@FXML
 	private Button btnLogout = null;
 	@FXML
 	private Button btnManager = null;
@@ -59,7 +61,6 @@ public class MenuUIController {
 	private User.UserType permission;
 	private String name;
 	private static Subscriber importedSubscriber;
-	
 	
 	private void initializeButtons() {
 		Button[] listOfButtons = {btnSearch,btnNotifications, btnManager, btnBorrow, btnReturnABook,btnBorrowedBooks,btnReservations,btnPersonalInfo};
@@ -101,6 +102,11 @@ public class MenuUIController {
 		frame.initialize(permission, name);
 		frame.initializeButtons();
 			
+	}
+	
+	@FXML
+	private void getReportBtn(ActionEvent event) {
+		loadFXMLIntoPane("/gui/ReportFrame.fxml"); //need to be complete
 	}
 	
 	@FXML

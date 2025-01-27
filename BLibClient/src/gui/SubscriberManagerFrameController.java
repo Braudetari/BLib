@@ -42,6 +42,10 @@ public class SubscriberManagerFrameController implements IController{
 	@FXML
 	private Button btnSearch=null;
 	@FXML
+	private Button btnRegister=null;
+	@FXML
+	private Button btnLentBooks=null;
+	@FXML
     private ComboBox<String> searchOptions;
 	@FXML
 	private TableView<Subscriber> tblSubscribers = null;
@@ -88,6 +92,17 @@ public class SubscriberManagerFrameController implements IController{
 		primaryStage.show();
 		SubscriberManagerFrameController controller = loader.getController();
 		controller.initializeTable();
+	}
+	
+	@FXML
+	private void handleRegisterBtn(ActionEvent event) {
+		try {
+    			IController genericController = mainController.loadFXMLIntoPane("/gui/RegisterSubscriberFrame.fxml");
+    			genericController.setMainController(mainController);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@FXML
@@ -142,6 +157,21 @@ public class SubscriberManagerFrameController implements IController{
         alert.showAndWait();
     }
 	
+	@FXML
+	private void handleLentBooksBtn(ActionEvent event) throws Exception{
+		try {
+			IController genericController = mainController.loadFXMLIntoPane("/gui/ShowBorrowedBooksFrame.fxml");
+			if(genericController instanceof ShowBorrowedBooksController) {
+				ShowBorrowedBooksController borrowedController = (ShowBorrowedBooksController)genericController;
+				genericController.setObject(selectedSubscriber);
+				borrowedController.initializeBorrowedBooks();
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 	@FXML
 	private void Open(ActionEvent event) throws Exception{
@@ -149,8 +179,9 @@ public class SubscriberManagerFrameController implements IController{
     		IController genericController = mainController.loadFXMLIntoPane("/gui/SubscriberInfoFrame.fxml");
     		if(genericController instanceof SubscriberInfoFrameController) {
     			SubscriberInfoFrameController infoController = (SubscriberInfoFrameController)genericController;
-    			infoController.setObject((Subscriber)selectedSubscriber);
-    			infoController.initializeFrame();
+    			infoController.setObject(selectedSubscriber);
+    			infoController.setPermission(ClientUI.chat.getClientUser().getType());
+    			infoController.initializeSubscriberInfo();
     		}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -168,9 +199,11 @@ public class SubscriberManagerFrameController implements IController{
 		selectedSubscriber = tblSubscribers.getSelectionModel().getSelectedItem();
 		if(selectedSubscriber != null) {
 			btnOpen.setDisable(false);
+			btnLentBooks.setDisable(false);
 		}
 		else {
 			btnOpen.setDisable(true);
+			btnLentBooks.setDisable(true);
 		}
 	}
 	
@@ -183,6 +216,7 @@ public class SubscriberManagerFrameController implements IController{
 
 	@Override
 	public void initializeFrame() {
+		mainController.setPaneTitle("Subscriber Manager");
 		searchOptions.getItems().addAll("Search Id", "Search by Name", "Search by Frozen Status");
         searchOptions.setValue("Search Id");
 		initializeTable();
@@ -197,6 +231,12 @@ public class SubscriberManagerFrameController implements IController{
 
 	@Override
 	public void setObject(Object object) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void initializeFrame(Object object) {
 		// TODO Auto-generated method stub
 		
 	}

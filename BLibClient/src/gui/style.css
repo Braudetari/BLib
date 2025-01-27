@@ -76,5 +76,19 @@
 
 .text-field:disabled {
     -fx-background-color: #A9A9A9; /* Dark grey when disabled */
-    -fx-text-fill: #696969;        /* Darker text for disabled */
+    -fx-text-fill: #090909;        /* Darker text for disabled */
+    -fx-font-weight: bold;
+}
+
+.toggle-button {
+    -fx-background-color: #006CEE; /* Light Red (Light Pink) */
+    -fx-text-fill: white;          /* Text color */
+    -fx-font-weight: bold;          /* Font size */
+}
+
+/* Selected state */
+.toggle-button:selected {
+    -fx-background-color: #CC2222; /* Light Red (Light Pink) */
+    -fx-text-fill: white;          /* Text color */
+    -fx-font-weight: bold; 
 }

@@ -230,7 +230,6 @@ public class SearchBookFrameController implements IController {
     
     @FXML
     private void Lend(ActionEvent event) {
-    	System.out.println("Lend" + selectedBook);
     	try {
     		IController genericController = mainController.loadFXMLIntoPane("/gui/BorrowBookFrame.fxml");
     		if(genericController instanceof BorrowBookFrameController) {
@@ -273,6 +272,11 @@ public class SearchBookFrameController implements IController {
     }
 	@Override
 	public void setObject(Object object) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void initializeFrame(Object object) {
 		// TODO Auto-generated method stub
 		
 	}

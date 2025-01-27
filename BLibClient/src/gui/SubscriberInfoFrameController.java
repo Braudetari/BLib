@@ -29,6 +29,10 @@ public class SubscriberInfoFrameController implements IController{
 	@FXML
 	private Button btnUpdate = null;
 	@FXML
+	private Button btnBack = null;
+	@FXML
+	private Button btnHistory = null;
+	@FXML
 	private Label labelmsg=null;
 	@FXML
 	private TextField txtId=null;
@@ -39,10 +43,23 @@ public class SubscriberInfoFrameController implements IController{
 	@FXML
 	private TextField txtEmail=null;
 	private Subscriber importedSubscriber;
+	private MenuUIController mainController=null;
+	private User.UserType permission=null;
 	
-	public void initialize() {
+	public void initializeSubscriberInfo() {
 	    boolean isLibrarian = checkUserType(); // Implement logic to check user type
+	    btnBack.setVisible(checkUserType());
+	    btnBack.setDisable(!checkUserType());
+	    toggleStatus.setSelected(importedSubscriber.isFrozen());
+	    if(importedSubscriber.isFrozen()) {
+	    	toggleStatus.setText("FROZEN");
+	    }
+	    else {
+	    	toggleStatus.setText("ACTIVE");
+	    }
 	    toggleStatus.setDisable(!isLibrarian); // Disable for subscribers
+	    txtId.setDisable(true);
+	    txtName.setDisable(!isLibrarian);
 	    loadText(importedSubscriber);
 	}
 
@@ -76,44 +93,67 @@ public class SubscriberInfoFrameController implements IController{
 	@FXML
 	private void getUpdateButton(ActionEvent event) throws Exception{
 		Subscriber editedSubscriber = new Subscriber(importedSubscriber);
+		if(checkUserType()) { //is librarian
+			editedSubscriber.setSubscriberName(txtName.getText());
+			editedSubscriber.setFrozen(toggleStatus.isSelected());
+		}
 		editedSubscriber.setSubscriberEmail(txtEmail.getText());
 		editedSubscriber.setSubscriberPhoneNumber(txtPhone.getText());
-		ClientUI.chat.accept(new Message("updatesubscriber",null,editedSubscriber.toString()));
-		getCloseButton(event); //close post update
-	}
-	
-	@FXML
-	private void getCloseButton(ActionEvent event) throws Exception {
-		((Stage)((Node)event.getSource()).getScene().getWindow()).close(); //exit window
+		ClientUI.chat.requestServerToUpdateSubscriber(editedSubscriber);
 	}
 	
 	@FXML
 	private void handleToggleStatus() {
-	    if (toggleStatus.isSelected()) {
-	        toggleStatus.setText("Active");
-	        System.out.println("Status changed to Active");
-	        // Update logic for Active
-	    } else {
-	        toggleStatus.setText("Frozen");
-	        System.out.println("Status changed to Frozen");
-	        // Update logic for Frozen
-	    }
+		if (toggleStatus.isSelected()) {
+            toggleStatus.setText("FROZEN");
+        } else {
+        	toggleStatus.setText("ACTIVE");
+        }
+	}
+	
+	@FXML
+	private void handleHistoryBtn(ActionEvent event) throws Exception{
+		try {
+    		IController genericController = mainController.loadFXMLIntoPane("/gui/HistoryFrame.fxml");
+    		if(genericController instanceof HistoryFrameController) {
+    			HistoryFrameController infoController = (HistoryFrameController)genericController;
+    			infoController.setObject(new Object[] {importedSubscriber, (Integer)importedSubscriber.getDetailedSubscriptionHistory()});
+    			infoController.initializeHistory();
+    		}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@FXML
+	private void handleBackBtn(ActionEvent event) throws Exception{
+		try {
+	    		IController genericController = mainController.loadFXMLIntoPane("/gui/SubscriberManagerFrame.fxml");
+	    		if(genericController instanceof HistoryFrameController) {
+	    			HistoryFrameController infoController = (HistoryFrameController)genericController;
+	    			infoController.setObject(importedSubscriber);
+	    			infoController.initializeHistory();
+	    		}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
-	public void initializeFrame() {
-		initialize();
+	public void initializeFrame(Object object) {
 	}
 
 	@Override
 	public void setPermission(UserType type) {
-		// TODO Auto-generated method stub
+		this.permission = type;
 		
 	}
 
 	@Override
 	public void setMainController(MenuUIController controller) {
-		// TODO Auto-generated method stub
+		this.mainController = controller;
 		
 	}
 
@@ -121,6 +161,11 @@ public class SubscriberInfoFrameController implements IController{
 	public void setObject(Object object) {
 		importedSubscriber = (Subscriber)object;
 		
+	}
+
+	@Override
+	public void initializeFrame() {
+		mainController.setPaneTitle("Personal Info");
 	}
 	
 	

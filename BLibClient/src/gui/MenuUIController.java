@@ -62,7 +62,6 @@ public class MenuUIController {
 	
 	private User.UserType permission;
 	private String name;
-	private static Subscriber importedSubscriber;
 	
 	private void initializeButtons() {
 		Button[] listOfButtons = {btnSearch,btnNotifications, btnManager, btnBorrow, btnReturnABook,btnBorrowedBooks,btnReservations,btnPersonalInfo};
@@ -138,8 +137,17 @@ public class MenuUIController {
 	
 	@FXML
 	private void getBorrowedBooksBtn(ActionEvent event) {
-		loadFXMLIntoPane("/gui/ShowBorrowedBooksFrame.fxml");
+		IController genericController = loadFXMLIntoPane("/gui/ShowBorrowedBooksFrame.fxml");
 		lblPane.setText("Borrowed Books");
+		//Only accessible from subscriber menu
+		User user = ClientUI.chat.getClientUser();
+		Subscriber subscriber = ClientUI.chat.requestServerForSubscriber("" + user.getId());
+		if(genericController instanceof ShowBorrowedBooksController) {
+			ShowBorrowedBooksController borrowedController = (ShowBorrowedBooksController)genericController;
+			genericController.setObject(subscriber);
+			borrowedController.initializeBorrowedBooks();
+		}
+		
 	}
 	
 	@FXML
@@ -150,7 +158,16 @@ public class MenuUIController {
 	
 	@FXML
 	private void getPersonalInfoBtn(ActionEvent event) {
-		loadFXMLIntoPane("/gui/SubscriberInfoFrame.fxml");
+		IController genericController = loadFXMLIntoPane("/gui/SubscriberInfoFrame.fxml");
+		User user = ClientUI.chat.getClientUser();
+		Subscriber subscriber = ClientUI.chat.requestServerForSubscriber("" + user.getId());
+		if(genericController instanceof SubscriberInfoFrameController) {
+			SubscriberInfoFrameController infoController = (SubscriberInfoFrameController)genericController;
+			infoController.setMainController(this);
+			infoController.setObject(subscriber);
+			infoController.setPermission(user.getType());
+			infoController.initializeSubscriberInfo();
+		}
 		lblPane.setText("Personal Info");
 	}
 	
@@ -205,6 +222,8 @@ public class MenuUIController {
 		}
 	}
 	
-	
+	public void setPaneTitle(String title) {
+		lblPane.setText(title);
+	}
 	
 }

@@ -71,5 +71,11 @@ public class NotificationsFrameController implements IController{
 		
 	}
 
+	@Override
+	public void initializeFrame(Object object) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

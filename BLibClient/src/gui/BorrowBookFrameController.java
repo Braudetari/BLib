@@ -93,7 +93,7 @@ public class BorrowBookFrameController implements IController {
         LocalDate returnDate = returnDatePicker.getValue();
 
         if (clientId.isEmpty()) {
-            showAlert("Error", "Please enter a valid Client ID.");
+            showAlert("Error", "Please enter a valid Subscriber ID.");
             return;
         }
         
@@ -102,14 +102,14 @@ public class BorrowBookFrameController implements IController {
         }
 
         if (returnDate == null || returnDate.isBefore(borrowDate) || returnDate.isAfter(borrowDate.plusWeeks(2))) {
-            showAlert("Error", "Return date cannot be more than two weeks from the borrow date.");
+            showAlert("Error", String.format("Please enter valid dates\nReturn date up to 2 weeks after borrow date."));
             return;
         }
         
         int success =  ClientUI.chat.requestServerToBorrowBook(bookId, clientId, borrowDate, returnDate, "id");
-        String message= String.format("Client ID: %s\nCould not borrow book", clientId);
+        String message= String.format("Subscriber ID: %s\nCould not borrow book\n%s", clientId, ClientUI.chat.getClientLastResponses()[2]);
         if(success>0) {
-            message = String.format("Client ID: %s\nBorrow Date: %s\nReturn Date: %s", clientId, borrowDate, returnDate);
+            message = String.format("Subscriber ID: %s\nBorrow Date: %s\nReturn Date: %s", clientId, borrowDate, returnDate);
         }
         showAlert("Book Borrow Result", message);
     }
@@ -142,6 +142,12 @@ public class BorrowBookFrameController implements IController {
 
 	@Override
 	public void setObject(Object object) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void initializeFrame(Object object) {
 		// TODO Auto-generated method stub
 		
 	}

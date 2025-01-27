@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ShowBorrowedBooksController">
+<AnchorPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ShowBorrowedBooksController">
     <children>
         <!-- Table Section -->
         <TableView fx:id="borrowedBooksTable" layoutX="5.0" layoutY="38.0" onMouseClicked="#SelectRow" prefHeight="300.0" prefWidth="560.0">
@@ -20,10 +18,5 @@
 
         <!-- Extend Button Section, placed under the TableView -->
         <Button fx:id="btnExtend" layoutX="250.0" layoutY="330.0" onAction="#Extend" prefWidth="100.0" text="Extend" visible="false" />
-      <Label layoutX="220.0" layoutY="2.0" text="Reservations">
-         <font>
-            <Font name="System Bold Italic" size="25.0" />
-         </font>
-      </Label>
     </children>
 </AnchorPane>

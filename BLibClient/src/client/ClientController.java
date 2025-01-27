@@ -303,7 +303,7 @@ public class ClientController implements ChatIF
   /**
    * Request Server for Detailed History List for a specific User
    * Can be found in any subscriber/librarian
-   * @param userId (subscriberId or librarianId)
+   * @param historyId (subscriberId or librarianId)
    * @return
    */
   public List<DetailedHistory> requestServerForHistoryList(int userId){

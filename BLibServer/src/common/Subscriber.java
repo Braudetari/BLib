@@ -105,6 +105,10 @@ public class Subscriber implements Serializable{
     	return false;
     }
     
+    public void setFrozen(boolean frozen) {
+    	this.subscriberFrozen = (frozen) ? 1 : 0;
+    }
+    
     @Override
     public String toString() {
     	if(this.subscriberId == -1)

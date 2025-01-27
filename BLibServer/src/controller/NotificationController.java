@@ -33,6 +33,8 @@ public class NotificationController {
 					String notificationMessage = "Book " + bb.getBorrowedBook().getName() +" Return Date is DUE tomorrow (" + DateUtil.DateToString(today.plusDays(1))+ ")";
 					Notification n = new Notification(subscriber, LocalDate.now(), notificationMessage);
 					Notify(connection, n);
+					SendSmsNotification(n.getDescription(), n.getSubscriber());
+					SendEmailNotification(n.getDescription(), n.getSubscriber());
 					
 				}
 			}
@@ -72,6 +74,8 @@ public class NotificationController {
 									SubscriberController.SetFreezeSubscriber(connection, subscriber.getSubscriberId(), false);
 									Notification n = new Notification(subscriber, dateNow, "Account unfrozen, 30 days have passed.");
 									Notify(connection, n);
+									SendSmsNotification(n.getDescription(), n.getSubscriber());
+									SendEmailNotification(n.getDescription(), n.getSubscriber());
 								}
 								break;
 							}
@@ -340,8 +344,6 @@ public class NotificationController {
 				System.out.println("Could not update notification for subscriber");
 				return 0;
 			}
-			SendSmsNotification(n.getDescription(), n.getSubscriber());
-			SendEmailNotification(n.getDescription(), n.getSubscriber());
 			return 1;
 		}
 		catch(Exception e) {
@@ -356,7 +358,7 @@ public class NotificationController {
 	 * @param message
 	 * @param subscriber
 	 */
-	private static void SendSmsNotification(String str, Subscriber subscriber) {
+	public static void SendSmsNotification(String str, Subscriber subscriber) {
 		//stub for now unless someone is willing to give me a sim card
 		System.out.println("Sent SMS to: " + subscriber.getSubscriberPhoneNumber() + " with message: " + str);
 	}
@@ -365,7 +367,7 @@ public class NotificationController {
 	 * Sends an Email notification
 	 * @param str
 	 */
-	private static void SendEmailNotification(String str, Subscriber subscriber) {
+	public static void SendEmailNotification(String str, Subscriber subscriber) {
 		//stub for now unless someone is willing to give me a sim card
 		System.out.println("Sent Email to: " + subscriber.getSubscriberEmail() + " with message: " + str);
 	}

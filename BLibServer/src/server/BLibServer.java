@@ -223,10 +223,39 @@ public class BLibServer extends AbstractServer
 		 		
 		 	case "updatesubscriber":
 		 		//Update subscriber in DB sent from client in string form
-		 		subscriber = Subscriber.subscriberFromString((String)message.getMessage());
-		 		SubscriberController.updateSubscriberInfo(dbConnection.getConnection(), subscriber.getSubscriberId(), subscriber.getSubscriberEmail(), subscriber.getSubscriberPhoneNumber());
-		 		reply = new Message("msg",clientInfo.getSessionId(),"updated subscriber");
-		 		handleMessageToClient(reply, client);
+		 		try {
+		 			subscriber = Subscriber.subscriberFromString((String)message.getMessage());
+			 		Subscriber oldSubscriber = SubscriberController.getSubscriberById(dbConnection.getConnection(), subscriber.getSubscriberId());
+			 		
+			 		boolean success = SubscriberController.updateSubscriberInfo(dbConnection.getConnection(), subscriber);
+			 		//If frozen was toggled by Librarian
+			 		if(success && oldSubscriber.isFrozen() != subscriber.isFrozen() && clientInfo.getUser().getType().equals(User.UserType.LIBRARIAN)) { //has to be a librarian
+			 			//If frozen status changed
+			 			str = "Account id "+ subscriber.getSubscriberId() +" was set to ";
+			 			if(subscriber.isFrozen()) {
+			 				str += "FROZEN ";
+			 			}
+			 			else {
+			 				str += "ACTIVE ";
+			 			}
+			 			str += "by " +UserController.getNameFromUser(dbConnection.getConnection(), clientInfo.getUser());
+			 			str += " on " + LocalDate.now();
+		 				Notification n = new Notification(subscriber, LocalDate.now(), str);
+			 			NotificationController.Notify(dbConnection.getConnection(), n);
+			 			dh = new DetailedHistory(
+			 					UserController.getUserById(dbConnection.getConnection(), subscriber.getSubscriberId()),
+			 					(subscriber.isFrozen()) ? DetailedHistory.ActionType.FREEZE : DetailedHistory.ActionType.UNFREEZE,
+			 					LocalDate.now(),
+			 					str);
+			 			DetailedHistoryController.RecordHistory(dbConnection.getConnection(), dh);
+			 		}
+			 		sendMessageToClient("msg", "Subscriber updated successfully", client, clientInfo);
+		 		}
+		 		catch(Exception e) {
+		 			System.err.println("Could not update subscriber");
+		 			sendMessageToClient("error", "Could not update subscriber", client, clientInfo);
+		 		}
+
 		 	break;
 		 	case "getsubscriber": //expected message: "subscriberId"
 		 		try {
@@ -304,6 +333,21 @@ public class BLibServer extends AbstractServer
 				 			}
 				 			if(!password.equals(user.getPassword())) { //incorrect password
 				 				handleMessageToClient(replyLoginFail, client);
+				 				break;
+				 			}
+				 			//Check user is not currently logged in
+				 			boolean userConnected = false;
+				 			for(ConnectionToClientInfo info : clientConnections) {
+				 				//Username equal and already connected
+				 				if(info.getUser() != null && 
+				 					user.getUsername().contentEquals(info.getUser().getUsername())
+				 					&& info.getStatus().equals(ClientConnectionStatus.Connected)) {
+						 					userConnected = true;
+						 					break;
+				 				}
+				 			}
+				 			if(userConnected) {
+				 				sendMessageToClient("error", "Username already connected to server.", client, clientInfo);
 				 				break;
 				 			}
 			 			}
@@ -457,6 +501,8 @@ public class BLibServer extends AbstractServer
 			 			if(subscriber != null) {
 			 				Notification n = new Notification(subscriber , LocalDate.now(), "Book "+book.getName()+ " has been returned and become Available");
 			 				NotificationController.Notify(dbConnection.getConnection(), n);
+			 				NotificationController.SendSmsNotification(n.getDescription(), n.getSubscriber());
+			 				NotificationController.SendEmailNotification(n.getDescription(), n.getSubscriber());
 			 			}
 		 			}
 		 			catch(Exception e) {
@@ -620,16 +666,19 @@ public class BLibServer extends AbstractServer
 	 		break;
 		 	case "extendbook": //expected message "int[2] = {bookId, amountOfDays}"
 		 			try {
+		 				int[] values = (int[])message.getMessage();
+		 				int book_id = values[0];
+		 				int amountOfDays = values[1];
 		 				user = clientInfo.getUser();
-		 				subscriber = SubscriberController.getSubscriberById(dbConnection.getConnection(), user.getId());
+		 				str = UserController.getNameFromUser(dbConnection.getConnection(), user);
+		 				bb = LendController.GetBorrowedBookByBookId(dbConnection.getConnection(), book_id);
+		 				subscriber = SubscriberController.getSubscriberById(dbConnection.getConnection(), bb.getBorrowingSubscriber().getSubscriberId());
 		 				if(subscriber.isFrozen()) {
 		 					sendMessageToClient("error", "Can't extend book, account is frozen.", client, clientInfo);
 		 					break;
 		 				}
 		 				//Extend Book by amountOfDays
-		 				int[] values = (int[])message.getMessage();
-		 				int book_id = values[0];
-		 				int amountOfDays = values[1];
+
 		 				LocalDate newDate = ExtendController.ExtendBookReturnDate(dbConnection.getConnection(), book_id, amountOfDays);
 		 				String newDateStr = DateUtil.DateToString(LocalDate.now().plusDays(amountOfDays));
 		 				if(newDate == null) {
@@ -639,7 +688,7 @@ public class BLibServer extends AbstractServer
 		 				//Notify client and record action
 		 				sendMessageToClient("msg", "Book's return date was extended by " + amountOfDays +" days", client, clientInfo);
 		 				book = BookController.GetBookById(dbConnection.getConnection(), book_id);
-		 				dh = new DetailedHistory(user, ActionType.EXTEND, LocalDate.now(), subscriber.getSubscriberName() + " Extended his book " + "\""+book.getName()+"\" to date "+ newDateStr);
+		 				dh = new DetailedHistory(UserController.getUserById(dbConnection.getConnection(), subscriber.getSubscriberId()), ActionType.EXTEND, LocalDate.now(), subscriber.getSubscriberName() + "'s book " + "\""+book.getName()+"\" was extended to date "+ newDateStr + (user.getType().equals(User.UserType.LIBRARIAN) ? " by librarian "+str:""));
 		 				int success = DetailedHistoryController.RecordHistory(dbConnection.getConnection(), dh);
 		 				if(success <= 0) {
 		 					System.err.println("Could not record history for extendbook");

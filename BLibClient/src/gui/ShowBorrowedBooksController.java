@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import client.ClientUI;
-import common.Book;
-import common.BorrowedBook;
-import common.User;
+import common.*;
 import common.User.UserType;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -43,8 +41,9 @@ public class ShowBorrowedBooksController implements IController{
     private List<BorrowedBook> borrowedBooksList = null;
     private List<Boolean> extendableList = null;
     private ObservableList<BorrowedBook> borrowedBooksData = FXCollections.observableArrayList();
+    private Subscriber importedSubscriber= null;
     
-    public void initializeFrame() {
+    public void initializeBorrowedBooks() {
         // Initialize the button and hide it initially
         btnExtend.setVisible(true);
         btnExtend.setDisable(true);
@@ -95,7 +94,8 @@ public class ShowBorrowedBooksController implements IController{
         }
         else {
         	alert.setHeaderText("Failed to Extend Loan");
-            alert.setContentText("The loan for '" + selectedBook.getBorrowedBook().getName() + "' could not be extended.");
+        	String str = String.format("The loan for '%s' could not be extended.\n%s",selectedBook.getBorrowedBook().getName(),ClientUI.chat.getClientLastResponses()[2]);
+            alert.setContentText(str);
         }
         alert.showAndWait();
         RefreshBorrowedBooks();
@@ -112,17 +112,10 @@ public class ShowBorrowedBooksController implements IController{
         primaryStage.show();
     }
 
-	@Override
-	public void setPermission(UserType type) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	private void RefreshBorrowedBooks() {
 		borrowedBooksData.clear();
         
-        User user = ClientUI.chat.getClientUser();
-        borrowedBooksList = ClientUI.chat.requestServerForBorrowedBooksBySubscriber(user.getId());
+        borrowedBooksList = ClientUI.chat.requestServerForBorrowedBooksBySubscriber(importedSubscriber.getSubscriberId());
         
         List<Integer> intList = new ArrayList<Integer>();
         for(BorrowedBook bb : borrowedBooksList) {
@@ -142,6 +135,23 @@ public class ShowBorrowedBooksController implements IController{
 
 	@Override
 	public void setObject(Object object) {
+		this.importedSubscriber = (Subscriber)object;
+		
+	}
+
+	@Override
+	public void initializeFrame(Object object) {
+		
+	}
+
+	@Override
+	public void setPermission(UserType type) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void initializeFrame() {
 		// TODO Auto-generated method stub
 		
 	}

@@ -105,7 +105,7 @@ public class SubscriberController {
 	    * @param newPhoneNumber
 	    * @return success/fail boolean
 	    */
-	    public static boolean updateSubscriberInfo(Connection connection, int subscriberId, String newEmail, String newPhoneNumber) {
+	    public static boolean updateSubscriberInfo(Connection connection, Subscriber editedSubscriber) {
 	        
 	        if (connection == null) {
 	            System.out.println("Failed to connect to the database.");
@@ -113,11 +113,13 @@ public class SubscriberController {
 	        }
 
 	        try {
-	            String query = "UPDATE subscriber SET subscriber_phone_number = ?, subscriber_email = ? WHERE subscriber_id = ?";
+	            String query = "UPDATE subscriber SET subscriber_frozen = ?, subscriber_name = ?,  subscriber_phone_number = ?, subscriber_email = ? WHERE subscriber_id = ?";
 	            PreparedStatement pstmt = connection.prepareStatement(query);
-	            pstmt.setString(1, newPhoneNumber);
-	            pstmt.setString(2, newEmail);
-	            pstmt.setInt(3, subscriberId);
+	            pstmt.setInt(1, (editedSubscriber.isFrozen() ? 1 : 0));
+	            pstmt.setString(2, editedSubscriber.getSubscriberName());
+	            pstmt.setString(3, editedSubscriber.getSubscriberPhoneNumber());
+	            pstmt.setString(4, editedSubscriber.getSubscriberEmail());
+	            pstmt.setInt(5, editedSubscriber.getSubscriberId());
 
 	            int rowsAffected = pstmt.executeUpdate();
 	            return rowsAffected > 0;

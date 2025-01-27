@@ -1,5 +1,7 @@
 package gui;
 
+import client.ClientUI;
+import common.User.UserType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -8,8 +10,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-public class RegisterClientFrameController {
-
+public class RegisterSubscriberFrameController implements IController{
+	private MenuUIController mainController;
+	
     @FXML
     private TextField firstNameTxt;
 
@@ -55,9 +58,22 @@ public class RegisterClientFrameController {
             return;
         }
 
-        // Simulate client registration here (e.g., saving to database)
-        String message = String.format("Registration Successful!\n\nName: %s %s\nUsername: %s\nEmail: %s", firstName, lastName, username, email);
-        showAlert("Success", message);
+        boolean success = ClientUI.chat.requestServerToRegisterSubscriber(username, password, firstName + " " + lastName, email, phoneNumber);
+        if(!success) {
+        	showAlert("Error", "Subscriber registration failed.");
+        	return;
+        }
+        else {
+        	
+        	showAlert("Notice", "Subscriber registered successfully.");
+            try {
+            	mainController.loadFXMLIntoPane("/gui/SubscriberManagerFrame.fxml");
+            }
+            catch(Exception e) {
+            	e.printStackTrace();
+            	System.err.println("Could go back to  Subscriber Manager Screen");
+            }
+        }
     }
 
     private boolean isValidPhoneNumber(String phoneNumber) {
@@ -77,4 +93,33 @@ public class RegisterClientFrameController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+	@Override
+	public void initializeFrame() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setPermission(UserType type) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setObject(Object object) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setMainController(MenuUIController controller) {
+		this.mainController = controller;
+	}
+
+	@Override
+	public void initializeFrame(Object object) {
+		// TODO Auto-generated method stub
+		
+	}
 }

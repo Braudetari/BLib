@@ -10,6 +10,7 @@ import common.Book;
 import common.DateUtil;
 import common.Subscriber;
 import common.User;
+import common.User.UserType;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -32,7 +33,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-public abstract class SubscriberManagerFrameController implements IController{
+public class SubscriberManagerFrameController implements IController{
 	
 	@FXML
 	private Button btnOpen = null;
@@ -62,8 +63,6 @@ public abstract class SubscriberManagerFrameController implements IController{
 	@FXML
 	private void initializeTable() {
 		
-        searchOptions.getItems().addAll("Search by Name", "Search by Subscriber ID", "Search by Frozen Subscriber");
-        searchOptions.setValue("Search by Name");
 
 		if(subscriberList != null) {
 			observableSubscribers.addAll(subscriberList);
@@ -97,57 +96,43 @@ public abstract class SubscriberManagerFrameController implements IController{
         String searchText = searchField.getText().trim();
 
         if (searchText.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Input Error", "Search text cannot be empty.");
-            return;
+            searchText = "";
         }
         
         switch(selectedOption){
-        	case "Search by Name":
-        			subscriberList = ClientUI.chat.requestServerForSubscriberList("subscriber_name", searchText);
+        	case "Search Id":
+        			Subscriber subscriber = null;
+        			subscriberList = new ArrayList<Subscriber>();
+					if(!(searchText.contentEquals("") || searchText.isEmpty())) {
+	        			subscriber = ClientUI.chat.requestServerForSubscriber(searchText);
+	        			subscriberList.add(subscriber);
+					}
         		break;
-        	case "Search by Subscriber ID":
-        		subscriberList  = ClientUI.chat.requestServerForSubscriberList("subscriber_id", searchText);
+        	case "Search by Name":
+        		subscriberList  = ClientUI.chat.requestServerForSubscriberList("subscriber_name", searchText);
     		break;
-        	case "Search by Frozen Subscriber":
-        		subscriberList  = ClientUI.chat.requestServerForSubscriberList("subscriber_frozen", searchText);
+        	case "Search by Frozen Status":
+        		if(searchText.contentEquals("") || searchText.isEmpty())
+        			break;
+        		if("frozen".contains(searchText.toLowerCase())) {
+            		subscriberList  = ClientUI.chat.requestServerForSubscriberList("subscriber_frozen", "1");
+        		}
+        		else if("active".contains(searchText.toLowerCase())){
+        			subscriberList  = ClientUI.chat.requestServerForSubscriberList("subscriber_frozen", "0");
+        		}
+        		else {
+        			subscriberList = new ArrayList<Subscriber>();
+        		}
     		break;
         	default:
         		break;
         }
+        if(subscriberList == null) {
+        	subscriberList = new ArrayList<Subscriber>();
+        }
         
-//        //Get BookInfo For List
-//        Object[] bookInfoList = ClientUI.chat.requestServerForBookListAvailibilityInfo(booksList);
-//        if(bookInfoList == null) {
-//        	showAlert(AlertType.ERROR, "Error", "Could not get book search info");
-//        	return;
-//        }
-//        
-//        try {
-//	        @SuppressWarnings("unchecked")
-//			List<Boolean> booleanList = (List<Boolean>)bookInfoList[0];
-//	        @SuppressWarnings("unchecked")
-//			List<LocalDate> dateList = (List<LocalDate>)bookInfoList[1];
-//	        //must be same size
-//	        booksAvailibility.clear();
-//	        booksClosestReturnDate.clear();
-//	        for(int i=0;i<booleanList.size();i++) {
-//	        	if(booleanList.get(i) == true)
-//	        		booksAvailibility.add("Available");
-//	        	else
-//	        		booksAvailibility.add("Unavailable");
-//	        	if(dateList.get(i) != null)
-//	        		booksClosestReturnDate.add(DateUtil.DateToString(dateList.get(i)));
-//	        	else
-//	        		booksClosestReturnDate.add("");
-//	        }
-//        }
-//        catch(Exception e) {
-//        	System.err.println("Could not show book availibility info");
-//        }
-//    	booksData.clear();
-//        if(booksList != null) {
-//            booksData.addAll(booksList);
-//        }
+        observableSubscribers.clear();
+        observableSubscribers.addAll(subscriberList);
     }
 	
 	private void showAlert(Alert.AlertType type, String title, String message) {
@@ -161,10 +146,11 @@ public abstract class SubscriberManagerFrameController implements IController{
 	@FXML
 	private void Open(ActionEvent event) throws Exception{
 		try {
-    		IController genericController = mainController.loadFXMLIntoPane("/gui/BorrowBookFrame.fxml");
-    		if(genericController instanceof BorrowBookFrameController) {
-    			BorrowBookFrameController borrowController = (BorrowBookFrameController)genericController;
-    			borrowController.initializeText("" + selectedSubscriber.getSubscriberId());
+    		IController genericController = mainController.loadFXMLIntoPane("/gui/SubscriberInfoFrame.fxml");
+    		if(genericController instanceof SubscriberInfoFrameController) {
+    			SubscriberInfoFrameController infoController = (SubscriberInfoFrameController)genericController;
+    			infoController.setObject((Subscriber)selectedSubscriber);
+    			infoController.initializeFrame();
     		}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -193,6 +179,26 @@ public abstract class SubscriberManagerFrameController implements IController{
 //	    SubscriberSearchFrameController subscriberManagerFrame = new SubscriberSearchFrameController();
 //	    subscriberManagerFrame.start(new Stage());
 	    
+	}
+
+	@Override
+	public void initializeFrame() {
+		searchOptions.getItems().addAll("Search Id", "Search by Name", "Search by Frozen Status");
+        searchOptions.setValue("Search Id");
+		initializeTable();
+		
+	}
+
+	@Override
+	public void setPermission(UserType type) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setObject(Object object) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

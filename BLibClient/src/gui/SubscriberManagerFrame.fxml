@@ -7,26 +7,20 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="488.0" prefWidth="599.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.SubscriberManagerFrameController">
+<AnchorPane prefHeight="439.0" prefWidth="599.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.SubscriberManagerFrameController">
    <children>
-
-      <Label fx:id="lblText" layoutX="226.0" layoutY="50.0" text="Subscribers" textAlignment="CENTER">
-         <font>
-            <Font name="System Bold Italic" size="20.0" />
-         </font></Label>
-      <Button id="btnOpen" fx:id="btnOpen" disable="true" layoutX="277.0" layoutY="440.0" mnemonicParsing="false" onAction="#Open" text="Open" />
-      <TableView fx:id="tblSubscribers" layoutX="26.0" layoutY="172.0" onMouseClicked="#SelectRow" prefHeight="254.0" prefWidth="546.0">
+      <Button id="btnOpen" fx:id="btnOpen" disable="true" layoutX="277.0" layoutY="364.0" mnemonicParsing="false" onAction="#Open" text="Open" />
+      <TableView fx:id="tblSubscribers" layoutX="26.0" layoutY="96.0" onMouseClicked="#SelectRow" prefHeight="254.0" prefWidth="546.0">
         <columns>
           <TableColumn fx:id="tblColumnId" prefWidth="164.79999351501465" text="Subscriber ID" />
           <TableColumn fx:id="tblColumnName" prefWidth="212.0" text="Subscriber Name" />
             <TableColumn fx:id="tblColumnStatus" prefWidth="168.80001831054688" text="Status" />
         </columns>
       </TableView>
-      <Label layoutX="72.0" layoutY="94.0" styleClass="label" text="Search Subscriber" wrapText="true" />
-      <ComboBox fx:id="searchOptions" layoutX="180.0" layoutY="90.0" prefWidth="200.0" />
-      <TextField fx:id="searchField" layoutX="180.0" layoutY="130.0" prefWidth="300.0" promptText="Enter search text" />
-      <Button fx:id="btnSearch" layoutX="500.0" layoutY="130.0" mnemonicParsing="false" styleClass="button" text="Search" />
+      <Label layoutX="72.0" layoutY="18.0" styleClass="label" text="Search Subscriber" wrapText="true" />
+      <ComboBox fx:id="searchOptions" layoutX="180.0" layoutY="14.0" prefWidth="200.0" />
+      <TextField fx:id="searchField" layoutX="180.0" layoutY="54.0" prefWidth="300.0" promptText="Enter search text" />
+      <Button fx:id="btnSearch" onAction="#handleSearchAction" layoutX="500.0" layoutY="54.0" mnemonicParsing="false" styleClass="button" text="Search" />
    </children>
 </AnchorPane>

@@ -271,4 +271,9 @@ public class SearchBookFrameController implements IController {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+	@Override
+	public void setObject(Object object) {
+		// TODO Auto-generated method stub
+		
+	}
 }

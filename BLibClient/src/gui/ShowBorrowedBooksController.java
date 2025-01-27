@@ -140,5 +140,11 @@ public class ShowBorrowedBooksController implements IController{
 		//
 	}
 
+	@Override
+	public void setObject(Object object) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 }

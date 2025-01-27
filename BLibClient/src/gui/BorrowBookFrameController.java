@@ -139,4 +139,10 @@ public class BorrowBookFrameController implements IController {
 		//TODO Aut-generated method stub
 		
 	}
+
+	@Override
+	public void setObject(Object object) {
+		// TODO Auto-generated method stub
+		
+	}
 }

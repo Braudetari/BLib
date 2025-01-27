@@ -242,7 +242,7 @@ public class BLibServer extends AbstractServer
 		 		subscriber = SubscriberController.getSubscriberById(dbConnection.getConnection(), subscriberId);
 		 		if(subscriber == null)
 		 			subscriber = new Subscriber();
-		 		reply = new Message("getsubscriber", clientInfo.getSessionId(), subscriber.toString());
+		 		reply = new Message("getsubscriber", clientInfo.getSessionId(), subscriber);
 		 		handleMessageToClient(reply, client);
 		 		break;
 		 	case "registersubscriber": //expected message String "username;password;name;email;phone"

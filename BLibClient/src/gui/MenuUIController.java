@@ -50,6 +50,8 @@ public class MenuUIController {
 	@FXML
 	private Label lblWelocome = null;
 	@FXML
+	private Label lblPane = null;
+	@FXML
 	private VBox pane=null;
 	@FXML
 	private ScrollPane scrollPane=null;
@@ -107,41 +109,49 @@ public class MenuUIController {
 	@FXML
 	private void getReportBtn(ActionEvent event) {
 		loadFXMLIntoPane("/gui/ReportFrame.fxml"); //need to be complete
+		lblPane.setText("Report");
 	}
 	
 	@FXML
 	private void getManagerBtn(ActionEvent event) {
 		loadFXMLIntoPane("/gui/SubscriberManagerFrame.fxml"); //need to be complete
+		lblPane.setText("Subscriber Manager");
 	}
 	
 	@FXML
 	private void getBorrowBtn(ActionEvent event) {
 		loadFXMLIntoPane("/gui/BorrowBookFrame.fxml");
+		lblPane.setText("Lend Book");
 	}
 	
 	@FXML
 	private void getReturnABookBtn(ActionEvent event) {
 		loadFXMLIntoPane("/gui/ReturnBookFrame.fxml");
+		lblPane.setText("Return Book");
 	}
 	
 	@FXML
 	private void getNotificationsBtn(ActionEvent event) {
 		loadFXMLIntoPane("/gui/NotificationsFrame.fxml");
+		lblPane.setText("Notifications");
 	}
 	
 	@FXML
 	private void getBorrowedBooksBtn(ActionEvent event) {
 		loadFXMLIntoPane("/gui/ShowBorrowedBooksFrame.fxml");
+		lblPane.setText("Borrowed Books");
 	}
 	
 	@FXML
 	private void getReservationsBtn(ActionEvent event) {
 		loadFXMLIntoPane("/gui/ReservationsFrame.fxml");
+		lblPane.setText("Reservation");
 	}
 	
 	@FXML
 	private void getPersonalInfoBtn(ActionEvent event) {
 		loadFXMLIntoPane("/gui/SubscriberInfoFrame.fxml");
+		lblPane.setText("Personal Info");
 	}
 	
 	@FXML
@@ -164,6 +174,7 @@ public class MenuUIController {
 	@FXML 
 	private void getSearchBtn(ActionEvent event) {
 		loadFXMLIntoPane("/gui/SearchBookFrame.fxml");
+		lblPane.setText("Browse Books");
 	}
 	
 	/**

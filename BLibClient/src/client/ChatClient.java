@@ -98,12 +98,16 @@ public class ChatClient extends AbstractClient
 			  				this.subscriberList = (List<Subscriber>)message.getMessage();
 			  			}
 			  			catch(Exception e) {
-			  				e.printStackTrace();
-			  				System.err.println("Could not search for subscriber from Server");
+			  				System.err.println("Could not receive subscriber List from Server");
 			  			}
 			  		break;
 			  	case "getsubscriber":
-			  		subscriber=Subscriber.subscriberFromString((String)message.getMessage());
+			  		try {
+				  		subscriber=(Subscriber)message.getMessage();
+			  		}
+			  		catch(Exception e) {
+			  			System.err.println("Could not receive subscriber from Server");
+			  		}
 			  		break;
 			  	case "connected":
 			  			this.sessionId = (String)message.getMessage();

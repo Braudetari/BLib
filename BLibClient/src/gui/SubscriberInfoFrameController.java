@@ -6,6 +6,7 @@ import client.ClientUI;
 import common.Message;
 import common.Subscriber;
 import common.User;
+import common.User.UserType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,7 +19,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-public class SubscriberInfoFrameController {
+public class SubscriberInfoFrameController implements IController{
 	
 	
 	@FXML
@@ -37,11 +38,12 @@ public class SubscriberInfoFrameController {
 	private TextField txtPhone=null;
 	@FXML
 	private TextField txtEmail=null;
-	private static Subscriber importedSubscriber;
+	private Subscriber importedSubscriber;
 	
 	public void initialize() {
 	    boolean isLibrarian = checkUserType(); // Implement logic to check user type
 	    toggleStatus.setDisable(!isLibrarian); // Disable for subscribers
+	    loadText(importedSubscriber);
 	}
 
 	private boolean checkUserType() {
@@ -96,6 +98,29 @@ public class SubscriberInfoFrameController {
 	        System.out.println("Status changed to Frozen");
 	        // Update logic for Frozen
 	    }
+	}
+
+	@Override
+	public void initializeFrame() {
+		initialize();
+	}
+
+	@Override
+	public void setPermission(UserType type) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setMainController(MenuUIController controller) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setObject(Object object) {
+		importedSubscriber = (Subscriber)object;
+		
 	}
 	
 	

@@ -136,10 +136,10 @@ public class SearchBookFrameController implements IController {
         String searchText = searchField.getText().trim();
 
         if (searchText.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Input Error", "Search text cannot be empty.");
-            return;
+            searchText = " ";
         }
-        
+        if(booksList != null)
+        	booksList.clear();
         switch(selectedOption){
         	case "Search by Name":
         			booksList = ClientUI.chat.requestServerSearchForBooks("book_name", searchText);

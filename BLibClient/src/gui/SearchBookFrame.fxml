@@ -12,7 +12,7 @@
    <children>
       <Label layoutX="20.0" layoutY="20.0" styleClass="label" text="Search Book" />
       <ComboBox fx:id="searchOptions" layoutX="150.0" layoutY="20.0" prefWidth="200.0" />
-      <TextField fx:id="searchField" layoutX="150.0" layoutY="60.0" prefWidth="300.0" promptText="Enter search text" />
+      <TextField fx:id="searchField" onAction="#handleSearchAction" layoutX="150.0" layoutY="60.0" prefWidth="300.0" promptText="Enter search text" />
       <Button fx:id="btnSearch" layoutX="470.0" layoutY="60.0" mnemonicParsing="false" onAction="#handleSearchAction" styleClass="button" text="Search" />
 
       <!-- TableView for displaying books -->

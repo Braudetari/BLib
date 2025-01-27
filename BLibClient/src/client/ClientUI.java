@@ -17,6 +17,20 @@ public class ClientUI extends Application {
     
     public static void main( String args[] ) throws Exception
        { 
+    	
+    	//put arguments as DB settings
+    			try {
+    				if(args[0].contains("?") || args[0].contains("help")){
+    					String help = "<How to use BLibClient (G13)>\n"
+    							+ "arguments: [ServerIP] [ServerPort] " + "\n"
+    							+ "or leave empty/partial for local server on localhost:5555" + "\n";
+    					System.out.println(help);
+    					return;
+    				};
+    			}
+    			catch(Exception e) {
+    				//Nothing is wrong here
+    			}
             try {
                 ConnectionIP = args[0]; //first argument should be IP
             }

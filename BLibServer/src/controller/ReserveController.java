@@ -139,7 +139,7 @@ public class ReserveController {
 				subscriberId = rs.getInt("subscriber_id");
 			}
 			if(subscriberId <= 0) {
-				throw new Exception();
+				return null;
 			}
 			Subscriber subscriber = SubscriberController.getSubscriberById(connection, subscriberId);
 			if(subscriber == null)

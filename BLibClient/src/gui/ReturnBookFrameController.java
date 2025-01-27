@@ -37,7 +37,6 @@ public class ReturnBookFrameController {
 	        ClientUI.chat.requestServerToReturnBook(bookId);
 	        String[] lr = ClientUI.chat.getClientLastResponses();
 	        if(lr[0] != null && lr[0].contentEquals("error")) {
-	        	showAlert("Return Book error", lr[2]);
 	        	return false;
 	        }
 	        return true;

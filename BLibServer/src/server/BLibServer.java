@@ -334,18 +334,16 @@ public class BLibServer extends AbstractServer
 		 			}
 		 		break;
 		 		
-		 	case "getbooks": // get books by element and value
-		 		str = (String)message.getMessage();
+		 	case "getbooks": // get books by element and value, expected String[2] = {element, value}
 	 			try {
-	 				String[] split = str.split(";");
-	 				String element = split[0];
-	 				String value = split[1];
+	 				String element = ((String[])message.getMessage())[0];
+	 				String value = ((String[])message.getMessage())[1];
 		 			List<Book> books = BookController.GetBooksByElement(dbConnection.getConnection(), element, value);
 		 			reply = new Message("books", clientInfo.getSessionId(), Book.bookListToString(books));
 		 			handleMessageToClient(reply, client);
 	 			}
 	 			catch(Exception e) {
-	 				reply = new Message("error", clientInfo.getSessionId(), str+" are not correct \"element;value\" for books search");
+	 				reply = new Message("error", clientInfo.getSessionId(), "Could not parse not correct element and value for books search");
 	 				handleMessageToClient(reply, client);
 	 			}
 		 		break;
@@ -396,10 +394,10 @@ public class BLibServer extends AbstractServer
 			 				}
 			 				//Lend based on serial or id
 			 				result = 0;
-			 				if(borrowType.equals("serial")) {
+			 				if(borrowType.contentEquals("serial")) {
 			 					result = LendController.LendBookSerialId(dbConnection.getConnection(), subscriberId, dateFrom, dateTo, bookOrSerialId);
 			 				}
-			 				else if(borrowType.equals("id")) {
+			 				else if(borrowType.contentEquals("id")) {
 			 					result = LendController.LendBookId(dbConnection.getConnection(), subscriberId, dateFrom, dateTo, bookOrSerialId);
 			 				}
 			 				else {

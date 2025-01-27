@@ -176,7 +176,7 @@ public class ClientController implements ChatIF
    * @return List of Books
    */
   public List<Book> requestServerSearchForBooks(String element, String value){
-	  SendRequestToServer("getbooks", element+";"+value);
+	  SendRequestToServer("getbooks", new String[] {element,value});
 	  return getClientBookList();
   }
   
@@ -269,8 +269,14 @@ public class ClientController implements ChatIF
    * @param returnDate
    * @param bookIdType "id" for book_id or "serial" for bookSerialId
    */
-  public void requestServerToBorrowBook(String bookIdOrSerial, String subscriberId, LocalDate borrowDate, LocalDate returnDate, String bookIdType) {
+  public int requestServerToBorrowBook(String bookIdOrSerial, String subscriberId, LocalDate borrowDate, LocalDate returnDate, String bookIdType) {
 	  SendRequestToServer("borrowbook", bookIdOrSerial+";"+subscriberId+";"+DateUtil.DateToString(borrowDate)+";"+DateUtil.DateToString(returnDate)+";"+bookIdType);
+	  if(client.lastResponse.contentEquals("msg")) {
+		  return 1;
+	  }
+	  else {
+		  return 0;
+	  }
   }
   
   /**

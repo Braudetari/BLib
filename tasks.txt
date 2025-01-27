@@ -1,5 +1,6 @@
 Tasks to do: BLib
 
+Add to both mains of BLibServer for /? or ? or help that shows help screen
 
 BLibServer:
 	- LendController

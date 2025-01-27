@@ -164,7 +164,7 @@ public abstract class SubscriberManagerFrameController implements IController{
     		IController genericController = mainController.loadFXMLIntoPane("/gui/BorrowBookFrame.fxml");
     		if(genericController instanceof BorrowBookFrameController) {
     			BorrowBookFrameController borrowController = (BorrowBookFrameController)genericController;
-    			borrowController.initializeText("" + selectedBook.getId());
+    			borrowController.initializeText("" + selectedSubscriber.getSubscriberId());
     		}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

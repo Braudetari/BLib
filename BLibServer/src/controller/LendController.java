@@ -12,6 +12,7 @@ import java.util.List;
 
 import common.*;
 import common.DetailedHistory.ActionType;
+import javafx.application.Platform;
 import server.DatabaseConnection;
 
 public class LendController {
@@ -361,15 +362,17 @@ public class LendController {
 			int result = DetailedHistoryController.RecordHistory(connection, dh);
 			
 			//Freeze subscriber if returned late by a week
-			if(borrowedbook.getReturnDate().isAfter(returnDate.plusDays(6)) && result>0) {
-				SubscriberController.SetFreezeSubscriber(connection, borrowedbook.getBorrowingSubscriber().getSubscriberId(), true);
+			if(borrowedbook.getReturnDate().isBefore(returnDate.plusDays(6)) && result>0) {
+				boolean booleanSuccess = SubscriberController.SetFreezeSubscriber(connection, borrowedbook.getBorrowingSubscriber().getSubscriberId(), true);
 				//Record History
-				dh = new DetailedHistory(user, ActionType.FREEZE,returnDate,"Subscriber frozen for returning book "+book.getId()+" after return time "+DateUtil.DateToString(borrowedbook.getBorrowedDate()));
-				DetailedHistoryController.RecordHistory(connection, dh);
-				//Notify User on Freeze
-				Notification n = new Notification(borrowedbook.getBorrowingSubscriber(), LocalDate.now(), "Returned book "+borrowedbook.getBorrowedBook().getName()+" late, account has been frozen for a month.");
-				NotificationController.Notify(connection, n);
-				result = 2;
+				if(booleanSuccess) {
+					dh = new DetailedHistory(user, ActionType.FREEZE,returnDate,"Subscriber frozen for returning book "+book.getId()+" after return time "+DateUtil.DateToString(borrowedbook.getBorrowedDate()));
+					DetailedHistoryController.RecordHistory(connection, dh);
+					//Notify User on Freeze
+					Notification n = new Notification(borrowedbook.getBorrowingSubscriber(), LocalDate.now(), "Returned book "+borrowedbook.getBorrowedBook().getName()+" late, account has been frozen for a month.");
+					NotificationController.Notify(connection, n);
+					result = 2;
+				}
 			}
 			
 			return result;

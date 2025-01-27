@@ -30,8 +30,10 @@ public class NotificationController {
 				//If its a day before
 				if(bb != null && today.isEqual(bb.getReturnDate().minusDays(1))) {
 					Subscriber subscriber = bb.getBorrowingSubscriber();
-					Notification n = new Notification(subscriber, LocalDate.now(), "Book " + bb.getBorrowedBook().getName() +" Return Date is DUE tomorrow (" + DateUtil.DateToString(today.plusDays(1))+ ")");
+					String notificationMessage = "Book " + bb.getBorrowedBook().getName() +" Return Date is DUE tomorrow (" + DateUtil.DateToString(today.plusDays(1))+ ")";
+					Notification n = new Notification(subscriber, LocalDate.now(), notificationMessage);
 					Notify(connection, n);
+					
 				}
 			}
 		}
@@ -66,7 +68,7 @@ public class NotificationController {
 						for(int i=dhList.size()-1; i>=0; i--) {
 							if(dhList.get(i).getAction().equals(DetailedHistory.ActionType.FREEZE)) {
 								//If its been 30 days
-								if(dhList.get(i).getDate().plusDays(29).isAfter(dateNow)){
+								if(dhList.get(i).getDate().plusDays(30).isBefore(dateNow)){
 									SubscriberController.SetFreezeSubscriber(connection, subscriber.getSubscriberId(), false);
 									Notification n = new Notification(subscriber, dateNow, "Account unfrozen, 30 days have passed.");
 									Notify(connection, n);
@@ -336,9 +338,10 @@ public class NotificationController {
 			int resultSubscriber = UpdateNotificationInDatabase(connection, subscriberNotifications,  notificationId);
 			if(resultSubscriber<=0) {
 				System.out.println("Could not update notification for subscriber");
-			}
-			if(resultSubscriber <= 0)
 				return 0;
+			}
+			SendSmsNotification(n.getDescription(), n.getSubscriber());
+			SendEmailNotification(n.getDescription(), n.getSubscriber());
 			return 1;
 		}
 		catch(Exception e) {
@@ -348,6 +351,23 @@ public class NotificationController {
 		}
 	}
 	
+	/**
+	 * Sends an SMS notification
+	 * @param message
+	 * @param subscriber
+	 */
+	private static void SendSmsNotification(String str, Subscriber subscriber) {
+		//stub for now unless someone is willing to give me a sim card
+		System.out.println("Sent SMS to: " + subscriber.getSubscriberPhoneNumber() + " with message: " + str);
+	}
 	
+	/**
+	 * Sends an Email notification
+	 * @param str
+	 */
+	private static void SendEmailNotification(String str, Subscriber subscriber) {
+		//stub for now unless someone is willing to give me a sim card
+		System.out.println("Sent Email to: " + subscriber.getSubscriberEmail() + " with message: " + str);
+	}
 	
 }

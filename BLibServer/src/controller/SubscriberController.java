@@ -283,7 +283,8 @@ public class SubscriberController {
 
 	        try {
 	        	PreparedStatement pstmt = connection.prepareStatement("UPDATE subscriber SET subscriber_frozen = ? WHERE subscriber_id = ?");
-	        	pstmt.setInt((freeze) ? 1 : 0, subscriberId);
+	        	pstmt.setInt(1, (freeze) ? 1 : 0);
+	        	pstmt.setInt(2, subscriberId);
 	        	int success = pstmt.executeUpdate();
 	        	return (success>0) ? true : false;
 	        }

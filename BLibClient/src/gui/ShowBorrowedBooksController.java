@@ -46,7 +46,8 @@ public class ShowBorrowedBooksController implements IController{
     
     public void initializeFrame() {
         // Initialize the button and hide it initially
-        btnExtend.setVisible(false);
+        btnExtend.setVisible(true);
+        btnExtend.setDisable(true);
 
         // Set up table columns
         colBookName.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getBorrowedBook().getName()));
@@ -57,20 +58,7 @@ public class ShowBorrowedBooksController implements IController{
 
         // Fetch and display all borrowed books for the client
         
-        borrowedBooksData.clear();
-        
-        User user = ClientUI.chat.getClientUser();
-        borrowedBooksList = ClientUI.chat.requestServerForBorrowedBooksBySubscriber(user.getId());
-        
-        List<Integer> intList = new ArrayList<Integer>();
-        for(BorrowedBook bb : borrowedBooksList) {
-        	intList.add(bb.getBorrowedBook().getId());
-        }
-        extendableList = ClientUI.chat.requestServerForBookListExtendability(intList);
-        
-        if (borrowedBooksList != null) {
-            borrowedBooksData.addAll(borrowedBooksList);
-        }
+        RefreshBorrowedBooks();
     }
 
     @FXML
@@ -80,14 +68,14 @@ public class ShowBorrowedBooksController implements IController{
             // Show the "Extend" button when a row is selected
         	int index = borrowedBooksList.indexOf(selectedBook);
         	if(extendableList.get(index)){
-                btnExtend.setVisible(true);
+                btnExtend.setDisable(false);
         	}
         	else {
-        		btnExtend.setVisible(false);
+                btnExtend.setDisable(true);
         	}
         } else {
             // Hide the "Extend" button when no row is selected
-            btnExtend.setVisible(false);
+        	btnExtend.setDisable(true);
         }
     }
     
@@ -97,13 +85,20 @@ public class ShowBorrowedBooksController implements IController{
 
         // Logic to extend the loan (You can implement the actual extension logic here)
         // You can send a request to the server or update the database accordingly
-        
-        // For now, let's just show an alert
+        int success = ClientUI.chat.requestServerToExtendBookReturnDate(selectedBook.getBorrowedBook().getId(), 14);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Extend Loan");
-        alert.setHeaderText("Loan Extended Successfully");
-        alert.setContentText("The loan for '" + selectedBook.getBorrowedBook().getName() + "' has been extended.");
+        if(success>0) {
+            // For now, let's just show an alert
+            alert.setHeaderText("Loan Extended Successfully");
+            alert.setContentText("The loan for '" + selectedBook.getBorrowedBook().getName() + "' has been extended.");      
+        }
+        else {
+        	alert.setHeaderText("Failed to Extend Loan");
+            alert.setContentText("The loan for '" + selectedBook.getBorrowedBook().getName() + "' could not be extended.");
+        }
         alert.showAndWait();
+        RefreshBorrowedBooks();
     }
 
     public void start(Stage primaryStage) throws Exception {
@@ -123,6 +118,23 @@ public class ShowBorrowedBooksController implements IController{
 		
 	}
 
+	private void RefreshBorrowedBooks() {
+		borrowedBooksData.clear();
+        
+        User user = ClientUI.chat.getClientUser();
+        borrowedBooksList = ClientUI.chat.requestServerForBorrowedBooksBySubscriber(user.getId());
+        
+        List<Integer> intList = new ArrayList<Integer>();
+        for(BorrowedBook bb : borrowedBooksList) {
+        	intList.add(bb.getBorrowedBook().getId());
+        }
+        extendableList = ClientUI.chat.requestServerForBookListExtendability(intList);
+        
+        if (borrowedBooksList != null) {
+            borrowedBooksData.addAll(borrowedBooksList);
+        }
+	}
+	
 	@Override
 	public void setMainController(MenuUIController controller) {
 		//

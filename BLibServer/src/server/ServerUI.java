@@ -36,6 +36,19 @@ public class ServerUI extends Application {
 	   {   
 		//put arguments as DB settings
 		try {
+			if(args[0].contains("?") || args[0].contains("help")){
+				String help = "<How to use BLibServer (G13)>\n"
+						+ "arguments: [DB_IP] [DB_SCHEME] [DB_USER] [DB_PASS]" + "\n"
+						+ "or leave empty/partial for local database.db file" + "\n"
+						+ "place database.db in the same folder as BLibServer" + "\n";
+				System.out.println(help);
+				System.exit(0);
+			};
+		}
+		catch(Exception e) {
+			//Nothing is wrong here
+		}
+		try {
 			DB_IP = args[0];
 			DB_SCHEME = args[1];
 			DB_USER = args[2];
@@ -63,8 +76,8 @@ public class ServerUI extends Application {
 		});
 		ServerPortFrame.start(primaryStage);
 		
-		
 	}
+	
 	
 	public static BLibServer runServer(String p)
 	{
@@ -142,8 +155,7 @@ public class ServerUI extends Application {
 			}
 		}
 		catch(Exception e) {
-			e.printStackTrace();
-			System.err.println("Could not listner to Notifiers");
+			System.err.println("Could not listen to Notifiers");
 		}
 	}
 

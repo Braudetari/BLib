@@ -106,10 +106,12 @@ public class BorrowBookFrameController implements IController {
             return;
         }
         
-        ClientUI.chat.requestServerToBorrowBook(bookId, clientId, borrowDate, returnDate, "id");
-        // Simulate book borrowing process here (e.g., saving to database)
-        String message = String.format("Client ID: %s\nBorrow Date: %s\nReturn Date: %s", clientId, borrowDate, returnDate);
-        showAlert("Book Borrowed", message);
+        int success =  ClientUI.chat.requestServerToBorrowBook(bookId, clientId, borrowDate, returnDate, "id");
+        String message= String.format("Client ID: %s\nCould not borrow book", clientId);
+        if(success>0) {
+            message = String.format("Client ID: %s\nBorrow Date: %s\nReturn Date: %s", clientId, borrowDate, returnDate);
+        }
+        showAlert("Book Borrow Result", message);
     }
 
     private void showAlert(String title, String message) {

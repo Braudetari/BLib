@@ -14,6 +14,11 @@ import java.util.List;
 import common.*;
 public class NotificationController {
 	
+	/**
+	 * Remove Reservations for Subscribers after Two days
+	 * cant hog all the books after all
+	 * @param connection
+	 */
 	public static void ReservationRemovalAfterTwoDays(Connection connection) {
 		if(connection == null) {
 			System.err.println("Cant connect to database");
@@ -195,8 +200,8 @@ public class NotificationController {
 	/**
 	 * Update Notification Blob in Database, if notification_id = 0 then create one and return it
 	 * @param connection
-	 * @param nList
-	 * @return -1=error, 0=fail, >0=notification_id (success)
+	 * @param nList List<Notification>
+	 * @return int -1=error, 0=fail, >0=notification_id (success)
 	 */
 	public static int UpdateNotificationInDatabase(Connection connection, List<Notification> nList, int notificationId) {
 		if(connection == null) {
@@ -258,8 +263,8 @@ public class NotificationController {
 	/**
 	 * Create Notification Blob in Database, simpler reuse for Update
 	 * @param connection
-	 * @param nList
-	 * @return
+	 * @param nList List<Notification>
+	 * @return int -1=error, 0=fail, >0=notification_id (success)
 	 */
 	public static int CreateNotificationsInDatabase(Connection connection, List<Notification> nList) {
 		int result = UpdateNotificationInDatabase(connection, nList, 0);
@@ -270,8 +275,9 @@ public class NotificationController {
 	/**
 	 * Updates subscriber's notification id 
 	 * @param connection
-	 * @param userId
-	 * @return -1=error, 0=fail, 1=success
+	 * @param subscriberId
+	 * @param notificationId
+	 * @return int -1=error, 0=fail, 1=success
 	 */
 	public static int UpdateNotificationIdForSubscriberId(Connection connection, int subscriberId, int notificationId) {
 		if(connection == null) {
@@ -339,8 +345,8 @@ public class NotificationController {
 	/**
 	 * Records Given Notification into Database
 	 * @param connection
-	 * @param dh Notification
-	 * @return -1=error, 0=fail, 1=success
+	 * @param n Notification
+	 * @return int -1=error, 0=fail, 1=success
 	 */
 	public static int Notify(Connection connection, Notification n) {
 		if(connection == null) {
@@ -396,7 +402,8 @@ public class NotificationController {
 	
 	/**
 	 * Sends an Email notification
-	 * @param str
+	 * @param str message
+	 * @param subscriber
 	 */
 	public static void SendEmailNotification(String str, Subscriber subscriber) {
 		//stub for now unless someone is willing to give me a sim card

@@ -23,8 +23,10 @@ public class DetailedHistoryController {
 	/**
 	 * Update History Blob in Database, if history_id = 0 then create one and return it
 	 * @param connection
-	 * @param dhList
-	 * @return -1=error, 0=fail, >0=history_id (success)
+	 * @param dhList  List<detailedHistory>
+	 * @param historyType UserType of history
+	 * @param historyId
+	 * @return int -1=error, 0=fail, >0=history_id (success)
 	 */
 	public static int UpdateHistoryListInDatabase(Connection connection, List<DetailedHistory> dhList, User.UserType historyType, int historyId) {
 		if(connection == null) {
@@ -87,15 +89,21 @@ public class DetailedHistoryController {
 	/**
 	 * Create History Blob in Database, simpler reuse for Update
 	 * @param connection
-	 * @param dhList
-	 * @param historyType
-	 * @return
+	 * @param dhList	List<DetailedHistory>
+	 * @param historyType UserType
+	 * @return int same as UpdateHistory
 	 */
 	public static int CreateHistoryListInDatabase(Connection connection, List<DetailedHistory> dhList, User.UserType historyType) {
 		int result = UpdateHistoryListInDatabase(connection, dhList, historyType, 0);
 		return result;
 	}
 	
+	/**
+	 * Gets History Id for user, whether its librarian or subscriber
+	 * @param connection
+	 * @param user
+	 * @return
+	 */
 	public static int GetHistoryIdForUser(Connection connection, User user) {
 		if(connection == null) {
 			System.err.println("Could not connect to Database");
@@ -135,7 +143,7 @@ public class DetailedHistoryController {
 	 * Get History List from Database using historyId
 	 * @param connection
 	 * @param historyId
-	 * @return DetailedHistory List
+	 * @return List<DetailedHistory>
 	 */
 	public static List<DetailedHistory> GetHistoryListFromDatabase(Connection connection, int historyId){
 		if(connection == null) {
@@ -184,7 +192,7 @@ public class DetailedHistoryController {
 	/**
 	 * Get History List of Librarians from Database
 	 * @param connection
-	 * @return DetailedHistory List
+	 * @return List<DetailedHistory>
 	 */
 	public static List<DetailedHistory> GetLibrarianHistoryListFromDatabase(Connection connection){
 		if(connection == null) {
@@ -212,8 +220,9 @@ public class DetailedHistoryController {
 	/**
 	 * Updates User's history id (whether librarian or subscriber)
 	 * @param connection
-	 * @param userId
-	 * @return -1=error, 0=fail, 1=success
+	 * @param user
+	 * @param historyId
+	 * @return int -1=error, 0=fail, 1=success
 	 */
 	public static int UpdateHistoryIdForUser(Connection connection, User user, int historyId) {
 		if(connection == null) {
@@ -253,7 +262,7 @@ public class DetailedHistoryController {
 	 * Records Given DetailedHistory into Database
 	 * @param connection
 	 * @param dh DetailedHistory
-	 * @return -1=error, 0=fail, 1=success
+	 * @return int -1=error, 0=fail, 1=success
 	 */
 	public static int RecordHistory(Connection connection, DetailedHistory dh) {
 		if(connection == null) {
@@ -328,24 +337,5 @@ public class DetailedHistoryController {
 			System.err.println("Could not record history.");
 			return -1;
 		}
-	}
-	
-	//DEBUG main
-	public static void main(String args[]) {
-		DatabaseConnection db;
-		try {
-			db = DatabaseConnection.getInstance();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return;
-		}
-		Connection connection = db.getConnection();
-		List<DetailedHistory> list = GetHistoryListFromDatabase(connection, 6);
-		for(DetailedHistory item : list) {
-			System.out.println(item);
-		}
-		
-		
 	}
 }

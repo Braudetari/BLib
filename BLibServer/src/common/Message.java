@@ -19,7 +19,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 /** 
 * Handles messages and data between client and server <p>
-* Encrypts and decrypts messages with Base64 <p>
+* Encrypts and decrypts messages with SHA256/AES
 */
 public class Message implements Serializable{
 	private static final long serialVersionUID = 1L;
@@ -35,7 +35,12 @@ public class Message implements Serializable{
 		encrypted = false;
 	}
 	
-	
+	/**
+	 * Message Regular Constructor
+	 * @param request
+	 * @param sessionId
+	 * @param msg
+	 */
 	public Message(String request, String sessionId, Object msg) {
 		this.request = request;
 		this.sessionId = sessionId;
@@ -43,6 +48,10 @@ public class Message implements Serializable{
 		encrypted = false;
 	}
 	
+	/**
+	 * Message Constructor With Message
+	 * @param message
+	 */
 	public Message(Message message) {
 		this.request = message.request;
 		this.sessionId = message.sessionId;
@@ -50,7 +59,8 @@ public class Message implements Serializable{
 		this.encrypted = message.encrypted;
 	}
 	
-	//Getters and Setters
+	////////	GETTERS AND SETTERS	////////
+	
 		public String getRequest() {
 			return this.request;
 		}
@@ -87,7 +97,7 @@ public class Message implements Serializable{
 	 * Encrypts Message using SHA-256, AES with sessionId
 	 * I had to google this, pretty sure we learn this in cryptology later on.
 	 * @param message
-	 * @return encrypted message (decrypted if fails)
+	 * @return Message encrypted message (decrypted if fails)
 	 */
 	public static Message encrypt(Message message) {
 		if(message.encrypted)
@@ -132,7 +142,7 @@ public class Message implements Serializable{
 	 * I had to google this, pretty sure we learn this in cryptology later on.
 	 * @param message
 	 * @param sessionId
-	 * @return decrypted message (encrypted if fails)
+	 * @return Message decrypted (encrypted if fails)
 	 */
 	public static Message decrypt(Message message, String sessionId) {
 		if(!message.encrypted)
@@ -167,6 +177,12 @@ public class Message implements Serializable{
         }
 	}
 	
+	/**
+	 * Gets a sha256 from SessionId
+	 * @param sessionId
+	 * @return byte[]
+	 * @throws Exception
+	 */
 	private static byte[] digestKey(String sessionId) throws Exception{
 		MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
 		return sha256.digest(sessionId.getBytes(StandardCharsets.UTF_8));

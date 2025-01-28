@@ -16,6 +16,11 @@ import javafx.application.Platform;
 import server.DatabaseConnection;
 
 public class LendController {
+	/**
+	 * Gets all borrowed books from Database
+	 * @param connection
+	 * @return List<BorrowedBook>
+	 */
 	public static List<BorrowedBook> GetAllBorrowedBooks(Connection connection) {
 		if(connection == null) {
 			System.err.println("Could not connect to Database");
@@ -46,6 +51,12 @@ public class LendController {
 		}
 	}
 
+	/**
+	 * Gets all Non borrowed BookId's using book serial id
+	 * @param connection
+	 * @param bookSerialId
+	 * @return List<Integer>
+	 */
 	public static List<Integer> GetAllNonBorrowedBookIdsBySerial(Connection connection, int bookSerialId){
 		if(connection == null) {
 			System.err.println("Could not connect to Database");
@@ -74,7 +85,7 @@ public class LendController {
 	 * If a book is borrowed it will return the borrowed book object
 	 * @param connection
 	 * @param book_id
-	 * @return borrowedbook, null if fail or not borrowed
+	 * @return BorrowedBook null if fail or not borrowed
 	 */
 	public static BorrowedBook GetBorrowedBookByBookId(Connection connection, int book_id) {
 		if(connection == null) {
@@ -108,7 +119,7 @@ public class LendController {
 	 * @param connection
 	 * @param book_serial_id
 	 * @param subscriber_id
-	 * @return borrowedbook, null if fail or not borrowed
+	 * @return BorrowedBook null if fail or not borrowed
 	 */
 	public static BorrowedBook GetBorrowedBookByBookSerialIdAndSubscriberId(Connection connection, int book_serial_id, int subscriber_id) {
 		if(connection == null) {
@@ -203,7 +214,7 @@ public class LendController {
 	 * @param connection
 	 * @param subscriberId
 	 * @param bookSerialId
-	 * @return -1=error, 0=false, 1=true
+	 * @return int -1=error, 0=false, 1=true
 	 */
 	public static int IsBookLentBySubscriber(Connection connection, int subscriberId, int bookSerialId) {
 		if(connection == null) {
@@ -232,10 +243,10 @@ public class LendController {
 	 * Lends the first book received from Search Query
 	 * @param connection
 	 * @param subscriberId
-	 * @param Date from when
-	 * @param Date to when
-	 * @param book serial id
-	 * @return boolean -1=error, 0=fail, 1=success
+	 * @param from when LocalDate
+	 * @param to when LocalDate
+	 * @param book_serial_id
+	 * @return int -1=error, 0=fail, 1=success
 	 */
 	public static int LendBookSerialId(Connection connection, int subscriberId, LocalDate from, LocalDate to, int book_serial_id) {
 		if(connection == null) {
@@ -283,9 +294,9 @@ public class LendController {
 	 * Lend book to subscriber using bookId from Date to Date
 	 * @param connection
 	 * @param subscriberId
-	 * @param Date from when
-	 * @param book id
-	 * @return boolean -1=error, 0=fail, 1=success
+	 * @param LocalDate from when
+	 * @param book_id
+	 * @return int -1=error, 0=fail, 1=success
 	 */
 	public static int LendBookId(Connection connection, int subscriberId, LocalDate from, LocalDate to, int book_id) {
 		if(connection == null) {
@@ -336,9 +347,9 @@ public class LendController {
 	/**
 	 * Return a book using bookId at returnDate
 	 * @param connection
-	 * @param bookId
+	 * @param book
 	 * @param returnDate
-	 * @return -1=error, 0=fail, 1=success
+	 * @return int -1=error, 0=fail, 1=success
 	 */
 	public static int ReturnBook(Connection connection, Book book, LocalDate returnDate) {
 		if(connection == null) {
@@ -384,22 +395,4 @@ public class LendController {
 		}
 	}
 	
-	//DEBUG main
-	public static void main(String args[]) {
-		DatabaseConnection dbc;
-		try {
-			dbc = DatabaseConnection.getInstance();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return;
-		}
-		int subscriber_id = 1;
-		LocalDate from = LocalDate.of(2025,1,24);
-		LocalDate to = LocalDate.of(2025,1,30);
-		
-		int book_serial_id = 101;
-		int success = LendBookSerialId(dbc.getConnection(), subscriber_id, from, to, book_serial_id);
-		System.out.println(success);
-	}
 }

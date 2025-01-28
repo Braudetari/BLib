@@ -3,6 +3,9 @@ package server;
 import common.User;
 import ocsf.server.ConnectionToClient;
 
+/**
+ * Connection To Client Info for more Authentication and Client Tracking
+ */
 public class ConnectionToClientInfo {
 	private ConnectionToClient client;
 	private final String clientIp;
@@ -13,6 +16,12 @@ public class ConnectionToClientInfo {
 	
 	public static enum ClientConnectionStatus{Disconnected, Connected};
 	
+	/**
+	 * Constructor
+	 * @param client
+	 * @param clientName
+	 * @param clientUser
+	 */
 	ConnectionToClientInfo(ConnectionToClient client, String clientName, User clientUser){
 		this.client = client;
 		this.clientName = clientName;
@@ -33,6 +42,12 @@ public class ConnectionToClientInfo {
 		return this.client;
 	}
 	
+	/**
+	 * Client equals if they share the same hostname and Ipaddress
+	 * @param client
+	 * @param clientName
+	 * @return
+	 */
 	public boolean equals(ConnectionToClient client, String clientName) {
 		if(this.clientName.equals(clientName)
 				&& this.clientIp.equals(client.getInetAddress().getHostAddress())) {

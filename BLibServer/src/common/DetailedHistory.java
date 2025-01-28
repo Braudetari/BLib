@@ -58,11 +58,12 @@ public class DetailedHistory implements Serializable {
     }
     
     /**
-     * Constructs a DetailedHistory with the specified description, date, and user.
-     * 
-     * @param description the description of the history record
-     * @param date of action
-     * @param user affected/relevant
+     * DetailedHistory Constructor
+     * @param user
+     * @param action
+     * @param date
+     * @param description
+     * @param note
      */
     public DetailedHistory(User user, ActionType action, LocalDate date, String description, String note) {
         this.description = description;
@@ -72,6 +73,13 @@ public class DetailedHistory implements Serializable {
         this.note = note;
     }
     
+    /**
+     * DetailedHistory Constructor
+     * @param user
+     * @param action
+     * @param date
+     * @param description
+     */
     public DetailedHistory(User user, ActionType action, LocalDate date, String description) {
         this.description = description;
         this.date = date;
@@ -81,8 +89,8 @@ public class DetailedHistory implements Serializable {
     }
     
     /**
-     * Construct DetailedHistory using another DetailedHistory
-     * @param detailedHistory object
+     * Construct using another DetailedHistory
+     * @param history
      */
     public DetailedHistory(DetailedHistory history) {
     	this.action = history.action;
@@ -206,8 +214,8 @@ public class DetailedHistory implements Serializable {
 	}
     
     /**
-     * Get String of a DetailedHistory list
-     * @param DetailedHistoryList
+     * Get String from List<DetailedHistory>
+     * @param detailedList
      * @return String
      */
     public static String detailedHistoryListToString(List<DetailedHistory> detailedList) {
@@ -248,16 +256,5 @@ public class DetailedHistory implements Serializable {
         	}
     	}
     	return detailedList;
-    }
-    
-    //DEBUG main
-    public static void main(String args[]) {
-    	User user = new User(1, "Leolel", "passwuwrd", User.UserType.LIBRARIAN);
-    	LocalDate date = LocalDate.now();
-    	ActionType action = ActionType.fromString("BORROW");
-    	DetailedHistory a = new DetailedHistory(user, action, date, "Pretty boring action ngl", " ");
-    	System.out.println(a);
-    	DetailedHistory b = DetailedHistory.fromString(a.toString());
-    	System.out.println(b);
     }
 }

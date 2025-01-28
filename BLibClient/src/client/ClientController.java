@@ -3,11 +3,9 @@
 // license found at www.lloseng.com 
 package client;
 import java.io.*;
-import java.net.InetAddress;
 import java.time.LocalDate;
 import java.util.List;
 
-import client.*;
 import common.*;
 
 
@@ -131,7 +129,7 @@ public class ClientController implements ChatIF
   
   /**
    * Request Server for Subscriber
-   * @param subscriber_id
+   * @param id	subscriberId
    * @return Subscriber
    */
   public Subscriber requestServerForSubscriber(String id){
@@ -141,7 +139,9 @@ public class ClientController implements ChatIF
   
   /**
    * Request Server for Subscriber List of all Subscribers
-   * @return Subscriber List
+   * @param element	String for database element
+   * @param value	String for database value
+   * @return List<Subscriber
    */
   public List<Subscriber> requestServerForSubscriberList(String element, String value){
 	  SendRequestToServer("getsubscribers", new String[] {element, value});
@@ -150,7 +150,7 @@ public class ClientController implements ChatIF
   
   /**
    * Request Server to Update a Subscriber
-   * @param updated subscriber with same id
+   * @param subscriber updated subscriber with same id
    */
   public void requestServerToUpdateSubscriber(Subscriber subscriber) {
 	  SendRequestToServer("updatesubscriber", subscriber.toString());
@@ -171,9 +171,9 @@ public class ClientController implements ChatIF
    * e.g. Searching for Books by name will be 
    * requestServerSearchForBooks("book_name", "Harry Potter")
    * will return all books with the name "Harry Potter"
-   * @param element: book_name, book_genre, book_description
+   * @param element book_name, book_genre, book_description
    * @param value of element
-   * @return List of Books
+   * @return List<Book Books
    */
   public List<Book> requestServerSearchForBooks(String element, String value){
 	  SendRequestToServer("getbooks", new String[] {element,value});
@@ -187,8 +187,8 @@ public class ClientController implements ChatIF
 
   /**
    * Request Server to Return Availiblity+ClosestReturnDate for books in bookList
-   * @param bookList
-   * @return Object[2] with Object[0]=List of availibility<p> Object[1]=List of Closest Return Date
+   * @param bookList	List<Book>
+   * @return Object[] with Object[0]=List of availibility Object[1]=List of Closest Return Date
    */
   public Object[] requestServerForBookListAvailibilityInfo(List<Book> bookList) {
 	  SendRequestToServer("booksinfo", bookList);
@@ -198,7 +198,7 @@ public class ClientController implements ChatIF
   /**
    * Request Server to Return Availiblity+ClosestReturnDate for books in bookList
    * @param bookList
-   * @return
+   * @return Object[]	{List<booleans>, List<LocalDate>}
    */
   public Object[] requestServerForBookAvailibilityInfo(Book book) {
 	  SendRequestToServer("booksinfo", book.toString());
@@ -207,8 +207,8 @@ public class ClientController implements ChatIF
   
   /**
    * Request Server to check for books in a list whether they are extendable
-   * @param bookIdList
-   * @return Object data of Boolean List, entry for each book in the same order
+   * @param bookIdList	List<Integer>
+   * @return List<Boolean> Object data of Boolean List, entry for each book in the same order
    */
   public List<Boolean> requestServerForBookListExtendability(List<Integer> bookIdList) {
 	  SendRequestToServer("arebooksextendable", (Object)bookIdList);
@@ -218,7 +218,7 @@ public class ClientController implements ChatIF
   /**
    * Request Server to check whether a book is extendable
    * @param bookId
-   * @return Object data of Boolean (true/false)
+   * @return Boolean boolean (true/false)
    */
   public Boolean requestServerForBookExtendability(int bookId) {
 	  SendRequestToServer("isbookextendable", (Object)bookId);
@@ -229,7 +229,7 @@ public class ClientController implements ChatIF
    * Request Server to Extend a book By certain amount of days
    * @param bookId
    * @param amountOfDays
-   * @return 0=fail/error, 1=success
+   * @return int 0=fail/error, 1=success
    */
   public int requestServerToExtendBookReturnDate(int bookId, int amountOfDays) {
 	  SendRequestToServer("extendbook", (new int[] {bookId, amountOfDays}));
@@ -263,16 +263,13 @@ public class ClientController implements ChatIF
   
   /**
    * Request Server to Borrow Book
-   * e.g. Borrow Book using book's serial id
-   * requestServerToBorrowBook("bookSerialId", "subscriberId", dateBorrow, dateReturn, "serial")
    * e.g. Borrow Book using book's id
    * requestServerToBorrowBook("bookId", ..., ..., ..., ..., "id")
    * check LastResponse for result
-   * @param bookIdOrSerial book id or serial, depends on BookIdType
+   * @param bookId book id
    * @param subscriberId
    * @param borrowDate
    * @param returnDate
-   * @param bookIdType "id" for book_id or "serial" for bookSerialId
    */
   public int requestServerToBorrowBook(String bookId, String subscriberId, LocalDate borrowDate, LocalDate returnDate) {
 	  try {
@@ -293,8 +290,8 @@ public class ClientController implements ChatIF
   
   /**
    * Request client for borrowed books list by subscriber
-   * @param subscriberId
-   * @return List of BorrowedBooks
+   * @param subscriberId	int
+   * @return List<BorrowedBook> of BorrowedBooks
    */
   public List<BorrowedBook> requestServerForBorrowedBooksBySubscriber(int subscriberId){
 	  SendRequestToServer("borrowedbooks", (Integer)subscriberId);
@@ -306,7 +303,6 @@ public class ClientController implements ChatIF
    * Request Server to Return book
    * Return Date set as time of method activation
    * @param bookId
-   * @param subscriber
    */
   public void requestServerToReturnBook(String bookId) {
 	  SendRequestToServer("returnbook", bookId+";"+DateUtil.DateToString(LocalDate.now()));
@@ -315,8 +311,8 @@ public class ClientController implements ChatIF
   /**
    * Request Server for Detailed History List for a specific User
    * Can be found in any subscriber/librarian
-   * @param historyId (subscriberId or librarianId)
-   * @return
+   * @param userId (subscriberId or librarianId)
+   * @return List<DetailedHistory>
    */
   public List<DetailedHistory> requestServerForHistoryList(int userId){
 	  SendRequestToServer("gethistory", ""+userId);
@@ -326,7 +322,7 @@ public class ClientController implements ChatIF
   /**
    * Request server to add a history into a history list
    * (subscribers have historyId btw) 
-   * @param DetailedHistory (user can be null)
+   * @param dh DetailedHistory (user can be null)
    * @param historyId int
    * @return boolean success/fail
    */
@@ -353,7 +349,7 @@ public class ClientController implements ChatIF
   /**
    * Request Server to check whether a book is reservable
    * @param book
-   * @param subscriber
+   * @param subscriberId
    * @return int 0=nope, 1=yep, 2=already reserved by subscriber
    */
   public int requestServerWhetherBookIsReservable(Book book, int subscriberId) {
@@ -365,7 +361,7 @@ public class ClientController implements ChatIF
   /**
    * Requests Server to a Reserve Book
    * @param book
-   * @param subscriber
+   * @param subscriberId
    * @return int 0=fail, 1=success
    */
   public int requestServerToReserveBook(Book book, int subscriberId) {
@@ -383,7 +379,7 @@ public class ClientController implements ChatIF
    * Request Server to Generate Loan Report and Return it
    * @param year
    * @param month
-   * @return Object[2] = {List<String> bookGenres, List<Integer> averageLoanTime}
+   * @return Object[] {List<String> bookGenres, List<Integer> averageLoanTime}
    */
   public Object[] requestServerToGenerateLoanReport(int year, int month) {
 	  Object[] object = new Object[] {year, month};
@@ -400,7 +396,7 @@ public class ClientController implements ChatIF
    * Request Server to Generate Subscriber Status Report
    * @param year
    * @param month
-   * @return Object[2] = {int ActiveCount, int FrozenCount}
+   * @return Object[] {int ActiveCount, int FrozenCount}
    */
   public Object[] requestServerToGenerateStatusReport(int year, int month) {
 	  Object[] object = new Object[] {year, month};
@@ -418,7 +414,7 @@ public class ClientController implements ChatIF
    * Get Last Responses from Server to Client
    * if LastResponse = error, LastResponseError will have str value
    * if LastResponse = msg, LastResponseMsg will have str value
-   * @return String[3] with {LastResponse, LastResponseMsg, LastResponseError}
+   * @return String[] with {LastResponse, LastResponseMsg, LastResponseError}
    */
   public String[] getClientLastResponses() {
 	  String[] responses = {client.lastResponse, client.lastResponseMsg, client.lastResponseError};
@@ -443,7 +439,7 @@ public class ClientController implements ChatIF
   
   /**
    * Get Client's Last Returned Subscriber List
-   * @return Subscriber List
+   * @return List<Subscriber>
    */
   public List<Subscriber> getClientSubscriberList() {
 	  return client.subscriberList;
@@ -459,7 +455,7 @@ public class ClientController implements ChatIF
   
   /**
    * Get Client's Last Returned Book LIst
-   * @return Book List
+   * @return List<Book>
    */
   public List<Book> getClientBookList(){
 	  return client.books;
@@ -467,7 +463,7 @@ public class ClientController implements ChatIF
   
 	/**
 	 * Get Client's Last Returned Book
-	 * @return book
+	 * @return Book
 	 */
   public Book getClientBook() {
 	  return client.book;
@@ -491,7 +487,7 @@ public class ClientController implements ChatIF
   
   /**
    * Get Client's Last Returned DetailedHistory List
-   * @return DetailedHistory List
+   * @return List<DetailedHistory>
    */
   public List<DetailedHistory> getClientHistoryList() {
 	  return client.historyList;

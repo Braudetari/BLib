@@ -78,10 +78,45 @@ public class ChatClient extends AbstractClient
   //Instance methods ************************************************
    
   /**
-   * This method handles all data that comes in from the server.
-   *
-   * @param msg The message from the server.
-   */
+  * Handles incoming data from the server by decrypting the message and 
+  * processing it based on the request type. Each request type updates 
+  * specific local fields or sets error/state variables as needed.
+  *
+  * <p>Possible request types and their effects:</p>
+  * <ul>
+  *   <li><b>"msg"</b>: Expects a {@code String} message from the server; 
+  *       stored in {@code lastResponseMsg}.</li>
+  *   <li><b>"subscribers"</b>: Expects a {@code List<Subscriber>} containing subscriber records; 
+  *       stored in {@code subscriberList}.</li>
+  *   <li><b>"getsubscriber"</b>: Expects a single {@code Subscriber} record; 
+  *       stored in {@code subscriber}.</li>
+  *   <li><b>"connected"</b>: Expects a {@code String} session ID; 
+  *       stored in {@code sessionId}.</li>
+  *   <li><b>"login"</b>: Expects a {@code String} that, when split on `;`, 
+  *       contains a serialized {@code User} plus an associated name. 
+  *       The {@code User} is parsed and stored in {@code user}, the name in {@code name}.</li>
+  *   <li><b>"book"</b>: Expects a serialized {@code Book} record; 
+  *       deserialized and stored in {@code book}.</li>
+  *   <li><b>"books"</b>: Expects a {@code List<Book>} containing multiple Book records; 
+  *       stored in {@code books}.</li>
+  *   <li><b>"bookinfo"</b>: Expects an {@code Object[]} with book availability info; 
+  *       stored in {@code bookAvailibilityInfo}.</li>
+  *   <li><b>"isbookreserved"</b>: Expects a {@code String} representation of an integer; 
+  *       parsed and stored in {@code intResponse} to indicate if a book is reserved.</li>
+  *   <li><b>"history"</b>: Expects a serialized {@code String} representing a list of 
+  *       {@code DetailedHistory} records; deserialized and stored in {@code historyList}.</li>
+  *   <li><b>"borrowedbooks"</b>: Expects a {@code List<BorrowedBook>} containing borrowed-book records; 
+  *       stored in {@code borrowedBooks}.</li>
+  *   <li><b>"notifications"</b>: Expects a {@code List<Notification>} containing user notifications; 
+  *       stored in {@code notifications}.</li>
+  *   <li><b>"data"</b>: Expects any general {@code Object}; 
+  *       stored in {@code data} for later processing.</li>
+  *   <li><b>"error"</b>: Expects a {@code String} describing an error; 
+  *       stored in {@code lastResponseError}.</li>
+  * </ul>
+  *
+  * @param msg the raw message object (typically of type {@code Message}) received from the server
+  */
   public void handleMessageFromServer(Object msg) 
   {
 	  try {
@@ -210,6 +245,10 @@ public class ChatClient extends AbstractClient
 	  }
   }
   
+  /**
+   * Return Connect to Server Message
+   * @return Message
+   */
   Message getConnectMessage() {
 	  try {
 		  String hostname = InetAddress.getLocalHost().getHostName();
@@ -228,7 +267,6 @@ public class ChatClient extends AbstractClient
    *
    * @param message The message from the UI.    
    */
-  
   public void handleMessageFromClientUI(Message message)  
   {
     try
@@ -279,47 +317,5 @@ public class ChatClient extends AbstractClient
     //System.exit(0);
   }
   
-  //DEBUG MAIN
-  public static void main(String args[]) {
-		ClientController chat = new ClientController("localhost",5555);
-		 try {
-			chat.connect();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.err.println("Could not connect to server");
-			return;
-		}
-		 
-		 try {
-			 Message msg;
-			 msg = new Message("login", chat.client.getSessionId(), "man sauce2");
-			 chat.client.handleMessageFromClientUI(msg);
-			 msg = new Message("getbook", chat.client.getSessionId(), "1");
-			 chat.client.handleMessageFromClientUI(msg);
-			 Book book1 = new Book(chat.client.book);
-			 msg = new Message("getbook", chat.client.getSessionId(), "6");
-			 chat.client.handleMessageFromClientUI(msg);
-			 Book book2 = new Book(chat.client.book);
-			 Object[] object = new Object[] {book1, chat.client.user.getId()};
-			 msg = new Message("isbookreservable", chat.client.getSessionId(), object);
-			 chat.client.handleMessageFromClientUI(msg);
-			 msg = new Message("reservebook", chat.client.getSessionId(), object);
-			 chat.client.handleMessageFromClientUI(msg);
-			 String lr = chat.client.lastResponse;
-			 String lre = chat.client.lastResponseError;
-			 String lrm = chat.client.lastResponseMsg;
-			 System.out.println(lr +" ; "+ lre + " ; " + lrm);
-		 }
-		 catch(Exception e) {
-			 e.printStackTrace();
-		 }
-		 try {
-			chat.client.closeConnection();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-  }
 }
 //End of ChatClient class

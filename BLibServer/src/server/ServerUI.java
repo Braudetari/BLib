@@ -139,6 +139,12 @@ public class ServerUI extends Application {
 		}
 	}
 	
+	/**
+	 * Listen to Notifiers, perform the following tasks every day
+	 * Remind Subscribers a day before return date to return books
+	 * Unfreeze Subscribers after a month
+	 * Remove Reservations after Two Days of not Borrowing
+	 */
 	private static void NotifiersListener() {
 		try {
 			LocalDate dateOld = null;

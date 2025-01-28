@@ -53,6 +53,15 @@ public class DatabaseConnection {
         System.out.println("SQL connection succeeded.");
     }
 
+    /**
+     * Get Singleton Instance of IP Database Connection
+     * @param DBIp
+     * @param DBScheme
+     * @param DBUser
+     * @param DBPass
+     * @return
+     * @throws SQLException
+     */
     public static DatabaseConnection getInstance(String DBIp, String DBScheme, String DBUser, String DBPass) throws SQLException {
         if (instance == null) {
             synchronized (DatabaseConnection.class) {
@@ -63,6 +72,11 @@ public class DatabaseConnection {
         }
         return instance;
     }
+	/**
+	 * Get Singleton Instance of Local Database Connection    
+	 * @return
+	 * @throws SQLException
+	 */
     public static DatabaseConnection getInstance() throws SQLException {
         if (instance == null) {
             synchronized (DatabaseConnection.class) {
@@ -73,6 +87,9 @@ public class DatabaseConnection {
         }
         return instance;
     }
+    /**
+     * Close Connection to Database
+     */
     public void closeConnection() {
         if (connection != null) {
             try {
@@ -85,8 +102,12 @@ public class DatabaseConnection {
             }
         }
     }
-    public Connection getConnection() {
-        return connection;
+    /**
+     * Get Connection to Database
+     * @return
+     */
+	public Connection getConnection() {
+	        return connection;
     }
 
  

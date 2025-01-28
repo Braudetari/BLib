@@ -55,7 +55,7 @@ public class BookController {
 	 * @param connection
 	 * @param element
 	 * @param value
-	 * @return List of Books
+	 * @return List<Book>
 	 */
 	public static List<Book> GetBooksByElement(Connection connection, String element, String value){
 		if(connection == null) {
@@ -115,8 +115,8 @@ public class BookController {
 	/**
 	 * Get Books from Database using Name
 	 * @param connection
-	 * @param bookName
-	 * @return List of Books
+	 * @param name of book
+	 * @return List<Book>
 	 */
 	public static List<Book> GetBooksByName(Connection connection, String name) {
 		return GetBooksByElement(connection, "book_name", name);
@@ -125,8 +125,8 @@ public class BookController {
 	/**
 	 * Get Books from Database using Name
 	 * @param connection
-	 * @param bookDescription
-	 * @return List of Books
+	 * @param description of book
+	 * @return List<Book>
 	 */
 	public static List<Book> GetBooksByDescription(Connection connection, String description) {
 		return GetBooksByElement(connection, "book_description", description);
@@ -135,8 +135,8 @@ public class BookController {
 	/**
 	 * Get Books from Database using Genre
 	 * @param connection
-	 * @param bookGenre
-	 * @return List of Books
+	 * @param genre of book
+	 * @return List<Book>
 	 */
 	public static List<Book> GetBooksByGenre(Connection connection, String genre) {
 		return GetBooksByElement(connection, "book_genre", genre);
@@ -145,8 +145,8 @@ public class BookController {
 	/**
 	 * Get Books from Database using specific SerialId
 	 * @param connection
-	 * @param bookSerialId
-	 * @return List of Books
+	 * @param serialId	of book
+	 * @return List<Book>
 	 */
 	public static List<Book> GetBooksBySerialId(Connection connection, int serialId) {
 		return GetBooksByElement(connection, "book_serial_id", ""+serialId);

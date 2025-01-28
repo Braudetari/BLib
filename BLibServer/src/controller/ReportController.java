@@ -1,4 +1,4 @@
-package server;
+package controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,14 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import common.*;
 
-import controller.SubscriberController;
-
 public class ReportController {
 	
 	/**
 	 * Generates Subscriber Report of how many frozen 
 	 * @param connection
-	 * @return Object[]= {(int)ActiveCount, (int)FrozenCount}
+	 * @return Object[] {(int)ActiveCount, (int)FrozenCount}
 	 */
 	public static Object[] GenerateSubscriberReport(Connection connection) {
 		if(connection == null) {
@@ -46,9 +44,9 @@ public class ReportController {
 	/**
 	 * Generate Loan Time Report of Book Genre's to Average Loan Time
 	 * @param connection
-	 * @param year
-	 * @param month
-	 * @return Object[2] = {List<String>bookGenre, List<Integer>loanTime}
+	 * @param year int
+	 * @param month int
+	 * @return Object[] {List<String>bookGenre, List<Integer>loanTime}
 	 */
 	@SuppressWarnings("unchecked")
 	public static Object[] GenerateLoanTimeReport(Connection connection, int year, int month) {
@@ -112,7 +110,7 @@ public class ReportController {
 	 * @param connection
 	 * @param year
 	 * @param month
-	 * @return Object[] = {List<Book> books, List<Integer> loanTime}
+	 * @return Object[] {List<Book> books, List<Integer> loanTime}
 	 */
 	public static Object[] GetReportBlobFromDatabase(Connection connection, int year, int month) {
 		if(connection == null) {
@@ -157,10 +155,10 @@ public class ReportController {
 	/**
 	 * Updates Report Blob to Database
 	 * @param connection
-	 * @param reportObject
+	 * @param reportObject Object[] blob
 	 * @param year
 	 * @param month
-	 * @return
+	 * @return int -1=error, 0=fail, 1=success
 	 */
 	public static int UpdateReportBlobInDatabase(Connection connection, Object[] reportObject, int year, int month) {
 		if(connection == null) {
@@ -221,6 +219,13 @@ public class ReportController {
 	
 	
 	@SuppressWarnings("unchecked")
+	/**
+	 * Add Report to Database
+	 * @param connection
+	 * @param book
+	 * @param loanTime
+	 * @return int -1=error, 0=fail, 1=success
+	 */
 	public static int AddReportToDatabase(Connection connection, Book book, int loanTime) {
 		if(connection == null) {
 			System.err.println("Could not connect to Database");

@@ -10,6 +10,9 @@ import java.util.StringTokenizer;
 
 import common.User.UserType;
 
+/**
+ * Book Class For Database
+ */
 public class Book implements Serializable{
 	private static final long serialVersionUID = 1L;
     private int id;
@@ -34,6 +37,8 @@ public class Book implements Serializable{
      * @param name
      * @param author
      * @param description
+     * @param genre
+     * @param location
      */
     public Book(int serial_id, String name, String author, String description, String genre, String location) {
         this.serial_id = serial_id;
@@ -78,7 +83,7 @@ public class Book implements Serializable{
 
     /**
      * Get Book Serial ID
-     * @return
+     * @return int
      */
     public int getSerial_id() {
         return serial_id;
@@ -166,7 +171,7 @@ public class Book implements Serializable{
 
     /**
      * Set Book Location
-     * @param Location
+     * @param location
      */
     public void setLocation(String location) {
         this.location = location;
@@ -229,7 +234,12 @@ public class Book implements Serializable{
         book.setId(id);
         return book;
     }
-
+    
+    /**
+     * Convert List<Book> to String
+     * @param books
+     * @return
+     */
     public static String bookListToString(List<Book> books) {
     	String output = "{";
     	Iterator<Book> iterator = books.iterator();

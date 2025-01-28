@@ -16,7 +16,7 @@ public class ReserveController {
 	 * @param connection
 	 * @param bookSerialId
 	 * @param subscriberId
-	 * @return -1=error, 0=nope, 1=yep
+	 * @return int -1=error, 0=nope, 1=yep
 	 */
 	public static int IsBookReservedBySubscriber(Connection connection, int bookSerialId, int subscriberId) {
 		if(connection == null) {
@@ -52,7 +52,7 @@ public class ReserveController {
 	 * Returns how many of a book are already reserved
 	 * @param connection
 	 * @param bookSerialId
-	 * @return -1=error, 0=all reserved, >0=number of books not reserved
+	 * @return int -1=error, 0=all reserved, >0=number of books not reserved
 	 */
 	public static int GetBookUnreservedCopies(Connection connection, int bookSerialId) {
 		if(connection == null) {
@@ -86,7 +86,7 @@ public class ReserveController {
 	 * @param connection
 	 * @param bookSerialId
 	 * @param subscriberId
-	 * @return -1=error, 0=nope, 1=yep, 2=already reserved
+	 * @return int -1=error, 0=nope, 1=yep, 2=already reserved
 	 */
 	public static int IsBookReservable(Connection connection, int bookSerialId, int subscriberId) {
 		if(connection == null) {
@@ -119,6 +119,12 @@ public class ReserveController {
 		}
 	}
 	
+	/**
+	 * Get Reserved books by subscriber
+	 * @param connection
+	 * @param subscriberId
+	 * @return List<Book>
+	 */
 	public static List<Book> GetReservedBookBySubscriber(Connection connection, int subscriberId){
 		if(connection == null) {
 			System.err.println("Could not connect to database");
@@ -182,7 +188,8 @@ public class ReserveController {
 	 * Reserve a book
 	 * @param connection
 	 * @param bookSerialId
-	 * @return -1=error, 0=fail, 1=success
+	 * @param subscriberId
+	 * @return int -1=error, 0=fail, 1=success
 	 */
 	public static int ReserveBook(Connection connection, int bookSerialId, int subscriberId) {
 		if(connection == null) {
@@ -238,7 +245,7 @@ public class ReserveController {
 	 * @param connection
 	 * @param bookId
 	 * @param subscriberId
-	 * @return -1=error, 0=fail, 1=success
+	 * @return int -1=error, 0=fail, 1=success
 	 */
 	public static int RemoveReservation(Connection connection, int bookId, int subscriberId) {
 		if(connection == null) {

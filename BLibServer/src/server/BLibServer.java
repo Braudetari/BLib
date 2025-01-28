@@ -160,11 +160,45 @@ public class BLibServer extends AbstractServer
   }
   
   /**
-   * This method handles any messages received from the client.
+   * Handles any messages received from the client by decrypting and analyzing
+   * the request type, then taking the appropriate action. If a request type is
+   * invalid or an error occurs, an error response is sent back.
    *
-   * @param msg The message received from the client.
-   * @param client The connection from which the message originated.
-   * @param 
+   * <p><strong>Supported request types include:</strong></p>
+   * <ul>
+   *   <li><b>"connect"</b> — Initializes the connection with a unique session ID 
+   *       and notifies the client of successful connection.</li>
+   *   <li><b>"getsubscribers"</b> — Retrieves a list of subscribers filtered by a certain element/value.</li>
+   *   <li><b>"updatesubscriber"</b> — Updates an existing subscriber's information; 
+   *       may trigger freeze/unfreeze notifications and history logs if changed by a librarian.</li>
+   *   <li><b>"getsubscriber"</b> — Retrieves a single subscriber by ID.</li>
+   *   <li><b>"registersubscriber"</b> — Registers a new subscriber using username, password, name, email, and phone.</li>
+   *   <li><b>"logout"</b> — Logs out the current user from the server.</li>
+   *   <li><b>"login"</b> — Authenticates a user (or sets them as GUEST) with a username and password.</li>
+   *   <li><b>"getbook"</b> — Retrieves a single book by its ID.</li>
+   *   <li><b>"getbooks"</b> — Retrieves a list of books filtered by a certain element/value.</li>
+   *   <li><b>"getreservedbooks"</b> — Retrieves a list of books reserved by a specific subscriber.</li>
+   *   <li><b>"borrowedbooks"</b> — Retrieves a list of borrowed books for a given subscriber.</li>
+   *   <li><b>"borrowbook"</b> — Lends a book to a subscriber if permitted (librarian only, subscriber not frozen, etc.).</li>
+   *   <li><b>"returnbook"</b> — Returns a borrowed book, updates relevant history, and notifies reserved subscribers.</li>
+   *   <li><b>"gethistory"</b> — Retrieves a detailed history (actions taken) for a specific ID.</li>
+   *   <li><b>"addhistory"</b> — Adds a new detailed history record for a specific user (librarian-only action).</li>
+   *   <li><b>"bookinfo"</b> — Checks availability of a specific book via its serial ID.</li>
+   *   <li><b>"booksinfo"</b> — Checks availability for a list of books.</li>
+   *   <li><b>"isbookreservable"</b> — Checks if a book is reservable by a given subscriber (subscriber-only action).</li>
+   *   <li><b>"reservebook"</b> — Reserves a book for a subscriber, updates notifications and history if successful.</li>
+   *   <li><b>"isbookextendable"</b> — Checks if a borrowed book can be extended.</li>
+   *   <li><b>"arebooksextendable"</b> — Checks if multiple borrowed books are extendable.</li>
+   *   <li><b>"extendbook"</b> — Extends the return date of a borrowed book; updates history and notifies accordingly.</li>
+   *   <li><b>"getnotifications"</b> — Retrieves notification records for a specific subscriber.</li>
+   *   <li><b>"loanreport"</b> — Generates a report of average loan times filtered by year/month.</li>
+   *   <li><b>"statusreport"</b> — Generates a report of subscriber statuses.</li>
+   *   <li><b>"encrypted"</b> — (No operation performed; indicates data already encrypted.)</li>
+   *   <li><b>"default"</b> — If the request is unrecognized, an error message is returned to the client.</li>
+   * </ul>
+   *
+   * @param msg    the raw message from the client (commonly a {@code Message} object)
+   * @param client the originating client connection
    */
   public void handleMessageFromClient  (Object msg, ConnectionToClient client)
   {

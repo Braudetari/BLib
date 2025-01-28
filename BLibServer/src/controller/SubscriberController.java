@@ -16,6 +16,11 @@ import server.DatabaseConnection;
 
 public class SubscriberController {
 	
+	/**
+	 * Get all subscribers from Database
+	 * @param connection
+	 * @return ArrayList<Subscriber>
+	 */
 	   public static ArrayList<Subscriber> getAllSubscribers(Connection connection) {
 	        ArrayList<Subscriber> subscribers = new ArrayList<>();
 
@@ -49,7 +54,13 @@ public class SubscriberController {
 	    }
 	   
 	   
-	   
+	   /**
+	    * Get Subscribers by element
+	    * @param connection
+	    * @param element	subscriber_id, subscriber_name, etc..
+	    * @param value
+	    * @return List<Subscriber>
+	    */
 	   public static List<Subscriber> getSubscribersByElement(Connection connection, String element, String value){
 		   if(connection == null) {
 				System.err.println("Could not connect to Database");
@@ -100,10 +111,8 @@ public class SubscriberController {
 	   /**
 	    * Update Subscriber Personal Information
 	    * @param connection
-	    * @param subscriberId
-	    * @param newEmail
-	    * @param newPhoneNumber
-	    * @return success/fail boolean
+	    * @param editedSubscriber subscriber
+	    * @return boolean success/fail
 	    */
 	    public static boolean updateSubscriberInfo(Connection connection, Subscriber editedSubscriber) {
 	        
@@ -196,6 +205,8 @@ public class SubscriberController {
 	        return null; // Return null if no subscriber is found
 	    }
 	    
+
+	     
 	    /**
 	     * Register new subscriber,
 	     * Creates new user with username and password
@@ -206,7 +217,7 @@ public class SubscriberController {
 	     * @param name
 	     * @param email
 	     * @param phone
-	     * @return boolean success
+	     * @return
 	     */
 	    public static boolean RegisterSubscriber(Connection connection, String username, String password, String name, String email, String phone) {
 	    	if (connection == null) {
@@ -244,7 +255,7 @@ public class SubscriberController {
 	     * Checks in database and returns whether subscriber is frozen or not
 	     * @param connection
 	     * @param subscriberId
-	     * @return -1=error, 0=false, 1=true
+	     * @return int -1=error, 0=false, 1=true
 	     */
 	    public static int CheckSubscriberStatus(Connection connection, int subscriberId){
 	    	 if (connection == null) {
@@ -274,7 +285,7 @@ public class SubscriberController {
 	     * if 1 freezes if 0 unfreezes
 	     * @param connection
 	     * @param subscriberId
-	     * @param freeze
+	     * @param freeze boolean
 	     * @return boolean success
 	     */
 	    public static boolean SetFreezeSubscriber(Connection connection, int subscriberId, boolean freeze) {
@@ -297,17 +308,4 @@ public class SubscriberController {
 	        }
 	    }
 
-	    //DEBUG main
-	    public static void main(String args[]) {
-	    	DatabaseConnection dbc; 
-	    	try {
-	    		dbc = DatabaseConnection.getInstance();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return;
-			}
-	    	boolean success = RegisterSubscriber(dbc.getConnection(), "userman", "passwordman", "Leo Userperson", "email@email.net", "054-Man");
-	    	System.out.println(success);
-	    }
 }

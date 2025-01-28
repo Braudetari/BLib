@@ -29,12 +29,11 @@ public class BorrowedBook implements Serializable{
     }
 
     /**
-     * Creates a BorrowedBook object with specified values.
-     *
-     * @param borrowedId   the unique borrowed record ID
-     * @param borrowedBook the Book that was borrowed
-     * @param borrowedDate the date the book was borrowed
-     * @param returnDate   the date the book was returned or is due
+     * Create BorrowedBook with specified variables
+     * @param borrowedBook
+     * @param borrowingSubscriber
+     * @param borrowedDate
+     * @param returnDate
      */
     public BorrowedBook(Book borrowedBook, Subscriber borrowingSubscriber, LocalDate borrowedDate, LocalDate returnDate) {
         this.borrowedBook = borrowedBook;
@@ -46,7 +45,7 @@ public class BorrowedBook implements Serializable{
     /**
      * Creates a BorrowedBook object by copying an existing BorrowedBook instance.
      *
-     * @param other the BorrowedBook to copy
+     * @param bb BorrowedBook other the BorrowedBook to copy
      */
     public BorrowedBook(BorrowedBook bb) {
         this.borrowedBook = bb.borrowedBook;
@@ -57,18 +56,17 @@ public class BorrowedBook implements Serializable{
 
     /////////	SETTERS AND GETTERS	/////////
     /**
-     * Gets the borrowed record ID.
+     * Gets the borrowing Subscriber.
      *
-     * @return the borrowed record ID
+     * @return Subscriber 
      */
     public Subscriber getBorrowingSubscriber() {
         return borrowingSubscriber;
     }
 
     /**
-     * Sets the borrowed record ID.
-     *
-     * @param borrowedId the borrowed record ID to set
+     * Set Borrowed Id
+     * @param borrowingSubscriber
      */
     public void setBorrowedId(Subscriber borrowingSubscriber) {
         this.borrowingSubscriber = borrowingSubscriber;
@@ -77,7 +75,7 @@ public class BorrowedBook implements Serializable{
     /**
      * Gets the borrowed Book object.
      *
-     * @return the borrowed Book
+     * @return Book the borrowed Book
      */
     public Book getBorrowedBook() {
         return borrowedBook;

@@ -13,31 +13,42 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-
 import client.ClientUI;
 import common.User.UserType;
 
+/**
+ * Controller for the "Borrow Book" frame, allowing subscribers to borrow books.
+ * The frame validates input data such as subscriber ID, book ID, borrow date, and return date.
+ */
 public class BorrowBookFrameController implements IController {
+	
+	/** The parent node for the frame layout. */
 	@FXML
 	private AnchorPane parentNode;
-    @FXML
+	/** Text field for entering the subscriber ID. */
+	@FXML
     private TextField subscriberIdTxt;
-  
+	/** Text field for entering the book ID. */
     @FXML
     private TextField bookIdTxt;
-
+    /** Date picker for selecting the borrow date. */
     @FXML
     private DatePicker borrowDatePicker;
-
+    /** Date picker for selecting the return date. */
     @FXML
     private DatePicker returnDatePicker;
-
+    /** Button to confirm and process the borrow request. */
     @FXML
     private Button borrowBtn;
     
-    //private int bookId;
-
+    
+    /**
+     * Starts the "Borrow Book" frame.
+     * 
+     * @param primaryStage the primary stage to display the frame.
+     * @param bookId the ID of the book to prefill in the book ID field, if available.
+     * @throws Exception if there is an error loading the FXML file.
+     */
     public void start(Stage primaryStage, String bookId) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/BorrowBookFrame.fxml"));
         Parent root = loader.load();
@@ -45,25 +56,24 @@ public class BorrowBookFrameController implements IController {
         scene.getStylesheets().add(getClass().getResource("/gui/BorrowBookFrame.css").toExternalForm());
         primaryStage.setTitle("Borrow Book");
         primaryStage.setScene(scene);
-        primaryStage.show();
- 
-        
-        //frame.initializeBookId(bookId);
-        
+        primaryStage.show();    
     }
     
+    /**
+     * Initializes the book ID field with a given value.
+     * 
+     * @param bookId the ID of the book to set in the book ID field.
+     */
     public void initializeText(String bookId) {
         if(bookId!=null) {
         	bookIdTxt.setText(bookId);
         }
     }
-    
-//    private void setBookId(String bookId) {
-//    	if(bookId!=null) {
-//    		this.bookId=bookId;
-//    	}
-//    }
 
+    /**
+     * Initializes the frame. Sets the default borrow date to today and configures the return date picker
+     * to allow dates only up to two weeks after the borrow date.
+     */
     @FXML
     private void initialize() {
     	
@@ -85,6 +95,12 @@ public class BorrowBookFrameController implements IController {
         });
     }
 
+    /**
+     * Handles the borrow button click event. Validates the input fields and sends a borrow request to the server.
+     * Displays an alert with the result of the borrow operation.
+     * 
+     * @param event the action event triggered by the button click.
+     */
     @FXML
     private void onBorrowBtnClick(ActionEvent event) {
         String clientId = subscriberIdTxt.getText().trim();
@@ -113,7 +129,13 @@ public class BorrowBookFrameController implements IController {
         }
         showAlert("Book Borrow Result", message);
     }
-
+    
+    /**
+     * Displays an alert dialog with the given title and message.
+     * 
+     * @param title the title of the alert dialog.
+     * @param message the message content of the alert dialog.
+     */
     private void showAlert(String title, String message) {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle(title);
@@ -121,7 +143,7 @@ public class BorrowBookFrameController implements IController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
+    
 	@Override
 	public void initializeFrame() {
 		// TODO Auto-generated method stub

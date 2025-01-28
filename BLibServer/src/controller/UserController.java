@@ -10,6 +10,12 @@ import common.User;
 import server.DatabaseConnection;
 
 public class UserController {
+	/**
+	 * Get User by Username
+	 * @param connection
+	 * @param username
+	 * @return User
+	 */
 	public static User getUserByUsername(Connection connection, String username) {
         
         if (connection == null) {
@@ -39,6 +45,12 @@ public class UserController {
         return null; // Return null if no subscriber is found
     }
 
+	/**
+	 * Get User by userId
+	 * @param connection
+	 * @param userId
+	 * @return User
+	 */
 	public static User getUserById(Connection connection, int userId) {
 		if (connection == null) {
             System.out.println("Failed to connect to the database.");
@@ -69,7 +81,12 @@ public class UserController {
         return null; // Return null if no subscriber is found
 	}
 	
-	//INSERT given user into database
+	/**
+	 * Create Username in Database
+	 * @param connection
+	 * @param user
+	 * @return boolean
+	 */
 	public static boolean createUsername(Connection connection, User user) {
         
         if (connection == null) {

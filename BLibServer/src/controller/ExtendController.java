@@ -13,7 +13,7 @@ public class ExtendController {
 	 * Checks if a Book is Extendable
 	 * @param connection
 	 * @param bookId
-	 * @return -1=fail, 0=nope, 1=yep
+	 * @return int -1=fail, 0=nope, 1=yep
 	 */
 	public static int IsBookExtendable(Connection connection, int bookId){
 		if(connection == null) {
@@ -47,7 +47,8 @@ public class ExtendController {
 	 * Extend a book's Return Date by up to 2 weeks
 	 * @param connection
 	 * @param bookId
-	 * @return Date of new Return Date
+	 * @param amountOfDays
+	 * @return LocalDate of new Return Date
 	 */
 	public static LocalDate ExtendBookReturnDate(Connection connection, int bookId, int amountOfDays) {
 		if(connection == null) {

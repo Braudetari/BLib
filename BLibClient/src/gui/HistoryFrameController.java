@@ -1,12 +1,9 @@
 package gui;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import client.ClientUI;
-import common.Book;
-import common.DateUtil;
 import common.DetailedHistory;
 import common.Subscriber;
 import common.User;
@@ -17,175 +14,238 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Controller class for the History Frame in the GUI.
+ * This frame displays detailed history of actions for a specific subscriber or user.
+ */
 public class HistoryFrameController implements IController {
-	@FXML
-	private AnchorPane parentNode = null;
+
+    /** Parent node of the frame layout. */
+    @FXML
+    private AnchorPane parentNode = null;
+
+    /** ComboBox for selecting search options (Action, Description, Note). */
     @FXML
     private ComboBox<String> searchOptions;
 
+    /** TextField for entering search text. */
     @FXML
     private TextField searchField;
 
+    /** Button for executing the search. */
     @FXML
     private Button btnSearch;
 
+    /** Button for navigating back to the previous screen. */
     @FXML
     private Button btnBack;
-    
+
+    /** Button for adding a note to a selected history entry. */
     @FXML
     private Button btnAddNote;
-    
+
+    /** TableView for displaying the detailed history. */
     @FXML
     private TableView<DetailedHistory> historyTable;
 
+    /** TableColumn for displaying the action in the history. */
     @FXML
     private TableColumn<DetailedHistory, String> colAction;
 
+    /** TableColumn for displaying the date in the history. */
     @FXML
     private TableColumn<DetailedHistory, String> colDate;
 
+    /** TableColumn for displaying the description in the history. */
     @FXML
     private TableColumn<DetailedHistory, String> colDescription;
-    
+
+    /** Reference to the main controller managing the current view. */
     private MenuUIController mainController;
-	private DetailedHistory selectedLine=null;
-	private User.UserType permission;
-	private Subscriber importedSubscriber;
+
+    /** Currently selected line in the history table. */
+    private DetailedHistory selectedLine = null;
+
+    /** User permission level. */
+    private User.UserType permission;
+
+    /** Imported subscriber whose history is being displayed. */
+    private Subscriber importedSubscriber;
+
+    /** List of all detailed history entries. */
     private List<DetailedHistory> historyList = null;
-    //private List<String> booksAvailibility = null;
-    //private List<String> booksClosestReturnDate = null;
+
+    /** Observable list for binding history data to the table view. */
     private ObservableList<DetailedHistory> historyData;
-    //private User.UserType permission;
+
+    /** ID representing the user's history. */
     private Integer userHistoryId = 0;
-    
+
+    /**
+     * Sets the object for this controller, specifying the user's history ID.
+     * 
+     * @param object the object containing the user's history ID.
+     */
     public void setOjbect(Object object) {
-    	if(object instanceof Integer)
-    		this.userHistoryId = (Integer)object;
+        if (object instanceof Integer) {
+            this.userHistoryId = (Integer) object;
+        }
     }
-    
+
+    /**
+     * Initializes the history frame. Configures table columns, populates search options,
+     * and sets visibility for the Add Note button based on user type.
+     */
     public void initializeHistory() {
-    	if(ClientUI.chat.getClientUser().getType().equals(User.UserType.LIBRARIAN)) {
-        	btnAddNote.setVisible(true);
-    	}
-    	else {
-    		btnAddNote.setVisible(false);
-    	}
-    	
-    	// Add search options
+        if (ClientUI.chat.getClientUser().getType().equals(User.UserType.LIBRARIAN)) {
+            btnAddNote.setVisible(true);
+        } else {
+            btnAddNote.setVisible(false);
+        }
+
+        // Add search options
         searchOptions.getItems().addAll("Action", "Description", "Note");
         searchOptions.setValue("Action");
-        
+
         historyData = FXCollections.observableArrayList();
         colAction.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getAction().toString()));
         colDescription.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getDescription()));
-		colDate.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getDate().toString()));
-		historyTable.setItems(historyData);
-        
+        colDate.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getDate().toString()));
+        historyTable.setItems(historyData);
     }
-    
+
+    /**
+     * Refreshes the history data. To be implemented.
+     */
     public void refreshHistory() {
     }
-    
+
+    /**
+     * Handles the search action when the search button is clicked.
+     * Filters the history data based on the selected search option and input text.
+     * 
+     * @param event the action event triggered by the search button.
+     */
     @FXML
     private void handleSearchAction(ActionEvent event) {
         String selectedOption = searchOptions.getValue();
         String searchText = searchField.getText().trim();
-        if(importedSubscriber == null && ClientUI.chat.getClientUser().equals(User.UserType.LIBRARIAN)) {
-        	//Implement Librarian Request History List
-        	historyList = null;
+        if (importedSubscriber == null && ClientUI.chat.getClientUser().equals(User.UserType.LIBRARIAN)) {
+            // Implement Librarian Request History List
+            historyList = null;
+        } else {
+            historyList = ClientUI.chat.requestServerForHistoryList(importedSubscriber.getDetailedSubscriptionHistory());
         }
-        else {
-    		historyList = ClientUI.chat.requestServerForHistoryList(importedSubscriber.getDetailedSubscriptionHistory());
+        if (historyList == null) {
+            historyList = new ArrayList<>();
         }
-		if(historyList == null) {
-			historyList = new ArrayList<DetailedHistory>();
-		}
-        
+
         if (searchText.isEmpty()) {
-        	searchText = "";
+            searchText = "";
         }
-        List<DetailedHistory> filteredHistoryList = new ArrayList<DetailedHistory>();
-        for(int i=historyList.size()-1; i>=0 ; i--) {
-        	boolean addEntry = false;
-        	switch(selectedOption){
-        	case "Action":
-        			if(historyList.get(i).getAction().toString().toLowerCase().contains(searchText.toLowerCase()))
-        					addEntry = true;
-        		break;
-        	case "Description":
-        		if(historyList.get(i).getDescription().toString().toLowerCase().contains(searchText.toLowerCase()))
-    					addEntry = true;
-    		break;
-        	case "Note":
-        		if(historyList.get(i).getNote().toString().toLowerCase().contains(searchText.toLowerCase()))
-    					addEntry = true;
-    		break;
-        	default:
-        		break;
-        	}
-        	
-        	if(addEntry) {
-        		filteredHistoryList.add(historyList.get(i));
-        	}
+        List<DetailedHistory> filteredHistoryList = new ArrayList<>();
+        for (int i = historyList.size() - 1; i >= 0; i--) {
+            boolean addEntry = false;
+            switch (selectedOption) {
+                case "Action":
+                    if (historyList.get(i).getAction().toString().toLowerCase().contains(searchText.toLowerCase())) {
+                        addEntry = true;
+                    }
+                    break;
+                case "Description":
+                    if (historyList.get(i).getDescription().toString().toLowerCase().contains(searchText.toLowerCase())) {
+                        addEntry = true;
+                    }
+                    break;
+                case "Note":
+                    if (historyList.get(i).getNote().toString().toLowerCase().contains(searchText.toLowerCase())) {
+                        addEntry = true;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            if (addEntry) {
+                filteredHistoryList.add(historyList.get(i));
+            }
         }
-        
+
         historyData.clear();
         historyData.addAll(filteredHistoryList);
     }
 
+    /**
+     * Handles the row selection in the history table. Enables or disables the Add Note button
+     * based on whether a row is selected.
+     * 
+     * @param event the mouse event triggered by selecting a row.
+     * @throws Exception if an error occurs during row selection.
+     */
     @FXML
-    private void SelectRow(MouseEvent event) throws Exception{
+    private void SelectRow(MouseEvent event) throws Exception {
         selectedLine = historyTable.getSelectionModel().getSelectedItem();
-        if(selectedLine != null) {
-        	btnAddNote.setDisable(false);
-        }
-        else {
-        	btnAddNote.setDisable(true);
+        if (selectedLine != null) {
+            btnAddNote.setDisable(false);
+        } else {
+            btnAddNote.setDisable(true);
         }
     }
-    
+
+    /**
+     * Opens the Add Note frame for adding a note to the selected history entry.
+     * 
+     * @param event the action event triggered by clicking the Add Note button.
+     */
     @FXML
     private void OpenAddNote(ActionEvent event) {
-    	IController genericController = mainController.loadFXMLIntoPane("/gui/AddNoteFrame.fxml");
-    	if(genericController instanceof AddNoteFrameController) {
-    		AddNoteFrameController addNote = (AddNoteFrameController)genericController;
-    		addNote.setObject(new Object[] {selectedLine, importedSubscriber, userHistoryId});
-    		
-    	}
+        IController genericController = mainController.loadFXMLIntoPane("/gui/AddNoteFrame.fxml");
+        if (genericController instanceof AddNoteFrameController) {
+            AddNoteFrameController addNote = (AddNoteFrameController) genericController;
+            addNote.setObject(new Object[]{selectedLine, importedSubscriber, userHistoryId});
+        }
     }
-    
+
+    /**
+     * Handles the back button action, navigating back to the Subscriber Info frame.
+     * 
+     * @param event the action event triggered by clicking the back button.
+     * @throws Exception if an error occurs during navigation.
+     */
     @FXML
-	private void handleBackBtn(ActionEvent event) throws Exception{
-		try {
-	    		IController genericController = mainController.loadFXMLIntoPane("/gui/SubscriberInfoFrame.fxml");
-	    		if(genericController instanceof SubscriberInfoFrameController) {
-	    			SubscriberInfoFrameController infoController = (SubscriberInfoFrameController)genericController;
-	    			infoController.setObject(importedSubscriber);
-	    			infoController.initializeSubscriberInfo();
-	    		}
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
-    
+    private void handleBackBtn(ActionEvent event) throws Exception {
+        try {
+            IController genericController = mainController.loadFXMLIntoPane("/gui/SubscriberInfoFrame.fxml");
+            if (genericController instanceof SubscriberInfoFrameController) {
+                SubscriberInfoFrameController infoController = (SubscriberInfoFrameController) genericController;
+                infoController.setObject(importedSubscriber);
+                infoController.initializeSubscriberInfo();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void setMainController(MenuUIController controller) {
-    	this.mainController = controller;
+        this.mainController = controller;
     }
-    
-    
-    public void start(Stage primaryStage,User.UserType permission) throws Exception {
+
+    /**
+     * Starts the History Frame, initializing it with the given permission level.
+     * 
+     * @param primaryStage the stage to display the frame.
+     * @param permission the user type permission level.
+     * @throws Exception if an error occurs during initialization.
+     */
+    public void start(Stage primaryStage, User.UserType permission) throws Exception {
         FXMLLoader loader = new FXMLLoader();
         Parent root = loader.load(getClass().getResource("/gui/HistoryFrame.fxml").openStream());
         Scene scene = new Scene(root);
@@ -195,27 +255,24 @@ public class HistoryFrameController implements IController {
         primaryStage.show();
     }
 
-@Override
-public void setPermission(UserType type) {
-	// TODO Auto-generated method stub
-	permission=type;
-}
+    @Override
+    public void setPermission(UserType type) {
+        permission = type;
+    }
 
-@Override
-public void setObject(Object object) {
-	userHistoryId = (Integer)((Object[])object)[1];
-	importedSubscriber = (Subscriber)((Object[])object)[0];
-}
+    @Override
+    public void setObject(Object object) {
+        userHistoryId = (Integer) ((Object[]) object)[1];
+        importedSubscriber = (Subscriber) ((Object[]) object)[0];
+    }
 
-@Override
-public void initializeFrame(Object object) {
-	// TODO Auto-generated method stub
-	
-}
+    @Override
+    public void initializeFrame(Object object) {
+        // To be implemented if needed
+    }
 
-	@Override
-	public void initializeFrame() {
-		mainController.setPaneTitle("Detailed History");
-		
-	}
+    @Override
+    public void initializeFrame() {
+        mainController.setPaneTitle("Detailed History");
+    }
 }

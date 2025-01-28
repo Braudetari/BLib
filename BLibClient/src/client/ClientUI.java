@@ -81,7 +81,8 @@ public class ClientUI extends Application {
     }
     
     /**
-     * Listen to Connection, if 
+     * Listen to Server Connection, exit program when not connected to server
+     * @param primaryStage	used to close the program when closing
      */
     private void ConnectionListener(Stage primaryStage) throws Exception{
     	boolean connectionActive = true;

@@ -3,7 +3,15 @@ package common;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Some LocalDate Utils
+ */
 public class DateUtil {
+	/**
+	 * Get LocalDate from String
+	 * @param string
+	 * @return LocalDate
+	 */
 	public static LocalDate DateFromString(String string) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 		LocalDate date = null;
@@ -17,6 +25,11 @@ public class DateUtil {
 		return date;
 	}
 	
+	/**
+	 * Get String from LocalDate
+	 * @param date
+	 * @return String
+	 */
 	public static String DateToString(LocalDate date) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 		return date.format(formatter);

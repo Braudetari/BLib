@@ -29,9 +29,9 @@ public class Notification implements Serializable {
     /**
      * Constructs a Notification with the specified description, date, and user.
      * 
-     * @param description the description of the notification record
+     * @param subscriber relevant subscriber
      * @param date of action
-     * @param user affected/relevant
+     * @param description the description of the notification record
      */
     public Notification(Subscriber subscriber, LocalDate date, String description) {
         this.description = description;
@@ -43,7 +43,7 @@ public class Notification implements Serializable {
     
     /**
      * Construct Notification using another Notification
-     * @param Notification object
+     * @param n Notification object
      */
     public Notification(Notification n) {
     	this.description = n.description;
@@ -55,7 +55,7 @@ public class Notification implements Serializable {
     
     /**
      * Returns the description of the notification
-     *  @return the description
+     *  @return String the description
      */
     public String getDescription() {
         return description;
@@ -71,7 +71,7 @@ public class Notification implements Serializable {
     
     /**
      * Returns the date of the notification.
-     * @return the date
+     * @return LocalDate
      */
     public LocalDate getDate() {
         return date;
@@ -86,22 +86,26 @@ public class Notification implements Serializable {
     }
     
     /**
-     * Returns the user associated with the notification record.
-     * @return the user
+     * Returns the subscriber associated with the notification record.
+     * @return Subscriber
      */
     public Subscriber getSubscriber() {
         return subscriber;
     }
     
     /**
-     * Sets the user associated with the notification record.
-     * @param user the user to set
+     * Sets the subscriber associated with the notification record.
+     * @param subscriber the subscriber to set
      */
     public void setSubscriber(Subscriber subscriber) {
         this.subscriber = subscriber;
     }
 
-    
+    /**
+     * Get Notification From String
+     * @param str String
+     * @return Notification
+     */
     public static Notification fromString(String str) {
 		str = str.substring(1, str.length()-1); //remove toString []
     	StringTokenizer tokenizer = new StringTokenizer(str, "%"); 
@@ -122,12 +126,12 @@ public class Notification implements Serializable {
     
     /**
      * Get String of a Notification list
-     * @param NotificationList
+     * @param notificationList	Notification List
      * @return String
      */
-    public static String NotificationListToString(List<Notification> detailedList) {
+    public static String NotificationListToString(List<Notification> notificationList) {
     	String output = "{";
-    	Iterator<Notification> iterator = detailedList.iterator();
+    	Iterator<Notification> iterator = notificationList.iterator();
     	while(iterator.hasNext()) {
     		output += iterator.next();
     		if(iterator.hasNext()) {

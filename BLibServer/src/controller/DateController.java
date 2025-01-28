@@ -19,7 +19,7 @@ public class DateController {
 	 * Get Date from Database using ID
 	 * @param connection
 	 * @param dateId
-	 * @return Book
+	 * @return LocalDate
 	 */
 	@SuppressWarnings("deprecation")
 	public static LocalDate GetDateById(Connection connection, int dateId) {
@@ -51,8 +51,8 @@ public class DateController {
 	/**
 	 * Gets DateId from given Date in database
 	 * @param connection
-	 * @param date
-	 * @return -1=error, 0=fail, >0=date_id
+	 * @param givenDate
+	 * @return int -1=error, 0=fail, >0=date_id
 	 */
 	@SuppressWarnings("deprecation")
 	public static int GetDateIdByDate(Connection connection, LocalDate givenDate) {
@@ -85,8 +85,8 @@ public class DateController {
 	/**
 	 * Creates DateId from given Date in database and returns it
 	 * @param connection
-	 * @param date
-	 * @return -1=error, 0=fail, >0=dateId
+	 * @param givenDate
+	 * @return int -1=error, 0=fail, >0=dateId
 	 */
 	@SuppressWarnings("deprecation")
 	public static int CreateDateIdByDate(Connection connection, LocalDate givenDate) {
@@ -115,6 +115,12 @@ public class DateController {
 		}
 	}
 
+	/**
+	 * Gets or Creates DateId using givenDate
+	 * @param connection
+	 * @param givenDate
+	 * @return int dateId
+	 */
 	public static int GetOrCreateDateIdByDate(Connection connection, LocalDate givenDate) {
 		int givenDateInt = GetDateIdByDate(connection, givenDate);
 		if(givenDateInt<0) //GetDate error

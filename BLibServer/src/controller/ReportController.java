@@ -17,7 +17,7 @@ public class ReportController {
 	/**
 	 * Generates Subscriber Report of how many frozen 
 	 * @param connection
-	 * @return Object[] {(int)ActiveCount, (int)FrozenCount}
+	 * @return Object[] {(@code (int)ActiveCount, (int)FrozenCount}
 	 */
 	public static Object[] GenerateSubscriberReport(Connection connection) {
 		if(connection == null) {
@@ -46,7 +46,7 @@ public class ReportController {
 	 * @param connection
 	 * @param year int
 	 * @param month int
-	 * @return Object[] {List<String>bookGenre, List<Integer>loanTime}
+	 * @return Object[] {@code List<String>bookGenre, List<Integer>loanTime}
 	 */
 	@SuppressWarnings("unchecked")
 	public static Object[] GenerateLoanTimeReport(Connection connection, int year, int month) {
@@ -110,7 +110,7 @@ public class ReportController {
 	 * @param connection
 	 * @param year
 	 * @param month
-	 * @return Object[] {List<Book> books, List<Integer> loanTime}
+	 * @return Object[] {@code List<Book> books, List<Integer> loanTime}
 	 */
 	public static Object[] GetReportBlobFromDatabase(Connection connection, int year, int month) {
 		if(connection == null) {
@@ -158,7 +158,7 @@ public class ReportController {
 	 * @param reportObject Object[] blob
 	 * @param year
 	 * @param month
-	 * @return int -1=error, 0=fail, 1=success
+	 * @return int {@code -1=error, 0=fail, 1=success}
 	 */
 	public static int UpdateReportBlobInDatabase(Connection connection, Object[] reportObject, int year, int month) {
 		if(connection == null) {
@@ -224,7 +224,7 @@ public class ReportController {
 	 * @param connection
 	 * @param book
 	 * @param loanTime
-	 * @return int -1=error, 0=fail, 1=success
+	 * @return int {@code -1=error, 0=fail, 1=success}
 	 */
 	public static int AddReportToDatabase(Connection connection, Book book, int loanTime) {
 		if(connection == null) {

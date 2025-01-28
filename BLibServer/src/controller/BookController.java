@@ -116,7 +116,7 @@ public class BookController {
 	 * Get Books from Database using Name
 	 * @param connection
 	 * @param name of book
-	 * @return List<Book>
+	 * @return {@code List<Book>}
 	 */
 	public static List<Book> GetBooksByName(Connection connection, String name) {
 		return GetBooksByElement(connection, "book_name", name);
@@ -126,7 +126,7 @@ public class BookController {
 	 * Get Books from Database using Name
 	 * @param connection
 	 * @param description of book
-	 * @return List<Book>
+	 * @return {@code List<Book>}
 	 */
 	public static List<Book> GetBooksByDescription(Connection connection, String description) {
 		return GetBooksByElement(connection, "book_description", description);
@@ -136,7 +136,7 @@ public class BookController {
 	 * Get Books from Database using Genre
 	 * @param connection
 	 * @param genre of book
-	 * @return List<Book>
+	 * @return {@code List<Book>}
 	 */
 	public static List<Book> GetBooksByGenre(Connection connection, String genre) {
 		return GetBooksByElement(connection, "book_genre", genre);
@@ -146,7 +146,7 @@ public class BookController {
 	 * Get Books from Database using specific SerialId
 	 * @param connection
 	 * @param serialId	of book
-	 * @return List<Book>
+	 * @return {@code List<Book>}
 	 */
 	public static List<Book> GetBooksBySerialId(Connection connection, int serialId) {
 		return GetBooksByElement(connection, "book_serial_id", ""+serialId);
@@ -249,7 +249,7 @@ public class BookController {
 	 * @param connection
 	 * @param book
 	 * @param subscriber
-	 * @return -1=error, 0=fail, 1=success
+	 * @return int {@code -1=error, 0=fail, 1=success}
 	 */
 	public static int OrderBookForSubscriber(Connection connection, Book book, Subscriber subscriber) {
 		if(connection == null) {

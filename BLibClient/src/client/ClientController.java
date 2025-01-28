@@ -198,7 +198,7 @@ public class ClientController implements ChatIF
   /**
    * Request Server to Return Availiblity+ClosestReturnDate for books in bookList
    * @param bookList
-   * @return Object[]	{List<booleans>, List<LocalDate>}
+   * @return Object[]	{@code List<boolean>, List<LocalDate>}
    */
   public Object[] requestServerForBookAvailibilityInfo(Book book) {
 	  SendRequestToServer("booksinfo", book.toString());
@@ -207,8 +207,8 @@ public class ClientController implements ChatIF
   
   /**
    * Request Server to check for books in a list whether they are extendable
-   * @param bookIdList	List<Integer>
-   * @return List<Boolean> Object data of Boolean List, entry for each book in the same order
+   * @param bookIdList	{@code List<Integer>}
+   * @return {@code List<Boolean>} Object data of Boolean List, entry for each book in the same order
    */
   public List<Boolean> requestServerForBookListExtendability(List<Integer> bookIdList) {
 	  SendRequestToServer("arebooksextendable", (Object)bookIdList);
@@ -229,7 +229,7 @@ public class ClientController implements ChatIF
    * Request Server to Extend a book By certain amount of days
    * @param bookId
    * @param amountOfDays
-   * @return int 0=fail/error, 1=success
+   * @return int {@code 0=fail/error, 1=success}
    */
   public int requestServerToExtendBookReturnDate(int bookId, int amountOfDays) {
 	  SendRequestToServer("extendbook", (new int[] {bookId, amountOfDays}));
@@ -291,7 +291,7 @@ public class ClientController implements ChatIF
   /**
    * Request client for borrowed books list by subscriber
    * @param subscriberId	int
-   * @return List<BorrowedBook> of BorrowedBooks
+   * @return {@code List<BorrowedBook>} of BorrowedBooks
    */
   public List<BorrowedBook> requestServerForBorrowedBooksBySubscriber(int subscriberId){
 	  SendRequestToServer("borrowedbooks", (Integer)subscriberId);
@@ -312,7 +312,7 @@ public class ClientController implements ChatIF
    * Request Server for Detailed History List for a specific User
    * Can be found in any subscriber/librarian
    * @param userId (subscriberId or librarianId)
-   * @return List<DetailedHistory>
+   * @return {@code List<DetailedHistory>}
    */
   public List<DetailedHistory> requestServerForHistoryList(int userId){
 	  SendRequestToServer("gethistory", ""+userId);
@@ -339,7 +339,7 @@ public class ClientController implements ChatIF
   /**
    * Request Server for Notifications for a specific subscriber
    * @param subscriberId
-   * @return List<Notification>
+   * @return {@code List<Notification>}
    */
   public List<Notification> requestServerForNotifications(int subscriberId){
 	  SendRequestToServer("getnotifications", (Integer)subscriberId);
@@ -362,7 +362,7 @@ public class ClientController implements ChatIF
    * Requests Server to a Reserve Book
    * @param book
    * @param subscriberId
-   * @return int 0=fail, 1=success
+   * @return int {@code 0=fail, 1=success}
    */
   public int requestServerToReserveBook(Book book, int subscriberId) {
 	  Object[] object = new Object[] {book, subscriberId};
@@ -379,7 +379,7 @@ public class ClientController implements ChatIF
    * Request Server to Generate Loan Report and Return it
    * @param year
    * @param month
-   * @return Object[] {List<String> bookGenres, List<Integer> averageLoanTime}
+   * @return Object[] {@code List<String> bookGenres, List<Integer> averageLoanTime}
    */
   public Object[] requestServerToGenerateLoanReport(int year, int month) {
 	  Object[] object = new Object[] {year, month};
@@ -396,7 +396,7 @@ public class ClientController implements ChatIF
    * Request Server to Generate Subscriber Status Report
    * @param year
    * @param month
-   * @return Object[] {int ActiveCount, int FrozenCount}
+   * @return Object[] {@code int ActiveCount, int FrozenCount}
    */
   public Object[] requestServerToGenerateStatusReport(int year, int month) {
 	  Object[] object = new Object[] {year, month};
@@ -439,7 +439,7 @@ public class ClientController implements ChatIF
   
   /**
    * Get Client's Last Returned Subscriber List
-   * @return List<Subscriber>
+   * @return {@code List<Subscriber>}
    */
   public List<Subscriber> getClientSubscriberList() {
 	  return client.subscriberList;
@@ -455,7 +455,7 @@ public class ClientController implements ChatIF
   
   /**
    * Get Client's Last Returned Book LIst
-   * @return List<Book>
+   * @return {@code List<Book>}
    */
   public List<Book> getClientBookList(){
 	  return client.books;
@@ -487,7 +487,7 @@ public class ClientController implements ChatIF
   
   /**
    * Get Client's Last Returned DetailedHistory List
-   * @return List<DetailedHistory>
+   * @return {@code List<DetailedHistory>}
    */
   public List<DetailedHistory> getClientHistoryList() {
 	  return client.historyList;

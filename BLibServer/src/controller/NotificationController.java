@@ -130,7 +130,7 @@ public class NotificationController {
 	 * Get Notifications for Subscriber from Database
 	 * @param connection
 	 * @param subscriberId
-	 * @return List<Notification>
+	 * @return {@code List<Notification>}
 	 */
 	public static List<Notification> GetNotificationsForSubscriber(Connection connection, int subscriberId){
 		if(connection == null) {
@@ -151,7 +151,7 @@ public class NotificationController {
 	 * Get Notification list from database using notification_id
 	 * @param connection
 	 * @param notificationId
-	 * @return List<Notification>
+	 * @return {@code List<Notification>}
 	 */
 	public static List<Notification> GetNotificationsFromDatabase(Connection connection, int notificationId){
 		if(connection == null) {
@@ -200,8 +200,8 @@ public class NotificationController {
 	/**
 	 * Update Notification Blob in Database, if notification_id = 0 then create one and return it
 	 * @param connection
-	 * @param nList List<Notification>
-	 * @return int -1=error, 0=fail, >0=notification_id (success)
+	 * @param nList {@code List<Notification>}
+	 * @return int {@code -1=error, 0=fail, >0=notification_id (success)}
 	 */
 	public static int UpdateNotificationInDatabase(Connection connection, List<Notification> nList, int notificationId) {
 		if(connection == null) {
@@ -263,8 +263,8 @@ public class NotificationController {
 	/**
 	 * Create Notification Blob in Database, simpler reuse for Update
 	 * @param connection
-	 * @param nList List<Notification>
-	 * @return int -1=error, 0=fail, >0=notification_id (success)
+	 * @param nList {@code List<Notification>}
+	 * @return int {@code -1=error, 0=fail, >0=notification_id (success)}
 	 */
 	public static int CreateNotificationsInDatabase(Connection connection, List<Notification> nList) {
 		int result = UpdateNotificationInDatabase(connection, nList, 0);
@@ -277,7 +277,7 @@ public class NotificationController {
 	 * @param connection
 	 * @param subscriberId
 	 * @param notificationId
-	 * @return int -1=error, 0=fail, 1=success
+	 * @return int {@code -1=error, 0=fail, 1=success}
 	 */
 	public static int UpdateNotificationIdForSubscriberId(Connection connection, int subscriberId, int notificationId) {
 		if(connection == null) {
@@ -346,7 +346,7 @@ public class NotificationController {
 	 * Records Given Notification into Database
 	 * @param connection
 	 * @param n Notification
-	 * @return int -1=error, 0=fail, 1=success
+	 * @return int {@code -1=error, 0=fail, 1=success}
 	 */
 	public static int Notify(Connection connection, Notification n) {
 		if(connection == null) {

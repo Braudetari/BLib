@@ -236,7 +236,7 @@ public class Book implements Serializable{
     }
     
     /**
-     * Convert List<Book> to String
+     * Convert List{@code <Book>} to String
      * @param books
      * @return
      */

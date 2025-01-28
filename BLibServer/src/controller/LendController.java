@@ -19,7 +19,7 @@ public class LendController {
 	/**
 	 * Gets all borrowed books from Database
 	 * @param connection
-	 * @return List<BorrowedBook>
+	 * @return {@code List<BorrowedBook>}
 	 */
 	public static List<BorrowedBook> GetAllBorrowedBooks(Connection connection) {
 		if(connection == null) {
@@ -55,7 +55,7 @@ public class LendController {
 	 * Gets all Non borrowed BookId's using book serial id
 	 * @param connection
 	 * @param bookSerialId
-	 * @return List<Integer>
+	 * @return {@code List<Integer>}
 	 */
 	public static List<Integer> GetAllNonBorrowedBookIdsBySerial(Connection connection, int bookSerialId){
 		if(connection == null) {
@@ -153,7 +153,7 @@ public class LendController {
 	 * Returns a list of borrowed books by a subscriber
 	 * @param connection
 	 * @param subscriberId
-	 * @return List<BorrowedBook> borrowedBookList
+	 * @return {@code List<BorrowedBook>} borrowedBookList
 	 */
 	public static List<BorrowedBook> GetBorrowedBooksBySubscriberId(Connection connection, int subscriberId){
 		if(connection == null) {
@@ -214,7 +214,7 @@ public class LendController {
 	 * @param connection
 	 * @param subscriberId
 	 * @param bookSerialId
-	 * @return int -1=error, 0=false, 1=true
+	 * @return int {@code -1=error, 0=false, 1=true}
 	 */
 	public static int IsBookLentBySubscriber(Connection connection, int subscriberId, int bookSerialId) {
 		if(connection == null) {
@@ -246,7 +246,7 @@ public class LendController {
 	 * @param from when LocalDate
 	 * @param to when LocalDate
 	 * @param book_serial_id
-	 * @return int -1=error, 0=fail, 1=success
+	 * @return int {@code -1=error, 0=fail, 1=success}
 	 */
 	public static int LendBookSerialId(Connection connection, int subscriberId, LocalDate from, LocalDate to, int book_serial_id) {
 		if(connection == null) {
@@ -296,7 +296,7 @@ public class LendController {
 	 * @param subscriberId
 	 * @param LocalDate from when
 	 * @param book_id
-	 * @return int -1=error, 0=fail, 1=success
+	 * @return int {@code -1=error, 0=fail, 1=success}
 	 */
 	public static int LendBookId(Connection connection, int subscriberId, LocalDate from, LocalDate to, int book_id) {
 		if(connection == null) {
@@ -349,7 +349,7 @@ public class LendController {
 	 * @param connection
 	 * @param book
 	 * @param returnDate
-	 * @return int -1=error, 0=fail, 1=success
+	 * @return int {@code -1=error, 0=fail, 1=success}
 	 */
 	public static int ReturnBook(Connection connection, Book book, LocalDate returnDate) {
 		if(connection == null) {

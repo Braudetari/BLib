@@ -18,7 +18,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 /** 
-* Handles messages and data between client and server <p>
+* Handles messages and data between client and server
 * Encrypts and decrypts messages with SHA256/AES
 */
 public class Message implements Serializable{

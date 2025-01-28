@@ -13,7 +13,7 @@ public class ExtendController {
 	 * Checks if a Book is Extendable
 	 * @param connection
 	 * @param bookId
-	 * @return int -1=fail, 0=nope, 1=yep
+	 * @return int {@code -1=fail, 0=nope, 1=yep}
 	 */
 	public static int IsBookExtendable(Connection connection, int bookId){
 		if(connection == null) {

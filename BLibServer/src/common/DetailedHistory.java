@@ -214,7 +214,7 @@ public class DetailedHistory implements Serializable {
 	}
     
     /**
-     * Get String from List<DetailedHistory>
+     * Get String from List{@code<DetailedHistory>}
      * @param detailedList
      * @return String
      */
@@ -234,7 +234,7 @@ public class DetailedHistory implements Serializable {
     /**
      * Get DetailedHistory list from string
      * @param str of DetailedHistoryList
-     * @return List<DetailedHistory>
+     * @return List{@code<DetailedHistory>}
      */
     public static List<DetailedHistory> detailedHistoryListFromString(String str){
 		DetailedHistory dh;

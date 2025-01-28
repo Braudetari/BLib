@@ -19,7 +19,7 @@ public class SubscriberController {
 	/**
 	 * Get all subscribers from Database
 	 * @param connection
-	 * @return ArrayList<Subscriber>
+	 * @return {@code ArrayList<Subscriber>}
 	 */
 	   public static ArrayList<Subscriber> getAllSubscribers(Connection connection) {
 	        ArrayList<Subscriber> subscribers = new ArrayList<>();
@@ -59,7 +59,7 @@ public class SubscriberController {
 	    * @param connection
 	    * @param element	subscriber_id, subscriber_name, etc..
 	    * @param value
-	    * @return List<Subscriber>
+	    * @return {@code List<Subscriber>}
 	    */
 	   public static List<Subscriber> getSubscribersByElement(Connection connection, String element, String value){
 		   if(connection == null) {
@@ -255,7 +255,7 @@ public class SubscriberController {
 	     * Checks in database and returns whether subscriber is frozen or not
 	     * @param connection
 	     * @param subscriberId
-	     * @return int -1=error, 0=false, 1=true
+	     * @return int {@code -1=error, 0=false, 1=true}
 	     */
 	    public static int CheckSubscriberStatus(Connection connection, int subscriberId){
 	    	 if (connection == null) {

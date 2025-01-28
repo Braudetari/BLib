@@ -52,7 +52,7 @@ public class DateController {
 	 * Gets DateId from given Date in database
 	 * @param connection
 	 * @param givenDate
-	 * @return int -1=error, 0=fail, >0=date_id
+	 * @return int {@code -1=error, 0=fail, >=dateId}
 	 */
 	@SuppressWarnings("deprecation")
 	public static int GetDateIdByDate(Connection connection, LocalDate givenDate) {
@@ -86,7 +86,7 @@ public class DateController {
 	 * Creates DateId from given Date in database and returns it
 	 * @param connection
 	 * @param givenDate
-	 * @return int -1=error, 0=fail, >0=dateId
+	 * @return int {@code -1=error, 0=fail, >=dateId}
 	 */
 	@SuppressWarnings("deprecation")
 	public static int CreateDateIdByDate(Connection connection, LocalDate givenDate) {
@@ -121,7 +121,7 @@ public class DateController {
 	 * @param givenDate
 	 * @return int dateId
 	 */
-	public static int GetOrCreateDateIdByDate(Connection connection, LocalDate givenDate) {
+		public static int GetOrCreateDateIdByDate(Connection connection, LocalDate givenDate) {
 		int givenDateInt = GetDateIdByDate(connection, givenDate);
 		if(givenDateInt<0) //GetDate error
 			return -1;

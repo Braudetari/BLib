@@ -145,7 +145,7 @@ public class Notification implements Serializable {
     /**
      * Get Notification list from string
      * @param str of NotificationList
-     * @return List<Notification>
+     * @return List{@code<Notification>}
      */
     public static List<Notification> NotificationListFromString(String str){
 		Notification n;

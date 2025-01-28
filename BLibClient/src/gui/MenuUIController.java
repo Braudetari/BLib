@@ -64,8 +64,8 @@ public class MenuUIController {
 	private String name;
 	
 	private void initializeButtons() {
-		Button[] listOfButtons = {btnSearch,btnNotifications, btnManager, btnBorrow, btnReturnABook,btnBorrowedBooks,btnReservations,btnPersonalInfo};
-		User.UserType[] buttonPermission = {User.UserType.GUEST,User.UserType.SUBSCRIBER, User.UserType.LIBRARIAN,User.UserType.LIBRARIAN, User.UserType.LIBRARIAN,User.UserType.SUBSCRIBER, User.UserType.SUBSCRIBER, User.UserType.SUBSCRIBER};
+		Button[] listOfButtons = {btnSearch,btnNotifications, btnManager, btnBorrow, btnReturnABook,btnBorrowedBooks,btnReservations,btnPersonalInfo, btnReport};
+		User.UserType[] buttonPermission = {User.UserType.GUEST,User.UserType.SUBSCRIBER, User.UserType.LIBRARIAN,User.UserType.LIBRARIAN, User.UserType.LIBRARIAN,User.UserType.SUBSCRIBER, User.UserType.SUBSCRIBER, User.UserType.SUBSCRIBER, User.UserType.LIBRARIAN};
 		int currentButtonPos = 50;
 		int buttonPadding = 50;
 		lblWelocome.setText("Welcome "+name);

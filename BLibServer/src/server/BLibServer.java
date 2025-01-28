@@ -7,12 +7,14 @@ import controller.*;
 import java.io.*;
 import java.sql.Connection;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.Vector;
 
@@ -494,6 +496,7 @@ public class BLibServer extends AbstractServer
 			 			String[] split = str.split(";");
 			 			book = BookController.GetBookById(dbConnection.getConnection(),Integer.parseInt(split[0]));
 			 			date = DateUtil.DateFromString(split[1]);
+			 			bb = LendController.GetBorrowedBookByBookId(dbConnection.getConnection(), book.getId());
 			 			//return book
 			 			result = LendController.ReturnBook(dbConnection.getConnection(), book, date);
 			 			//error handling
@@ -507,6 +510,10 @@ public class BLibServer extends AbstractServer
 			 			if(result == 2) {
 			 				replyStr += " but return date passed, account was frozen.";
 			 			}
+			 			//Report Return to Database
+			 			int loanTime = (int)ChronoUnit.DAYS.between(bb.getBorrowedDate(), date);
+			 			ReportController.AddReportToDatabase(dbConnection.getConnection(), book, loanTime);
+			 			
 			 			reply = new Message("msg", clientInfo.getSessionId(), replyStr);
 			 			handleMessageToClient(reply, client);
 			 			//notify reserved
@@ -754,6 +761,26 @@ public class BLibServer extends AbstractServer
 		 			System.err.println("Could not get notifications for subscriber");
 		 		}
 		 		break;
+		 	case "loanreport": //expected message
+		 			try {
+		 				object = (Object[])message.getMessage();
+		 				int year = (Integer)object[0];
+		 				int month = (Integer)object[1];
+		 				Object[] objectReport = ReportController.GenerateLoanTimeReport(dbConnection.getConnection(), year, month);
+		 				sendMessageToClient("data", objectReport, client, clientInfo);
+		 			}catch(Exception e) {
+		 				sendMessageToClient("error", "Could not generate loan report", client, clientInfo);
+		 			}
+		 		break;
+		 	case "statusreport": //expected message
+	 			try {
+	 				object = (Object[])message.getMessage();
+	 				Object[] objectReport = ReportController.GenerateSubscriberReport(dbConnection.getConnection());
+	 				sendMessageToClient("data", objectReport, client, clientInfo);
+	 			}catch(Exception e) {
+	 				sendMessageToClient("error", "Could not generate loan report", client, clientInfo);
+	 			}
+	 		break;
 		 	case "encrypted":
 		 		break;
 		 	default:
@@ -797,6 +824,7 @@ public class BLibServer extends AbstractServer
     
     flagKillPingThread = true;
   }
+  
   
 }
 //End of EchoServer class

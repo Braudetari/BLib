@@ -379,6 +379,39 @@ public class ClientController implements ChatIF
 	  }
   }
   
+  /**
+   * Request Server to Generate Loan Report and Return it
+   * @param year
+   * @param month
+   * @return Object[2] = {List<String> bookGenres, List<Integer> averageLoanTime}
+   */
+  public Object[] requestServerToGenerateLoanReport(int year, int month) {
+	  Object[] object = new Object[] {year, month};
+	  SendRequestToServer("loanreport",object);
+	  if(client.lastResponse.contentEquals("data")) {
+		  return (Object[])client.data;  
+	  }
+	  else {
+		  return null;
+	  }
+  }
+  
+  /**
+   * Request Server to Generate Subscriber Status Report
+   * @param year
+   * @param month
+   * @return Object[2] = {int ActiveCount, int FrozenCount}
+   */
+  public Object[] requestServerToGenerateStatusReport(int year, int month) {
+	  Object[] object = new Object[] {year, month};
+	  SendRequestToServer("statusreport",object);
+	  if(client.lastResponse.contentEquals("data")) {
+		  return (Object[])client.data;  
+	  }
+	  else {
+		  return null;
+	  }
+  }
   
   ////////	Get Client Local Variables	/////////
   /**

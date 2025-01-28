@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="paneScreen" prefHeight="570.0" prefWidth="810.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MenuUIController">
+<AnchorPane fx:id="paneScreen" prefHeight="636.0" prefWidth="879.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MenuUIController">
    <children>
       <Label fx:id="lblWelocome" layoutX="23.0" layoutY="14.0" prefHeight="46.0" prefWidth="744.0" wrapText="true">
          <font>
@@ -17,16 +17,17 @@
          <children>
             <Button id="btnUpdate" fx:id="btnSearch" layoutX="27.0" layoutY="40.0" mnemonicParsing="false" onAction="#getSearchBtn" prefHeight="26.0" prefWidth="152.0" text="Search" />
             <Button id="btnClose" fx:id="btnManager" layoutX="27.0" layoutY="85.0" mnemonicParsing="false" onAction="#getManagerBtn" prefHeight="26.0" prefWidth="152.0" text="Manager" />
-            <Button fx:id="btnLogout" layoutX="62.0" layoutY="282.0" mnemonicParsing="false" onAction="#getLogoutBtn" text="Logout" />
+            <Button fx:id="btnLogout" layoutX="64.0" layoutY="304.0" mnemonicParsing="false" onAction="#getLogoutBtn" text="Logout" />
             <Button id="btnClose" fx:id="btnBorrow" layoutX="27.0" layoutY="135.0" mnemonicParsing="false" onAction="#getBorrowBtn" prefHeight="26.0" prefWidth="152.0" text="Borrow" />
             <Button id="btnClose" fx:id="btnReturnABook" layoutX="27.0" layoutY="185.0" mnemonicParsing="false" onAction="#getReturnABookBtn" prefHeight="26.0" prefWidth="152.0" text="Return a Book" />
             <Button id="btnClose" fx:id="btnNotifications" layoutX="27.0" layoutY="233.0" mnemonicParsing="false" onAction="#getNotificationsBtn" prefHeight="26.0" prefWidth="152.0" text="Notifications" />
             <Button id="btnClose" fx:id="btnBorrowedBooks" layoutX="27.0" layoutY="85.0" mnemonicParsing="false" onAction="#getBorrowedBooksBtn" prefHeight="26.0" prefWidth="152.0" text="Borrowed Books" />
             <Button id="btnClose" fx:id="btnPersonalInfo" layoutX="27.0" layoutY="135.0" mnemonicParsing="false" onAction="#getPersonalInfoBtn" prefHeight="26.0" prefWidth="152.0" text="Personal Info" />
             <Button id="btnClose" fx:id="btnReservations" layoutX="27.0" layoutY="185.0" mnemonicParsing="false" onAction="#getReservationsBtn" prefHeight="26.0" prefWidth="152.0" text="Reservations" />
+            <Button id="btnClose" fx:id="btnReport" layoutX="27.0" layoutY="233.0" mnemonicParsing="false" onAction="#getReportBtn" prefHeight="26.0" prefWidth="152.0" text="Reports" />
          </children>
       </AnchorPane>
-      <ScrollPane fx:id="scrollPane" layoutX="197.0" layoutY="104.0" prefHeight="451.0" prefWidth="598.0">
+      <ScrollPane fx:id="scrollPane" layoutX="195.0" layoutY="92.0" prefHeight="533.0" prefWidth="674.0">
          <content>
             <VBox fx:id="pane" alignment="CENTER" prefHeight="34.0" prefWidth="33.0" />
          </content>

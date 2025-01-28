@@ -28,6 +28,9 @@ public class ShowBorrowedBooksController implements IController{
     private TableView<BorrowedBook> borrowedBooksTable;
 
     @FXML
+    private TableColumn<BorrowedBook, Integer> colBookId;
+    
+    @FXML
     private TableColumn<BorrowedBook, String> colBookName;
 
     @FXML
@@ -49,6 +52,7 @@ public class ShowBorrowedBooksController implements IController{
         btnExtend.setDisable(true);
 
         // Set up table columns
+        colBookId.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getBorrowedBook().getId()));
         colBookName.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getBorrowedBook().getName()));
         colBorrowedDate.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getBorrowedDate().toString()));
         colReturnDate.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getReturnDate().toString()));

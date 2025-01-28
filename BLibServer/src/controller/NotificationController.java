@@ -392,7 +392,7 @@ public class NotificationController {
 	
 	/**
 	 * Sends an SMS notification
-	 * @param message
+	 * @param str
 	 * @param subscriber
 	 */
 	public static void SendSmsNotification(String str, Subscriber subscriber) {

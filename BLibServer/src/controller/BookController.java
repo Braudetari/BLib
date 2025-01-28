@@ -55,7 +55,7 @@ public class BookController {
 	 * @param connection
 	 * @param element
 	 * @param value
-	 * @return List<Book>
+	 * @return {@code List<Book>}
 	 */
 	public static List<Book> GetBooksByElement(Connection connection, String element, String value){
 		if(connection == null) {

@@ -141,7 +141,7 @@ public class ClientController implements ChatIF
    * Request Server for Subscriber List of all Subscribers
    * @param element	String for database element
    * @param value	String for database value
-   * @return List<Subscriber
+   * @return {@code List<Subscriber>}
    */
   public List<Subscriber> requestServerForSubscriberList(String element, String value){
 	  SendRequestToServer("getsubscribers", new String[] {element, value});
@@ -173,7 +173,7 @@ public class ClientController implements ChatIF
    * will return all books with the name "Harry Potter"
    * @param element book_name, book_genre, book_description
    * @param value of element
-   * @return List<Book Books
+   * @return {@code List<Book>} Books
    */
   public List<Book> requestServerSearchForBooks(String element, String value){
 	  SendRequestToServer("getbooks", new String[] {element,value});
@@ -187,7 +187,7 @@ public class ClientController implements ChatIF
 
   /**
    * Request Server to Return Availiblity+ClosestReturnDate for books in bookList
-   * @param bookList	List<Book>
+   * @param bookList
    * @return Object[] with Object[0]=List of availibility Object[1]=List of Closest Return Date
    */
   public Object[] requestServerForBookListAvailibilityInfo(List<Book> bookList) {
@@ -197,7 +197,7 @@ public class ClientController implements ChatIF
   
   /**
    * Request Server to Return Availiblity+ClosestReturnDate for books in bookList
-   * @param bookList
+   * @param book
    * @return Object[]	{@code List<boolean>, List<LocalDate>}
    */
   public Object[] requestServerForBookAvailibilityInfo(Book book) {

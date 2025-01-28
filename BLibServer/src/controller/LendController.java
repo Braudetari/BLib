@@ -294,7 +294,7 @@ public class LendController {
 	 * Lend book to subscriber using bookId from Date to Date
 	 * @param connection
 	 * @param subscriberId
-	 * @param LocalDate from when
+	 * @param from LocateDate
 	 * @param book_id
 	 * @return int {@code -1=error, 0=fail, 1=success}
 	 */

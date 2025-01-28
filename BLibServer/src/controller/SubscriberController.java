@@ -225,7 +225,9 @@ public class SubscriberController {
 	            return false;
 	        }
 	    	User newUser = new User(0, username, password, UserType.SUBSCRIBER);
-	    	UserController.createUsername(connection, newUser);
+	    	boolean bool = UserController.createUsername(connection, newUser);
+	    	if(!bool)
+	    		return false;
 	    	User user = UserController.getUserByUsername(connection, username);
 	    	
 	    	//Add subscriber to database

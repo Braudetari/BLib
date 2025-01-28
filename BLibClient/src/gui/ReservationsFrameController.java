@@ -86,17 +86,16 @@ public class ReservationsFrameController implements IController {
             }
         });
 
-        reservedTable.setItems(reservedData);
-
         reservedList = ClientUI.chat.requestServerForReservedBooks(ClientUI.chat.getClientUser().getId());
         if (reservedList == null) {
-            reservedList = new ArrayList<>();
+            reservedList = new ArrayList<Book>();
         }
         try {
+        	booksAvailibility = (List<Boolean>)((Object[])ClientUI.chat.requestServerForBookListAvailibilityInfo(reservedList))[0];
         } catch (Exception e) {
-            booksAvailibility = new ArrayList<>();
+            booksAvailibility = new ArrayList<Boolean>();
         }
-
+        reservedTable.setItems(reservedData);
         reservedData.clear();
         if (reservedList != null) {
             reservedData.addAll(reservedList);

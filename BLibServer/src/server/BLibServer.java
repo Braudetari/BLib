@@ -590,7 +590,7 @@ public class BLibServer extends AbstractServer
 		 				object = (Object[])message.getMessage();
 				 		dh = (DetailedHistory)object[0];
 		 				Integer historyId = (Integer)object[1];
-		 				Integer userId = (Integer)object[1];
+		 				Integer userId = (Integer)object[2];
 		 				user = UserController.getUserById(dbConnection.getConnection(), userId);
 		 				dh.setUser(user);
 		 				DetailedHistoryController.RecordHistory(dbConnection.getConnection(), dh);

@@ -107,10 +107,10 @@ public class ServerConnectionsFrameController {
         Parent root = loader.load();
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("/gui/ServerConnections.css").toExternalForm());
+        this.server = server;
         primaryStage.setTitle(title);
         primaryStage.setScene(scene);
         primaryStage.centerOnScreen();
-
         primaryStage.show();
         ServerConnectionsFrameController controller = loader.getController();
         controller.startShowClientsThread();

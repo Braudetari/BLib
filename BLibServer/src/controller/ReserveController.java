@@ -137,8 +137,10 @@ public class ReserveController {
 			List<Book> books = new ArrayList<Book>();
 			while(rs.next()) {
 				int book_id = rs.getInt("book_id");
-				Book book = BookController.GetBookById(connection, book_id);
-				books.add(book);
+				if(book_id>0) {
+					Book book = BookController.GetBookById(connection, book_id);
+					books.add(book);
+				}
 			}
 			return books;
 		}
